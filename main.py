@@ -69,10 +69,21 @@ def make_corpus():
 if __name__ == '__main__':
     from alias_sampler import *
     from ldamodel_cbs import *
-    import gensim
+    from gensim import models
 
     (corpus, corpus_dict) = make_corpus()
-    model = LDAModelCGS(corpus, num_topics=3)
 
-
+    model = LDAModelCGS(corpus, num_topics=5, num_passes=10)
+    print("term_seqs:")
+    for seq in model.term_seqs:
+        print([corpus_dict[w] for w in seq])
+    print(model.term_seqs)
+    print("topic_seqs:")
+    print(model.topic_seqs)
+    print("doc_topic_counts:")
+    print(model.doc_topic_counts)
+    print("term_topic_counts:")
+    print(model.term_topic_counts)
+    print("terms_per_topic:")
+    print(model.terms_per_topic)
 

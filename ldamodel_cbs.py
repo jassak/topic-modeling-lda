@@ -40,8 +40,8 @@ class LDAModelCGS:
 
     """
 
-    def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, id2word=None, eval_every=10,
-                 minimum_probability=0.01, random_state=None, dtype=np.float32):
+    def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, id2word=None, num_passes=10,
+        eval_every=10, minimum_probability=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
         """
         :param corpus:
@@ -104,7 +104,7 @@ class LDAModelCGS:
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
-           self.train(corpus)
+           self.train(corpus, num_passes=num_passes)
 
     def build_seqs_and_counts(self, corpus, id2word):
         # TODO comments
