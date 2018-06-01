@@ -210,16 +210,16 @@ class LDAModelCGS:
             return
 
         # TODO Write the correct version of the logger
-        # logger.info(
-        #     "running Gibbs Sampling LDA training, %s topics, over "
-        #     "the supplied corpus of %i documents, evaluating perplexity every %i documents ",
-        #     self.num_topics, lencorpus,
-        #     eval_every
-        # )
+        logger.info(
+            "running Gibbs Sampling LDA training, %s topics, over "
+            "the supplied corpus of %i documents, evaluating perplexity every %i documents ",
+            self.num_topics, lencorpus,
+            eval_every
+        )
 
-        # TODO start model training
         # Perform several rounds of Gibbs sampling on the documents in the given range.
-        for _ in range(num_passes):
+        for pass_i in range(num_passes):
+            print('Gibss sampling pass:', pass_i)
             self.do_one_pass()
 
     def do_one_pass(self):
@@ -255,7 +255,6 @@ class LDAModelCGS:
             new_topic = np.random.choice(num_topics, p=topic_weights)
 
             # Put that new topic into the counts
-            # TODO Important! This must change the something
             one_doc_topic_seq[si] = new_topic
             one_doc_topic_count[new_topic] += 1
             self.term_topic_counts[term_id][new_topic] += 1
