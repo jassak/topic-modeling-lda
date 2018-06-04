@@ -28,8 +28,12 @@ class AliasSampler():
     """
     def __init__(self, prob_vector, dtype=np.float32):
         """
-        :param prob_vector: The probability vector must be an array/list of non-negative elements that sum to 1.
-        :param dtype: Data type used during calculations. Chose among np.float16, np.float32 and np.float64.
+
+        Args:
+            prob_vector: The probability vector must be an array/list of non-negative elements that sum to 1.
+
+            dtype: Data type used during calculations. Chose among np.float16, np.float32 and np.float64.
+
         """
 
         if dtype not in DTYPE_TO_EPS:
@@ -81,10 +85,14 @@ class AliasSampler():
 
     def generate(self, n=1):
         """
-        Returns a numpy array of size n of random samples from the prob_vector.
-        :param n:
-        :return:
+
+        Args:
+            n:
+
+        Returns:
+            A numpy array of size n of random samples from the prob_vector.
         """
+
         samples = np.empty(n, dtype=int)
         for i in range(n):
             samples[i] = self.generate_once()
@@ -93,9 +101,11 @@ class AliasSampler():
 
     def generate_once(self):
         """
-        Returns a random sample from the prob_vector in O(1) time, once prob_table and alias_table have been built.
-        :return:
+
+        Returns:
+            A random sample from the prob_vector in O(1) time, once prob_table and alias_table have been built.
         """
+
         i = random.randrange(self.num_el)
         if self.prob_table[i] == 1:
             return i

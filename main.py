@@ -71,23 +71,11 @@ if __name__ == '__main__':
     from ldamodel_cbs import *
     from gensim import corpora
     from nips_corpus_utils import *
+    from gensim import models
 
-    corpus_online = NipsCorpus()
-    corpus = []
-    for doc in corpus_online:
-        corpus.append(doc)
+    corpus = NipsCorpus()
 
-    model = LDAModelCGS(corpus, num_topics=20, num_passes=10)
+    model = LdaModelCgs(corpus, num_topics=10, num_passes=4)
 
-    print("term_seqs:")
-    for seq in model.term_seqs[0:10]:
-        print([corpus_online.dictionary[w] for w in seq])
-    print("topic_seqs:")
-    print(model.topic_seqs[1:10])
-    # print("doc_topic_counts:")
-    # print(model.doc_topic_counts)
-    # print("term_topic_counts:")
-    # print(model.term_topic_counts)
-    # print("terms_per_topic:")
-    # print(model.terms_per_topic)
-
+    for topic_id in range(10):
+        print(model.get_topic_terms(topic_id, topn=20, words=True))

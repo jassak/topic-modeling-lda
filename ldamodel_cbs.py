@@ -34,23 +34,42 @@ DTYPE_TO_EPS = {
 }
 
 
-class LDAModelCGS:
-    # TODO Comments
+class LdaModelCgs:
+    """
+    The constructor estimates Latent Dirichlet Allocation model parameters based
+    on a training corpus, according to the collapsed Gibbs sampling method described in
+    **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
+    Example:
+        lda = LdaModelCgs(corpus, num_topics=10)
     """
 
-    """
-
-    def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, id2word=None, num_passes=10,
+    def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
         eval_every=10, minimum_probability=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
         """
-        :param corpus:
-        :param num_topics:
-        :param id2word:
-        :param eval_every:
-        :param minimum_probability:
-        :param random_state:
-        :param dtype:
+
+        Args:
+            corpus: If given, start training from the iterable `corpus` straight away. If not given,
+                the model is left untrained (presumably because you want to call `train()` manually).
+
+            num_topics: The number of requested latent topics to be extracted from
+                the training corpus.
+
+            alpha: Hyperparameter of the Dirichlet prior over the topics in the documemt.
+
+            beta: Hyperparameter of the Dirichlet prior over the terms in a topic.
+
+            num_passes: The number of passes of the MCMC procedure. One pass is one step per term
+                in each document of the whole corpus.
+
+            eval_every: TODO
+
+            minimum_probability: TODO
+
+            random_state: TODO
+
+            dtype: Data-type to use during calculations inside model. All inputs are also converted to this dtype.
+                Available types: `numpy.float16`, `numpy.float32`, `numpy.float64`.
         """
 
         if dtype not in DTYPE_TO_EPS:
@@ -60,24 +79,13 @@ class LDAModelCGS:
         self.dtype = dtype
 
         # store user-supplied parameters
-        self.id2word = id2word
-        if corpus is None and self.id2word is None:
-            raise ValueError(
-                'at least one of corpus/id2word must be specified, to establish input space dimensionality'
-            )
-
-        if self.id2word is None:
-            logger.warning("no word id mapping provided; initializing from corpus, assuming identity")
-            self.id2word = utils.dict_from_corpus(corpus)
-            self.num_terms = len(self.id2word)
-        elif len(self.id2word) > 0:
+        if corpus is not None:
+            self.id2word = corpus.dictionary
             self.num_terms = 1 + max(self.id2word.keys())
         else:
+            self.id2word = None
             self.num_terms = 0
-        if self.num_terms == 0:
-            raise ValueError("cannot compute LDA over an empty collection (no terms)")
 
-        self.num_docs = len(corpus)
         self.num_topics = int(num_topics)
         self.minimum_probability = minimum_probability
         self.eval_every = eval_every
@@ -95,19 +103,29 @@ class LDAModelCGS:
             "Invalid beta shape. Got shape %s, but expected (%d, 1) or (%d, %d)" %
             (str(self.beta.shape), self.num_terms, self.num_topics, self.num_terms))
 
-        self.v_beta = sum(self.beta)
+        self.w_beta = sum(self.beta)
 
         self.term_seqs, self.topic_seqs, \
         self.doc_topic_counts, self.term_topic_counts, \
         self.terms_per_topic = \
-            self.build_seqs_and_counts(corpus=corpus,id2word=self.id2word)
+            self.get_seqs_and_counts(corpus=corpus)
+        self.num_docs = len(self.term_seqs)
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
-           self.train(corpus, num_passes=num_passes)
+            self.train(corpus, num_passes=num_passes)
+            self.theta, self.phi = self.get_theta_phi()
 
-    def build_seqs_and_counts(self, corpus, id2word):
-        # TODO comments
+    def get_seqs_and_counts(self, corpus):
+        """
+            Builds the sequences of terms and topics, and the counts of topics in docs,
+            terms in topics and term per topic.
+        Args:
+            corpus:
+
+        Returns:
+            term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
+        """
         # Build term_seqs
         term_seqs = []
         for document in corpus:
@@ -117,7 +135,7 @@ class LDAModelCGS:
             term_seqs.append(term_seq)
         # Init randomly topic_seqs
         topic_seqs = []
-        for di in range(self.num_docs):
+        for di in range(len(term_seqs)):
             topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
             topic_seqs.append(topic_seq)
         # Build doc_topic_counts
@@ -131,7 +149,7 @@ class LDAModelCGS:
         term_topic_counts = [None] * self.num_terms
         for term in range(self.num_terms):
             term_topic_counts[term] = [0] * self.num_topics
-        for di in range(self.num_docs):
+        for di in range(len(term_seqs)):
             assert len(term_seqs[di]) == len(topic_seqs[di]) # Check if everything is fine
             for term, topic in zip(term_seqs[di], topic_seqs[di]):
                 term_topic_counts[term][topic] += 1
@@ -145,10 +163,14 @@ class LDAModelCGS:
     def init_dir_prior(self, prior, name):
         """
         Initializes the Dirichlet priors. Copied from gensim.
-        :param prior:
-        :param name:
-        :return:
+        Args:
+            prior:
+            name:
+
+        Returns:
+
         """
+
         if prior is None:
             prior = 'symmetric'
 
@@ -190,13 +212,17 @@ class LDAModelCGS:
         return init_prior, is_auto
 
     def train(self, corpus, eval_every=None, num_passes=1):
-        # TODO Comments
         """
-        :param corpus:
-        :param eval_every:
-        :param num_passes:
-        :return:
+        Trains the model by making num_passes Monte Carlo passes on the corpus.
+        Args:
+            corpus:
+            eval_every:
+            num_passes:
+
+        Returns:
+
         """
+
         if eval_every is None:
             eval_every = self.eval_every
 
@@ -223,12 +249,29 @@ class LDAModelCGS:
             self.do_one_pass()
 
     def do_one_pass(self):
-        # One iteration of Gibbs sampling, across all documents.
+        """
+        Performs one iteration of Gibbs sampling, across all documents.
+
+        """
+
         for di in range(self.num_docs):
             self.sample_topics_for_one_doc(di, self.term_seqs[di], self.topic_seqs[di], self.doc_topic_counts[di])
 
     def sample_topics_for_one_doc(self, di, one_doc_term_seq, one_doc_topic_seq,
                                   one_doc_topic_count):
+        """
+        Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
+        for one document, according to
+        **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
+        Args:
+            di:
+            one_doc_term_seq:
+            one_doc_topic_seq:
+            one_doc_topic_count:
+
+        Returns:
+
+        """
         doc_len = len(one_doc_term_seq)
         num_topics = len(one_doc_topic_count)
 
@@ -246,7 +289,7 @@ class LDAModelCGS:
             topic_weights = np.zeros(num_topics, self.dtype)
             current_term_topic_count = self.term_topic_counts[term_id]
             for ti in range(num_topics):
-                tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.v_beta))\
+                tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.w_beta))\
                      * (one_doc_topic_count[ti] + self.alpha[ti])
                 topic_weights[ti] = tw
 
@@ -263,3 +306,42 @@ class LDAModelCGS:
         # Update seqs and counts class-wise
         self.topic_seqs[di] = one_doc_topic_seq
         self.doc_topic_counts[di] = one_doc_topic_count
+
+    def get_theta_phi(self):
+        """
+        Returns:
+            theta and phi. Matrices whose vectors are the predictive distributions of
+            topic|doc and term|topic respectively.
+        """
+        theta = np.empty(shape=(self.num_docs, self.num_topics), dtype=self.dtype)
+        phi = np.empty(shape=(self.num_topics, self.num_terms), dtype=self.dtype)
+
+        for doc_id in range(self.num_docs):
+            for topic_id in range(self.num_topics):
+                theta[doc_id][topic_id] = self.doc_topic_counts[doc_id][topic_id] + self.alpha[topic_id]
+            theta[doc_id] = theta[doc_id] / sum(theta[doc_id])
+
+        for topic_id in range(self.num_topics):
+            for term_id in range(self.num_terms):
+                phi[topic_id][term_id] = self.term_topic_counts[term_id][topic_id] + self.beta[term_id]
+            phi[topic_id] = phi[topic_id] / sum(phi[topic_id])
+
+        return theta, phi
+
+    def get_topic_terms(self, topic_id, topn=10, words=True):
+        """
+        Args:
+            topic_id:
+            topn:
+            words: If False returns term_id, if True returns the actual word.
+
+        Returns:
+             A list of tuples (term, prob) of the topn terms in topic_id, formated according to format.
+        """
+
+        topic_term_probs = self.phi[topic_id]
+        bestn = matutils.argsort(topic_term_probs, topn, reverse=True)
+        if words:
+            return [(self.id2word[idx], topic_term_probs[idx]) for idx in bestn]
+        else:
+            return [(idx, topic_term_probs[idx]) for idx in bestn]
