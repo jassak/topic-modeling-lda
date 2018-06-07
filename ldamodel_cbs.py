@@ -6,6 +6,7 @@ Created on 21 May 2018
 @author: jason
 """
 
+
 import logging
 import numbers
 import os
@@ -25,6 +26,9 @@ from gensim.matutils import (
 from gensim.models import basemodel, CoherenceModel
 from gensim.models.callbacks import Callback
 
+from base_topic_model import BaseTopicModel
+
+# TODO Change logger name to __name__
 logger = logging.getLogger('gensim.models.ldamodel')
 
 DTYPE_TO_EPS = {
@@ -34,17 +38,18 @@ DTYPE_TO_EPS = {
 }
 
 
-class LdaModelCgs:
+class LdaModelCgs(BaseTopicModel):
     """
     The constructor estimates Latent Dirichlet Allocation model parameters based
     on a training corpus, according to the collapsed Gibbs sampling method described in
     **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
+
     Example:
         lda = LdaModelCgs(corpus, num_topics=10)
     """
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
-        eval_every=10, minimum_probability=0.01, random_state=None, dtype=np.float32):
+                 eval_every=10, minimum_probability=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
         """
 
@@ -55,7 +60,7 @@ class LdaModelCgs:
             num_topics: The number of requested latent topics to be extracted from
                 the training corpus.
 
-            alpha: Hyperparameter of the Dirichlet prior over the topics in the documemt.
+            alpha: Hyperparameter of the Dirichlet prior over the topics in a documemt.
 
             beta: Hyperparameter of the Dirichlet prior over the terms in a topic.
 
@@ -74,8 +79,8 @@ class LdaModelCgs:
 
         if dtype not in DTYPE_TO_EPS:
             raise ValueError(
-                "Incorrect 'dtype', please choose one of {}".format(
-                    ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
+                    "Incorrect 'dtype', please choose one of {}".format(
+                            ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
         # store user-supplied parameters
@@ -120,6 +125,7 @@ class LdaModelCgs:
         """
             Builds the sequences of terms and topics, and the counts of topics in docs,
             terms in topics and term per topic.
+
         Args:
             corpus:
 
@@ -150,7 +156,7 @@ class LdaModelCgs:
         for term in range(self.num_terms):
             term_topic_counts[term] = [0] * self.num_topics
         for di in range(len(term_seqs)):
-            assert len(term_seqs[di]) == len(topic_seqs[di]) # Check if everything is fine
+            assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
             for term, topic in zip(term_seqs[di], topic_seqs[di]):
                 term_topic_counts[term][topic] += 1
         # Sum above across terms to build terms_per_topic
@@ -163,6 +169,7 @@ class LdaModelCgs:
     def init_dir_prior(self, prior, name):
         """
         Initializes the Dirichlet priors. Copied from gensim.
+
         Args:
             prior:
             name:
@@ -214,12 +221,11 @@ class LdaModelCgs:
     def train(self, corpus, eval_every=None, num_passes=1):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
+
         Args:
             corpus:
             eval_every:
             num_passes:
-
-        Returns:
 
         """
 
@@ -237,15 +243,16 @@ class LdaModelCgs:
 
         # TODO Write the correct version of the logger
         logger.info(
-            "running Gibbs Sampling LDA training, %s topics, over "
-            "the supplied corpus of %i documents, evaluating perplexity every %i documents ",
-            self.num_topics, lencorpus,
-            eval_every
+                "running Gibbs Sampling LDA training, %s topics, over "
+                "the supplied corpus of %i documents, evaluating perplexity every %i documents ",
+                self.num_topics, lencorpus,
+                eval_every
         )
 
         # Perform several rounds of Gibbs sampling on the documents in the given range.
+        print('Start training:')
         for pass_i in range(num_passes):
-            print('Gibss sampling pass:', pass_i)
+            print('\tpass', pass_i)
             self.do_one_pass()
 
     def do_one_pass(self):
@@ -263,13 +270,12 @@ class LdaModelCgs:
         Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
         for one document, according to
         **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
+
         Args:
             di:
             one_doc_term_seq:
             one_doc_topic_seq:
             one_doc_topic_count:
-
-        Returns:
 
         """
         doc_len = len(one_doc_term_seq)
@@ -289,7 +295,7 @@ class LdaModelCgs:
             topic_weights = np.zeros(num_topics, self.dtype)
             current_term_topic_count = self.term_topic_counts[term_id]
             for ti in range(num_topics):
-                tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.w_beta))\
+                tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.w_beta)) \
                      * (one_doc_topic_count[ti] + self.alpha[ti])
                 topic_weights[ti] = tw
 
@@ -309,6 +315,7 @@ class LdaModelCgs:
 
     def get_theta_phi(self):
         """
+
         Returns:
             theta and phi. Matrices whose vectors are the predictive distributions of
             topic|doc and term|topic respectively.
@@ -328,20 +335,53 @@ class LdaModelCgs:
 
         return theta, phi
 
-    def get_topic_terms(self, topic_id, topn=10, words=True):
+    def get_topic_terms(self, topic_id, topn=10, readable=True):
         """
+
         Args:
             topic_id:
             topn:
-            words: If False returns term_id, if True returns the actual word.
+            readable: If False returns term_id, if True returns the actual word.
 
         Returns:
              A list of tuples (term, prob) of the topn terms in topic_id, formated according to format.
+
         """
 
         topic_term_probs = self.phi[topic_id]
         bestn = matutils.argsort(topic_term_probs, topn, reverse=True)
-        if words:
+        if readable:
             return [(self.id2word[idx], topic_term_probs[idx]) for idx in bestn]
         else:
             return [(idx, topic_term_probs[idx]) for idx in bestn]
+
+    def get_document_topics(self, doc_id, minimum_probability=None, readable=True):
+        """
+
+        Args:
+            doc_id:
+            minimum_probability: Ignore topics below this probability.
+            readable: If False returns topic_id's. Else returns a string of the top 10 words in topic.
+
+        Returns:
+            A list of tuples (topic, probability) for document[doc_id]. topic is either topic_id or a string.
+
+        """
+
+        if minimum_probability is None:
+            minimum_probability = self.minimum_probability
+        minimum_probability = max(minimum_probability, 1e-8)  # never allow zero values in sparse output. (Why??)
+
+        doc_topic_probs = self.theta[doc_id]
+        sorted_idx = matutils.argsort(doc_topic_probs, reverse=True)
+        if not readable:
+            return [(idx, doc_topic_probs[idx]) for idx in sorted_idx if doc_topic_probs[idx] > minimum_probability]
+        else:
+            doc_topics = []
+            for idx in sorted_idx:
+                if doc_topic_probs[idx] > minimum_probability:
+                    topic_terms = self.get_topic_terms(idx, topn=10, readable=True)
+                    terms_string = " ".join([w[0] for w in topic_terms])
+                    doc_topics.append((terms_string, doc_topic_probs[idx]))
+            return doc_topics
+

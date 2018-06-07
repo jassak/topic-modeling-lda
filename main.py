@@ -72,10 +72,16 @@ if __name__ == '__main__':
     from gensim import corpora
     from nips_corpus_utils import *
     from gensim import models
+    import itertools
+    from utils import *
+
+
 
     corpus = NipsCorpus()
 
-    model = LdaModelCgs(corpus, num_topics=10, num_passes=4)
+    model = LdaModelCgs(corpus, num_topics=10, num_passes=5)
 
-    for topic_id in range(10):
-        print(model.get_topic_terms(topic_id, topn=20, words=True))
+    model.save('models/test_model.pkl')
+
+    model.print_topic_terms(0)
+    model.print_document_topics(0)

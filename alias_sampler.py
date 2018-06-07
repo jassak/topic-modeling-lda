@@ -16,6 +16,7 @@ DTYPE_TO_EPS = {
     np.float64: 1e-100,
 }
 
+
 class AliasSampler():
     """
     Implements Walker's Alias Method for efficiently sampling from a categorical distribution (biased die),
@@ -26,6 +27,7 @@ class AliasSampler():
 
     The constructor takes a probability vector and builds the probability and alias tables in O(n) time.
     """
+
     def __init__(self, prob_vector, dtype=np.float32):
         """
 
@@ -38,15 +40,15 @@ class AliasSampler():
 
         if dtype not in DTYPE_TO_EPS:
             raise ValueError(
-                "Incorrect 'dtype', please choose one of {}".format(
-                    ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
+                    "Incorrect 'dtype', please choose one of {}".format(
+                            ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
         eps = DTYPE_TO_EPS[self.dtype]
 
         self.prob_vector = np.asarray(prob_vector, self.dtype)
-        assert(np.amin(prob_vector) >= 0.), "probabilities must be non-negative"
-        assert(abs(np.sum(prob_vector) - 1.) <= eps), "probabilities must sum to 1"
-        assert(prob_vector.ndim == 1), "a probability vector must have dimension 1"
+        assert (np.amin(prob_vector) >= 0.), "probabilities must be non-negative"
+        assert (abs(np.sum(prob_vector) - 1.) <= eps), "probabilities must sum to 1"
+        assert (prob_vector.ndim == 1), "a probability vector must have dimension 1"
 
         num_el = len(prob_vector)
         self.num_el = num_el
@@ -115,7 +117,3 @@ class AliasSampler():
                 return i
             else:
                 return self.alias_table[i]
-
-
-
-
