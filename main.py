@@ -10,7 +10,7 @@ def time_alias_sampler():
 import numpy as np
 from alias_sampler import AliasSampler
 p = np.random.rand(
-""" + str(int(vec_sizes[i])) +""" )
+""" + str(int(vec_sizes[i])) + """ )
 p = p / sum(p)
 p[0] = 1. - sum(p[1:])
 alias_sampler = AliasSampler(p, dtype=np.float16)
@@ -21,32 +21,30 @@ alias_sampler = AliasSampler(p, dtype=np.float16)
         setup = """\
 import numpy as np
 p = np.random.rand(
-""" + str(int(vec_sizes[i])) +""" )
+""" + str(int(vec_sizes[i])) + """ )
 p = p / sum(p)
 p[0] = 1. - sum(p[1:])
 """
         times_table[1][i] = timeit.timeit('np.random.multinomial(1, p, size=1)', number=100000,
-                      setup=setup)
+                                          setup=setup)
         # print(t)
 
     print(times_table)
 
 
 def make_corpus():
-
     from gensim import corpora
     from pprint import pprint
 
-
     documents = ["Human machine interface for lab abc computer applications",
-                "A survey of user opinion of computer system response time",
-                "The EPS user interface management system",
-                "System and human system engineering testing of EPS",
-                "Relation of user perceived response time to error measurement",
-                "The generation of random binary unordered trees",
-                "The intersection graph of paths in trees",
-                "Graph minors IV Widths of trees and well quasi ordering",
-                "Graph minors A survey"]
+                 "A survey of user opinion of computer system response time",
+                 "The EPS user interface management system",
+                 "System and human system engineering testing of EPS",
+                 "Relation of user perceived response time to error measurement",
+                 "The generation of random binary unordered trees",
+                 "The intersection graph of paths in trees",
+                 "Graph minors IV Widths of trees and well quasi ordering",
+                 "Graph minors A survey"]
     # remove common words and tokenize
     stoplist = set('for a of the and to in'.split())
     texts = [[word for word in document.lower().split() if word not in stoplist]
@@ -58,7 +56,7 @@ def make_corpus():
         for token in text:
             frequency[token] += 1
     texts = [[token for token in text if frequency[token] > 1]
-              for text in texts]
+             for text in texts]
     corpus_dict = corpora.Dictionary(texts)
     # print(corpus_dict.token2id)
     corpus = [corpus_dict.doc2bow(text) for text in texts]
@@ -75,13 +73,15 @@ if __name__ == '__main__':
     import itertools
     from utils import *
 
+    # corpus = NipsCorpus()
+    # model = LdaModelCgs(corpus, num_topics=100, num_passes=20)
+    # model.save('models/test_model.pkl')
 
+    model = LdaModelCgs.load('models/test_model.pkl')
 
-    corpus = NipsCorpus()
+    # print(model.get_term_topics(5))
 
-    model = LdaModelCgs(corpus, num_topics=10, num_passes=5)
-
-    model.save('models/test_model.pkl')
-
-    model.print_topic_terms(0)
-    model.print_document_topics(0)
+    model.print_document_topics(2)
+    model.print_topic_terms(63)
+    model.print_term_topics(5)
+    model.print_topic_documents(63)

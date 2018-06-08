@@ -6,7 +6,7 @@ Created on 7 June 2018
 @author: jason
 """
 
-"""This module contains various general utility functions."""
+"""This module contains various general utility classes."""
 
 import logging
 import pickle
@@ -18,6 +18,7 @@ class SaveLoad(object):
     """
     TODO Comments
     """
+
     def save(self, fname, pickle_protocol=3):
         """
 

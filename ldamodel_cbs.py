@@ -6,7 +6,6 @@ Created on 21 May 2018
 @author: jason
 """
 
-
 import logging
 import numbers
 import os
@@ -26,7 +25,7 @@ from gensim.matutils import (
 from gensim.models import basemodel, CoherenceModel
 from gensim.models.callbacks import Callback
 
-from base_topic_model import BaseTopicModel
+from abc_topicmodel import ABCTopicModel
 
 # TODO Change logger name to __name__
 logger = logging.getLogger('gensim.models.ldamodel')
@@ -38,7 +37,7 @@ DTYPE_TO_EPS = {
 }
 
 
-class LdaModelCgs(BaseTopicModel):
+class LdaModelCgs(ABCTopicModel):
     """
     The constructor estimates Latent Dirichlet Allocation model parameters based
     on a training corpus, according to the collapsed Gibbs sampling method described in
@@ -49,7 +48,7 @@ class LdaModelCgs(BaseTopicModel):
     """
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
-                 eval_every=10, minimum_probability=0.01, random_state=None, dtype=np.float32):
+                 eval_every=10, minimum_prob=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
         """
 
@@ -69,7 +68,7 @@ class LdaModelCgs(BaseTopicModel):
 
             eval_every: TODO
 
-            minimum_probability: TODO
+            minimum_prob: TODO
 
             random_state: TODO
 
@@ -92,7 +91,7 @@ class LdaModelCgs(BaseTopicModel):
             self.num_terms = 0
 
         self.num_topics = int(num_topics)
-        self.minimum_probability = minimum_probability
+        self.minimum_probability = minimum_prob
         self.eval_every = eval_every
         self.random_state = utils.get_random_state(random_state)
 
@@ -355,12 +354,29 @@ class LdaModelCgs(BaseTopicModel):
         else:
             return [(idx, topic_term_probs[idx]) for idx in bestn]
 
-    def get_document_topics(self, doc_id, minimum_probability=None, readable=True):
+    def get_term_topics(self, term_id, topn=10, minimum_prob=0):
+        """
+
+        Args:
+            term_id:
+            topn:
+
+        Returns:
+            A list of tuples (topic, prob) of topics containing term_id with prob greater than minimum_prob.
+
+        """
+
+        term_topic_probs = self.phi.transpose()[term_id]
+        sorted_probs = matutils.argsort(term_topic_probs, topn=topn, reverse=True)
+        return [(topic_id, term_topic_probs[topic_id]) for topic_id in sorted_probs
+                if term_topic_probs[topic_id] > minimum_prob]
+
+    def get_document_topics(self, doc_id, minimum_prob=None, readable=True):
         """
 
         Args:
             doc_id:
-            minimum_probability: Ignore topics below this probability.
+            minimum_prob: Ignore topics below this probability.
             readable: If False returns topic_id's. Else returns a string of the top 10 words in topic.
 
         Returns:
@@ -368,20 +384,36 @@ class LdaModelCgs(BaseTopicModel):
 
         """
 
-        if minimum_probability is None:
-            minimum_probability = self.minimum_probability
-        minimum_probability = max(minimum_probability, 1e-8)  # never allow zero values in sparse output. (Why??)
+        if minimum_prob is None:
+            minimum_prob = self.minimum_probability
+        minimum_prob = max(minimum_prob, 1e-8)  # never allow zero values in sparse output. (Why??)
 
         doc_topic_probs = self.theta[doc_id]
         sorted_idx = matutils.argsort(doc_topic_probs, reverse=True)
         if not readable:
-            return [(idx, doc_topic_probs[idx]) for idx in sorted_idx if doc_topic_probs[idx] > minimum_probability]
+            return [(idx, doc_topic_probs[idx]) for idx in sorted_idx if doc_topic_probs[idx] > minimum_prob]
         else:
             doc_topics = []
             for idx in sorted_idx:
-                if doc_topic_probs[idx] > minimum_probability:
+                if doc_topic_probs[idx] > minimum_prob:
                     topic_terms = self.get_topic_terms(idx, topn=10, readable=True)
                     terms_string = " ".join([w[0] for w in topic_terms])
                     doc_topics.append((terms_string, doc_topic_probs[idx]))
             return doc_topics
 
+    def get_topic_documents(self, topic_id, topn=10, minimum_prob=0):
+        """
+
+        Args:
+            topic_id:
+            minimum_prob:
+
+        Returns:
+            A list of tuples (doc_id, probability) of documents containing topic_id with prob greater than minimum_prob.
+
+        """
+
+        topic_docs_probs = self.theta.transpose()[topic_id]
+        sorted_probs = matutils.argsort(topic_docs_probs, topn=topn, reverse=True)
+        return [(doc_id, topic_docs_probs[doc_id]) for doc_id in sorted_probs
+                if topic_docs_probs[doc_id] > minimum_prob]
