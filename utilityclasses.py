@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+This module contains various general utility classes.
+
 Created on 7 June 2018
 
 @author: jason
 """
-
-"""This module contains various general utility classes."""
 
 import logging
 import pickle

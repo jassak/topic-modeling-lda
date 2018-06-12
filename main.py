@@ -65,23 +65,26 @@ def make_corpus():
 
 
 if __name__ == '__main__':
-    from alias_sampler import *
-    from ldamodel_cbs import *
+    from aliassampler import *
+    from ldamodel_cgs import *
     from gensim import corpora
-    from nips_corpus_utils import *
+    from nipscorpus import *
     from gensim import models
     import itertools
-    from utils import *
+    from utilityclasses import *
+    from corpusutils import get_seqs_and_counts
+    from useful_datatypes import SparseCounter
 
+    test_count = SparseCounter([1, 3, 5, 3, 4, 6, 6])
+
+    #
     # corpus = NipsCorpus()
-    # model = LdaModelCgs(corpus, num_topics=100, num_passes=20)
-    # model.save('models/test_model.pkl')
-
-    model = LdaModelCgs.load('models/test_model.pkl')
-
-    # print(model.get_term_topics(5))
-
-    model.print_document_topics(2)
-    model.print_topic_terms(63)
-    model.print_term_topics(5)
-    model.print_topic_documents(63)
+    # model = LDAModelCGS(corpus, num_topics=6, num_passes=2)
+    # model.save('models/test_model2.pkl')
+    #
+    # # model = LDAModelCGS.load('models/test_model.pkl')
+    #
+    # model.print_document_topics(2)
+    # model.print_topic_terms(6)
+    # model.print_term_topics(5)
+    # model.print_topic_documents(6)

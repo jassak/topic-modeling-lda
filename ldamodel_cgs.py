@@ -12,22 +12,13 @@ import os
 
 import numpy as np
 import six
-from scipy.special import gammaln, psi  # gamma function utils
-from scipy.special import polygamma
-from six.moves import xrange
-from collections import defaultdict
 
-from gensim import interfaces, utils, matutils
-from gensim.matutils import (
-    kullback_leibler, hellinger, jaccard_distance, jensen_shannon,
-    dirichlet_expectation, logsumexp, mean_absolute_difference
-)
-from gensim.models import basemodel, CoherenceModel
-from gensim.models.callbacks import Callback
+from gensim import utils, matutils
 
 from abc_topicmodel import ABCTopicModel
+from corpusutils import get_seqs_and_counts
 
-# TODO Change logger name to __name__
+
 logger = logging.getLogger('gensim.models.ldamodel')
 
 DTYPE_TO_EPS = {
@@ -37,14 +28,14 @@ DTYPE_TO_EPS = {
 }
 
 
-class LdaModelCgs(ABCTopicModel):
+class LDAModelCGS(ABCTopicModel):
     """
     The constructor estimates Latent Dirichlet Allocation model parameters based
     on a training corpus, according to the collapsed Gibbs sampling method described in
     **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
 
     Example:
-        lda = LdaModelCgs(corpus, num_topics=10)
+        lda = LDAModelCGS(corpus, num_topics=10)
     """
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
@@ -59,7 +50,7 @@ class LdaModelCgs(ABCTopicModel):
             num_topics: The number of requested latent topics to be extracted from
                 the training corpus.
 
-            alpha: Hyperparameter of the Dirichlet prior over the topics in a documemt.
+            alpha: Hyperparameter of the Dirichlet prior over the topics in a document.
 
             beta: Hyperparameter of the Dirichlet prior over the terms in a topic.
 
@@ -110,9 +101,10 @@ class LdaModelCgs(ABCTopicModel):
         self.w_beta = sum(self.beta)
 
         self.term_seqs, self.topic_seqs, \
-        self.doc_topic_counts, self.term_topic_counts, \
-        self.terms_per_topic = \
+            self.doc_topic_counts, self.term_topic_counts, \
+            self.terms_per_topic = \
             self.get_seqs_and_counts(corpus=corpus)
+
         self.num_docs = len(self.term_seqs)
 
         # if a training corpus was provided, start estimating the model right away
@@ -261,10 +253,9 @@ class LdaModelCgs(ABCTopicModel):
         """
 
         for di in range(self.num_docs):
-            self.sample_topics_for_one_doc(di, self.term_seqs[di], self.topic_seqs[di], self.doc_topic_counts[di])
+            self.sample_topics_for_one_doc(di)
 
-    def sample_topics_for_one_doc(self, di, one_doc_term_seq, one_doc_topic_seq,
-                                  one_doc_topic_count):
+    def sample_topics_for_one_doc(self, di):
         """
         Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
         for one document, according to
@@ -272,21 +263,24 @@ class LdaModelCgs(ABCTopicModel):
 
         Args:
             di:
-            one_doc_term_seq:
-            one_doc_topic_seq:
-            one_doc_topic_count:
+            doc_term_seq:
+            doc_topic_seq:
+            doc_topic_count:
 
         """
-        doc_len = len(one_doc_term_seq)
-        num_topics = len(one_doc_topic_count)
+        doc_term_seq = self.term_seqs[di]
+        doc_len = len(doc_term_seq)
+        doc_topic_seq = self.topic_seqs[di]
+        doc_topic_count = self.doc_topic_counts[di]
+        num_topics = len(doc_topic_count)
 
         # Iterate over the positions (words) in the document
         for si in range(doc_len):
-            term_id = one_doc_term_seq[si]
-            old_topic = one_doc_topic_seq[si]
+            term_id = doc_term_seq[si]
+            old_topic = doc_topic_seq[si]
 
             # Remove this term from all counts
-            one_doc_topic_count[old_topic] -= 1
+            doc_topic_count[old_topic] -= 1
             self.term_topic_counts[term_id][old_topic] -= 1
             self.terms_per_topic[old_topic] -= 1
 
@@ -295,22 +289,22 @@ class LdaModelCgs(ABCTopicModel):
             current_term_topic_count = self.term_topic_counts[term_id]
             for ti in range(num_topics):
                 tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.w_beta)) \
-                     * (one_doc_topic_count[ti] + self.alpha[ti])
+                     * (doc_topic_count[ti] + self.alpha[ti])
                 topic_weights[ti] = tw
+            topic_weights = topic_weights / sum(topic_weights)
 
             # Sample a topic assignment from this distribution
-            topic_weights = topic_weights / sum(topic_weights)
             new_topic = np.random.choice(num_topics, p=topic_weights)
 
             # Put that new topic into the counts
-            one_doc_topic_seq[si] = new_topic
-            one_doc_topic_count[new_topic] += 1
+            doc_topic_seq[si] = new_topic
+            doc_topic_count[new_topic] += 1
             self.term_topic_counts[term_id][new_topic] += 1
             self.terms_per_topic[new_topic] += 1
 
         # Update seqs and counts class-wise
-        self.topic_seqs[di] = one_doc_topic_seq
-        self.doc_topic_counts[di] = one_doc_topic_count
+        self.topic_seqs[di] = doc_topic_seq
+        self.doc_topic_counts[di] = doc_topic_count
 
     def get_theta_phi(self):
         """

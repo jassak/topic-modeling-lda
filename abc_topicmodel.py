@@ -6,10 +6,11 @@ Created on 7 June 2018
 @author: jason
 """
 
-"""This module contains the base topic model from which all topic models inherit"""
-
-from utils import SaveLoad
+from utilityclasses import SaveLoad
 from abc import ABC, abstractmethod
+
+"""This module contains the abstract base class topic model from which all topic models inherit.
+It implements various printing methods, common to all topic models."""
 
 
 class ABCTopicModel(ABC, SaveLoad):
