@@ -1,6 +1,7 @@
 data/
 results/
 models/
+unittesting/
 
 # macos files
 .DS_Store

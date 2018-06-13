@@ -279,7 +279,7 @@ class LDAModelCGS(ABCTopicModel):
             term_id = doc_term_seq[si]
             old_topic = doc_topic_seq[si]
 
-            # Remove this term from all counts
+            # Remove this topic from all counts
             doc_topic_count[old_topic] -= 1
             self.term_topic_counts[term_id][old_topic] -= 1
             self.terms_per_topic[old_topic] -= 1
@@ -302,7 +302,7 @@ class LDAModelCGS(ABCTopicModel):
             self.term_topic_counts[term_id][new_topic] += 1
             self.terms_per_topic[new_topic] += 1
 
-        # Update seqs and counts class-wise
+        # Update seqs and counts document-wise
         self.topic_seqs[di] = doc_topic_seq
         self.doc_topic_counts[di] = doc_topic_count
 
@@ -354,6 +354,7 @@ class LDAModelCGS(ABCTopicModel):
         Args:
             term_id:
             topn:
+            minimum_prob:
 
         Returns:
             A list of tuples (topic, prob) of topics containing term_id with prob greater than minimum_prob.

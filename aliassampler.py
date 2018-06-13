@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+TODO change ints to floats in various probabilities
+
 Created on 21 May 2018
 
 @author: jason
@@ -46,8 +48,8 @@ class AliasSampler():
         eps = DTYPE_TO_EPS[self.dtype]
 
         self.prob_vector = np.asarray(prob_vector, self.dtype)
-        assert (np.amin(prob_vector) >= 0.), "probabilities must be non-negative"
-        assert (abs(np.sum(prob_vector) - 1.) <= eps), "probabilities must sum to 1"
+        assert (np.amin(prob_vector) >= 0.), "probabilities are not non-negative"
+        # assert (abs(np.sum(prob_vector) - 1.) <= eps), "probabilities must sum to 1"
         assert (prob_vector.ndim == 1), "a probability vector must have dimension 1"
 
         num_el = len(prob_vector)
@@ -95,7 +97,7 @@ class AliasSampler():
             A numpy array of size n of random samples from the prob_vector.
         """
 
-        samples = np.empty(n, dtype=int)
+        samples = [0] * n
         for i in range(n):
             samples[i] = self.generate_once()
 
