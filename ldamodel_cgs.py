@@ -18,8 +18,7 @@ from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
 from corpusutils import get_seqs_and_counts
 
-
-logger = logging.getLogger('gensim.models.ldamodel')
+logger = logging.getLogger(__name__)
 
 DTYPE_TO_EPS = {
     np.float16: 1e-5,
@@ -39,7 +38,7 @@ class LDAModelCGS(ABCTopicModel):
     """
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
-                 eval_every=10, minimum_prob=0.01, random_state=None, dtype=np.float32):
+                 minimum_prob=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
         """
 
@@ -57,8 +56,6 @@ class LDAModelCGS(ABCTopicModel):
             num_passes: The number of passes of the MCMC procedure. One pass is one step per term
                 in each document of the whole corpus.
 
-            eval_every: TODO
-
             minimum_prob: TODO
 
             random_state: TODO
@@ -73,6 +70,7 @@ class LDAModelCGS(ABCTopicModel):
                             ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
+        logger.info("creating a new lda cgs model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary
@@ -83,7 +81,6 @@ class LDAModelCGS(ABCTopicModel):
 
         self.num_topics = int(num_topics)
         self.minimum_probability = minimum_prob
-        self.eval_every = eval_every
         self.random_state = utils.get_random_state(random_state)
 
         self.alpha, self.optimize_alpha = self.init_dir_prior(alpha, 'alpha')
@@ -123,6 +120,7 @@ class LDAModelCGS(ABCTopicModel):
         Returns:
             term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
         """
+        logger.info("creating sequences and counts")
         # Build term_seqs
         term_seqs = []
         for document in corpus:
@@ -181,6 +179,7 @@ class LDAModelCGS(ABCTopicModel):
 
         is_auto = False
 
+        # TODO Something is wrong here, I think it assigns beta = 1/num_topics for prior=symmetric
         if isinstance(prior, six.string_types):
             if prior == 'symmetric':
                 logger.info("using symmetric %s at %s", name, 1.0 / self.num_topics)
@@ -209,20 +208,15 @@ class LDAModelCGS(ABCTopicModel):
 
         return init_prior, is_auto
 
-    def train(self, corpus, eval_every=None, num_passes=1):
+    def train(self, corpus, num_passes=1):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
 
         Args:
             corpus:
-            eval_every:
             num_passes:
 
         """
-
-        if eval_every is None:
-            eval_every = self.eval_every
-
         try:
             lencorpus = len(corpus)
         except Exception:
@@ -232,18 +226,15 @@ class LDAModelCGS(ABCTopicModel):
             logger.warning("LdaModel.train() called with an empty corpus")
             return
 
-        # TODO Write the correct version of the logger
         logger.info(
-                "running Gibbs Sampling LDA training, %s topics, over "
-                "the supplied corpus of %i documents, evaluating perplexity every %i documents ",
-                self.num_topics, lencorpus,
-                eval_every
+                "running collapsed Gibbs sampling for LDA training, {0} topics, over "
+                "the supplied corpus of {1} documents for {2} passes over the whole corpus"
+                    .format(self.num_topics, lencorpus, num_passes)
         )
 
         # Perform several rounds of Gibbs sampling on the documents in the given range.
-        print('Start training:')
         for pass_i in range(num_passes):
-            print('\tpass', pass_i)
+            logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass()
 
     def do_one_pass(self):
@@ -252,8 +243,12 @@ class LDAModelCGS(ABCTopicModel):
 
         """
 
-        for di in range(self.num_docs):
-            self.sample_topics_for_one_doc(di)
+        for doc_id in range(self.num_docs):
+            if doc_id % 100 == 0:
+                logger.info("doc: {0}".format(doc_id))
+            else:
+                logger.debug("doc: {0}".format(doc_id))
+            self.sample_topics_for_one_doc(doc_id)
 
     def sample_topics_for_one_doc(self, di):
         """
@@ -278,6 +273,8 @@ class LDAModelCGS(ABCTopicModel):
         for si in range(doc_len):
             term_id = doc_term_seq[si]
             old_topic = doc_topic_seq[si]
+            logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
+                         .format(si, term_id, old_topic))
 
             # Remove this topic from all counts
             doc_topic_count[old_topic] -= 1
@@ -313,6 +310,7 @@ class LDAModelCGS(ABCTopicModel):
             theta and phi. Matrices whose vectors are the predictive distributions of
             topic|doc and term|topic respectively.
         """
+        logger.info("computing theta and phi")
         theta = np.empty(shape=(self.num_docs, self.num_topics), dtype=self.dtype)
         phi = np.empty(shape=(self.num_topics, self.num_terms), dtype=self.dtype)
 

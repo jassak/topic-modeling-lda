@@ -39,7 +39,7 @@ class LDAModelMHW(ABCTopicModel):
     """
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
-                 eval_every=10, minimum_prob=0.01, random_state=None, dtype=np.float32):
+                 minimum_prob=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
         """
 
@@ -57,8 +57,6 @@ class LDAModelMHW(ABCTopicModel):
             num_passes: The number of passes of the MCMC procedure. One pass is one step per term
                 in each document of the whole corpus.
 
-            eval_every: TODO
-
             minimum_prob: TODO
 
             random_state: TODO
@@ -73,6 +71,7 @@ class LDAModelMHW(ABCTopicModel):
                             ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
+        logger.info("creating a new lda mhw model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary
@@ -83,7 +82,6 @@ class LDAModelMHW(ABCTopicModel):
 
         self.num_topics = int(num_topics)
         self.minimum_probability = minimum_prob
-        self.eval_every = eval_every
         self.random_state = utils.get_random_state(random_state)
 
         self.alpha, self.optimize_alpha = self.init_dir_prior(alpha, 'alpha')
@@ -124,6 +122,7 @@ class LDAModelMHW(ABCTopicModel):
         Returns:
             term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
         """
+        logger.info("creating sequences and counts")
         # Build term_seqs
         term_seqs = []
         for document in corpus:
@@ -167,7 +166,6 @@ class LDAModelMHW(ABCTopicModel):
         Returns:
 
         """
-
         if prior is None:
             prior = 'symmetric'
 
@@ -180,6 +178,7 @@ class LDAModelMHW(ABCTopicModel):
 
         is_auto = False
 
+        # TODO Something is wrong here, I think it assigns beta = 1/num_topics for prior=symmetric
         if isinstance(prior, six.string_types):
             if prior == 'symmetric':
                 logger.info("using symmetric %s at %s", name, 1.0 / self.num_topics)
@@ -208,20 +207,15 @@ class LDAModelMHW(ABCTopicModel):
 
         return init_prior, is_auto
 
-    def train(self, corpus, eval_every=None, num_passes=0):
+    def train(self, corpus, num_passes=0):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
 
         Args:
             corpus:
-            eval_every:
             num_passes:
 
         """
-
-        if eval_every is None:
-            eval_every = self.eval_every
-
         try:
             lencorpus = len(corpus)
         except Exception:
@@ -231,21 +225,18 @@ class LDAModelMHW(ABCTopicModel):
             logger.warning("LdaModel.train() called with an empty corpus")
             return
 
-        # TODO Write the correct version of the logger
         logger.info(
-                "running Gibbs Sampling LDA training, %s topics, over "
-                "the supplied corpus of %i documents, evaluating perplexity every %i documents ",
-                self.num_topics, lencorpus,
-                eval_every
+                "running Metropolis-Hastings-Walker sampling for LDA training, {0} topics, over "
+                "the supplied corpus of {1} documents for {2} passes over the whole corpus"
+                    .format(self.num_topics, lencorpus, num_passes)
         )
 
         # Create blank stale_samples which will be used throughout training
         stale_samples = {}
 
         # Perform several rounds of Gibbs sampling on the documents in the given range.
-        print('Start training:')
         for pass_i in range(num_passes):
-            print('\tpass', pass_i)
+            logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass(stale_samples)
 
         # Delete stale samples
@@ -259,10 +250,21 @@ class LDAModelMHW(ABCTopicModel):
 
         for doc_id in range(self.num_docs):
             if doc_id % 100 == 0:
-                print('doc:', doc_id)
+                logger.info("doc: {0}".format(doc_id))
+            else:
+                logger.debug("doc: {0}".format(doc_id))
             self.sample_topics_for_one_doc(doc_id, stale_samples)
 
     def sample_topics_for_one_doc(self, doc_id, stale_samples):
+        """
+
+        Args:
+            doc_id:
+            stale_samples:
+
+        Returns:
+
+        """
         doc_term_seq = self.term_seqs[doc_id]
         doc_len = len(doc_term_seq)
         doc_topic_seq = self.topic_seqs[doc_id]
@@ -272,6 +274,8 @@ class LDAModelMHW(ABCTopicModel):
         for si in range(doc_len):
             term_id = doc_term_seq[si]
             old_topic = doc_topic_seq[si]
+            logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
+                         .format(si, term_id, old_topic))
 
             # Check if stale samples haven't been generated yet or are exhausted and generate
             # new ones if that's the case.
@@ -308,12 +312,14 @@ class LDAModelMHW(ABCTopicModel):
 
             # If move is accepted put new topic into seqs and counts
             if accept:
+                logger.debug("new topic accepted: {0}".format(new_topic))
                 doc_topic_seq[si] = new_topic
                 doc_topic_count.incr_count(new_topic)
                 self.term_topic_counts[term_id][new_topic] += 1
                 self.terms_per_topic[new_topic] += 1
             # Else put back old topic
             else:
+                logger.debug("new topic was not accepted")
                 doc_topic_seq[si] = old_topic
                 doc_topic_count.incr_count(old_topic)
                 self.term_topic_counts[term_id][old_topic] += 1
@@ -324,7 +330,16 @@ class LDAModelMHW(ABCTopicModel):
         self.doc_topic_counts[doc_id] = doc_topic_count
 
     def populate_stale_samples(self, term_id, stale_samples):
-        # TODO comments
+        """
+
+        Args:
+            term_id:
+            stale_samples:
+
+        Returns:
+
+        """
+        logger.debug("generate stale samples for term: {0}".format(term_id))
 
         # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
         qw = np.zeros(self.num_topics, self.dtype)
@@ -343,7 +358,17 @@ class LDAModelMHW(ABCTopicModel):
         stale_samples[term_id] = (sw, qw, qw_norm)
 
     def compute_sparse_comp(self, term_id, doc_topic_count):
+        """
+
+        Args:
+            term_id:
+            doc_topic_count:
+
+        Returns:
+
+        """
         # TODO comments
+        logger.debug("compute sparse distribution for term: {0}".format(term_id))
 
         doc_num_topics = len(doc_topic_count)
         pdw = SparseVector(self.num_topics, dtype=self.dtype)
@@ -357,7 +382,19 @@ class LDAModelMHW(ABCTopicModel):
         return pdw, pdw_norm
 
     def bucket_sampling(self, pdw, pdw_norm, sw, qw_norm):
+        """
+
+        Args:
+            pdw:
+            pdw_norm:
+            sw:
+            qw_norm:
+
+        Returns:
+
+        """
         # TODO comments
+        logger.debug("do bucket sampling")
 
         # Determine by coin flip to draw from sparse or dense bucket
         if random.random() < pdw_norm / (pdw_norm + qw_norm):
@@ -375,6 +412,12 @@ class LDAModelMHW(ABCTopicModel):
             return sw.pop()
 
     def get_theta_phi(self):
+        """
+
+        Returns:
+
+        """
+        logger.info("computing theta and phi")
         theta = np.empty(shape=(self.num_docs, self.num_topics), dtype=self.dtype)
         phi = np.empty(shape=(self.num_topics, self.num_terms), dtype=self.dtype)
 
