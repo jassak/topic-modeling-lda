@@ -4,6 +4,9 @@ results/
 models/
 unittesting/
 
+# pycharm stuff
+.idea/
+
 # project files
 main.py
 
