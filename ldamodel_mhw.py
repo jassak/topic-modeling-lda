@@ -37,6 +37,7 @@ class LDAModelMHW(ABCTopicModel):
     Example:
         lda = LDAModelMHW(corpus, num_topics=10)
     """
+
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
                  eval_every=10, minimum_prob=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
@@ -100,8 +101,8 @@ class LDAModelMHW(ABCTopicModel):
         self.w_beta = sum(self.beta)
 
         self.term_seqs, self.topic_seqs, \
-            self.doc_topic_counts, self.term_topic_counts, \
-            self.terms_per_topic = \
+        self.doc_topic_counts, self.term_topic_counts, \
+        self.terms_per_topic = \
             self.get_seqs_and_counts(corpus=corpus)
         self.num_docs = len(self.term_seqs)
 
@@ -257,7 +258,7 @@ class LDAModelMHW(ABCTopicModel):
         """
 
         for doc_id in range(self.num_docs):
-            if doc_id % 10 == 0:
+            if doc_id % 100 == 0:
                 print('doc:', doc_id)
             self.sample_topics_for_one_doc(doc_id, stale_samples)
 
@@ -269,7 +270,6 @@ class LDAModelMHW(ABCTopicModel):
 
         # Iterate over positions in document
         for si in range(doc_len):
-            # print(si)
             term_id = doc_term_seq[si]
             old_topic = doc_topic_seq[si]
 
@@ -352,13 +352,8 @@ class LDAModelMHW(ABCTopicModel):
             pdw[topic_id] = doc_topic_count.get_count(topic_id) \
                             * (self.term_topic_counts[term_id][topic_id] + self.beta[term_id]) \
                             / (self.terms_per_topic[topic_id] + self.w_beta)
-            # if pdw[topic_id] < 0.:
-            #     pass
             pdw_norm += pdw[topic_id]
         pdw = pdw / pdw_norm
-        # for topic_id in doc_topic_count:
-        #     if pdw[topic_id] < 0.:
-        #         pass
         return pdw, pdw_norm
 
     def bucket_sampling(self, pdw, pdw_norm, sw, qw_norm):
@@ -464,7 +459,6 @@ class LDAModelMHW(ABCTopicModel):
                     doc_topics.append((terms_string, doc_topic_probs[idx]))
             return doc_topics
 
-
     def get_topic_documents(self, topic_id, topn=10, minimum_prob=0):
         """
 
@@ -481,4 +475,3 @@ class LDAModelMHW(ABCTopicModel):
         sorted_probs = matutils.argsort(topic_docs_probs, topn=topn, reverse=True)
         return [(doc_id, topic_docs_probs[doc_id]) for doc_id in sorted_probs
                 if topic_docs_probs[doc_id] > minimum_prob]
-

@@ -18,7 +18,7 @@ class ABCTopicModel(ABC, SaveLoad):
     TODO Comments
     """
 
-    def print_topic_terms(self, topic_id, topn=10, with_prob=False):
+    def print_topic_terms(self, topic_id, topn=10, with_prob=True):
         """
 
         Args:

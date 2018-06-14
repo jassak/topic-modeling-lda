@@ -1,7 +1,11 @@
+# project folders
 data/
 results/
 models/
 unittesting/
+
+# project files
+main.py
 
 # macos files
 .DS_Store
