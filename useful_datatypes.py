@@ -7,7 +7,7 @@ Created on 12 June 2018
 """
 
 from collections import defaultdict
-from scipy.sparse import dok_matrix
+from scipy.sparse import dok_matrix, csr_matrix
 
 
 class SparseCounter():
@@ -45,7 +45,6 @@ class SparseCounter():
         else:
             self.__count[key] = 1
 
-
     def decr_count(self, key):
         if self.get_count(key):
             self.set_count(key, count=self.get_count(key) - 1)
@@ -64,7 +63,7 @@ class SparseVector():
     """Implements a sparse one-dimensional vector, encapsulating the cumbersome shape=(1, N) scipy dok_matrix"""
 
     def __init__(self, vec_size, dtype):
-        self.__spmat= dok_matrix((1, vec_size), dtype=dtype)
+        self.__spmat = dok_matrix((1, vec_size), dtype=dtype)
 
     def __getitem__(self, item):
         return self.__spmat[0, item]
@@ -82,3 +81,15 @@ class SparseVector():
 
     def get_nnz(self):
         return self.__spmat.nnz
+
+
+class SparseGraph():
+    def __init__(self, dense_matr, dtype):
+        self.__matr = csr_matrix(dense_matr, dtype=dtype)
+
+    def __getitem__(self, item):
+        return self.__matr[item]
+
+    def neighbours(self, node):
+        _, neighbs = self.__matr[node].nonzero()
+        return  neighbs

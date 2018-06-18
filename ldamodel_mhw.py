@@ -156,6 +156,7 @@ class LDAModelMHW(ABCTopicModel):
         return term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
 
     def init_dir_prior(self, prior, name):
+        # TODO move this method to the parent class.
         """
         Initializes the Dirichlet priors. Copied from gensim.
 
@@ -435,6 +436,7 @@ class LDAModelMHW(ABCTopicModel):
         return theta, phi
 
     def get_topic_terms(self, topic_id, topn=10, readable=True):
+        # TODO move this and similar methods to parent class
         """
 
         Args:
