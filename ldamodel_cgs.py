@@ -233,7 +233,7 @@ class LDAModelCGS(ABCTopicModel):
                     .format(self.num_topics, lencorpus, num_passes)
         )
 
-        # Perform several rounds of Gibbs sampling on the documents in the given range.
+        # Perform num_passes rounds of Gibbs sampling.
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass()

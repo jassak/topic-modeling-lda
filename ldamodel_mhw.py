@@ -110,6 +110,7 @@ class LDAModelMHW(ABCTopicModel):
             self.theta, self.phi = self.get_theta_phi()
 
     def get_seqs_and_counts(self, corpus):
+        # TODO move to parent class with sparsity condition
         """
             Builds the sequences of terms and topics, and the counts of topics in docs,
             terms in topics and term per topic.
@@ -235,7 +236,7 @@ class LDAModelMHW(ABCTopicModel):
         # Create blank stale_samples which will be used throughout training
         stale_samples = {}
 
-        # Perform several rounds of Gibbs sampling on the documents in the given range.
+        # Perform num_passes rounds of Gibbs sampling.
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass(stale_samples)
@@ -281,9 +282,9 @@ class LDAModelMHW(ABCTopicModel):
             # Check if stale samples haven't been generated yet or are exhausted and generate
             # new ones if that's the case.
             if term_id not in stale_samples:
-                self.populate_stale_samples(term_id, stale_samples)
+                self.generate_stale_samples(term_id, stale_samples, self.num_topics)
             elif not stale_samples[term_id][0]:
-                self.populate_stale_samples(term_id, stale_samples)
+                self.generate_stale_samples(term_id, stale_samples, self.num_topics)
             (sw, qw, qw_norm) = stale_samples[term_id]
 
             # Remove current term from counts
@@ -330,14 +331,16 @@ class LDAModelMHW(ABCTopicModel):
         self.topic_seqs[doc_id] = doc_topic_seq
         self.doc_topic_counts[doc_id] = doc_topic_count
 
-    def populate_stale_samples(self, term_id, stale_samples):
+    def generate_stale_samples(self, term_id, stale_samples, num_samples):
         """
+        Computes dense component of topic conditional distr for term_id qw as well as it's normalization qw_norm,
+        then computes num_samples samples using AliasSampler and stores them in sw.
+        Finally, writes (sw, qw, qw_norm) in stale_samples.
 
         Args:
             term_id:
             stale_samples:
-
-        Returns:
+            num_samples:
 
         """
         logger.debug("generate stale samples for term: {0}".format(term_id))
@@ -353,9 +356,8 @@ class LDAModelMHW(ABCTopicModel):
         qw = qw / sum(qw)
         # Sample num_topics samples from above distribution using the alias method
         alias_sampler = AliasSampler(qw, self.dtype)
-        sw = alias_sampler.generate(self.num_topics)
+        sw = alias_sampler.generate(num_samples)
         del alias_sampler
-
         stale_samples[term_id] = (sw, qw, qw_norm)
 
     def compute_sparse_comp(self, term_id, doc_topic_count):
