@@ -15,7 +15,7 @@ import random
 
 from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
-from useful_datatypes import SparseCounter, SparseVector, SparseGraph
+from sparse_datastruct import SparseCounter, SparseVector, SparseGraph
 from aliassampler import AliasSampler
 
 logger = logging.getLogger(__name__)
@@ -169,27 +169,13 @@ class LDAModelGrS(ABCTopicModel):
             smooth_factor: must be in range [0, 1]
 
         Returns:
-            A useful_datatypes.SparseGraph corresponding to the matrix
+            A sparse_datastruct.SparseGraph corresponding to the matrix:
             (1 - smooth_factor) * I + smooth_factor * similarity_matrix.
-            A list of AliasSamplers, one for every node.
-            The average degree avdeg of the graph (not counting self-connections).
         """
         eye = np.eye(self.num_terms, dtype=self.dtype)
         S = (1 - smooth_factor) * eye + smooth_factor * similarity_matrix
         sim_graph = SparseGraph(S, dtype=self.dtype)
-        graph_aliassamplers = []
-        avdeg = 0
-        # For every term_id append a list of neighbours and the corresponding alias sampler
-        for term_id in range(self.num_terms):
-            neighbours = sim_graph.neighbours(term_id)
-            avdeg += len(neighbours) - 1
-            weights = np.zeros(len(neighbours), self.dtype)
-            for (idx, node) in enumerate(neighbours):
-                weights[idx] = sim_graph[term_id, node]
-            aliassampler = AliasSampler(weights, self.dtype)
-            graph_aliassamplers.append((neighbours, aliassampler))
-        avdeg /= self.num_terms
-        return sim_graph, graph_aliassamplers, avdeg
+        return sim_graph
 
     def init_dir_prior(self, prior, name):
         # TODO move this method to the parent class.
@@ -274,25 +260,22 @@ class LDAModelGrS(ABCTopicModel):
             raise ValueError("similarity_matrix must have shape (num_terms, num_terms)")
         if smooth_factor < 0 or smooth_factor > 1:
             raise ValueError("smooth_factor must be in [0, 1]")
-        sim_graph, graph_aliassamplers, avdeg = self.get_similarity_graph(similarity_matrix, smooth_factor)
+        sim_graph = self.get_similarity_graph(similarity_matrix, smooth_factor)
 
-        # Create stale_samples which will be used throughout training
+        # Init stale_samples
         logger.info("generating stale samples")
-        stale_samples = {}
-        for term_id in range(self.num_terms):
-            self.generate_stale_samples(term_id, stale_samples, self.num_topics + avdeg)
+        stale_samples = self.init_stale_sample(sim_graph)
 
         # Perform num_passes rounds of Gibbs sampling.
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
-            self.do_one_pass(stale_samples, sim_graph, graph_aliassamplers)
+            self.do_one_pass(stale_samples, sim_graph)
 
         # Delete stuff
         del stale_samples
         del sim_graph
-        del graph_aliassamplers
 
-    def do_one_pass(self, stale_samples, sim_graph, graph_aliassamplers):
+    def do_one_pass(self, stale_samples, sim_graph):
         """
         Performs one iteration of Gibbs sampling, across all documents.
 
@@ -303,14 +286,15 @@ class LDAModelGrS(ABCTopicModel):
                 logger.info("doc: {0}".format(doc_id))
             else:
                 logger.debug("doc: {0}".format(doc_id))
-            self.sample_topics_for_one_doc(doc_id, stale_samples, sim_graph, graph_aliassamplers)
+            self.sample_topics_for_one_doc(doc_id, stale_samples, sim_graph)
 
-    def sample_topics_for_one_doc(self, doc_id, stale_samples, sim_graph, graph_aliassamplers):
+    def sample_topics_for_one_doc(self, doc_id, stale_samples, sim_graph):
         """
 
         Args:
             doc_id:
             stale_samples:
+            sim_graph:
 
         Returns:
 
@@ -327,23 +311,30 @@ class LDAModelGrS(ABCTopicModel):
             logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
                          .format(si, term_id, old_topic))
 
-            # TODO
-            # Compute dense component qw^S and qw_norm^S
-
+            # Check if stale samples for term_id are exhausted and generate if needed
+            # If that's the case recompute qwS_norm
+            if not stale_samples[term_id][0]:
+                self.generate_stale_samples(term_id, stale_samples, self.num_topics + sim_graph.avdeg, sim_graph)
+            (sw, _, _, qwS_norm) = stale_samples[term_id]
 
             # Remove current topic from counts
+            doc_topic_count.decr_count(old_topic)  # use decr_count method for SparseCounter object instead of -=1
+            self.term_topic_counts[term_id][old_topic] -= 1
+            self.terms_per_topic[old_topic] -= 1
 
+            # TODO
             # Compute dense component pdw^S and pdw_norm^S
+            (pdwS, pdwS_norm) = self.compute_dense_comp(term_id, sim_graph, doc_topic_count)
 
             # Draw from proposal distribution q(t, w, d)^S with bucket sampling
-            # If in dense bucket:
-            #       Draw node from graph_aliassamplers[term_id]
-            #       Check if stale samples are exhausted and generate if needed
-            #       Draw topic from stale_samples[node]
-            # If in sparse bucket:
-            #       Draw from pdw^S in ﻿O(k_d) time
+            new_topic = self.bucket_sampling(pdwS, pdwS_norm, sw, qwS_norm)
 
             # Accept new_topic with prob_ratio according to Metropolis-Hastings
+            prob_ratio = []
+            if prob_ratio >= 1.0:
+                accept = True
+            else:
+                accept = (random.random() < prob_ratio)
 
             # If move is accepted put new topic into seqs and counts
             # Else put back old topic
@@ -352,7 +343,45 @@ class LDAModelGrS(ABCTopicModel):
 
         # Update seqs and counts document-wise
 
-    def generate_stale_samples(self, term_id, stale_samples, num_samples):
+    def compute_dense_comp(self, term_id, sim_graph, doc_topic_count):
+        raise NotImplementedError
+
+    def bucket_sampling(self, pdwS, pdwS_norm, sw, qwS_norm):
+        # If in dense bucket:
+        #       Draw node from graph_aliassamplers[term_id]
+        #       Check if stale samples are exhausted and generate if needed
+        #       Draw topic from stale_samples[node]
+        # If in sparse bucket:
+        #       Draw from pdw^S in ﻿O(k_d) time
+        raise NotImplementedError
+
+    def init_stale_sample(self, sim_graph):
+        """
+
+        Args:
+            sim_graph:
+
+        Returns:
+
+        """
+        # generate stale samples for all term_ids
+        stale_samples = {}
+        for term_id in range(self.num_terms):
+            self.generate_stale_samples(term_id, stale_samples, self.num_topics + sim_graph.avdeg, sim_graph,
+                                        update_qwSnorm=False)
+        # compute all qwS_norm by sparse dot-product between sim_graph and qw_norm's
+        qw_norm_vec = np.empty(self.num_terms)
+        for term_id in range(self.num_terms):
+            (_, _, qw_norm_vec[term_id]) = stale_samples[term_id]
+        qwS_norm = sim_graph.dot_vec(qw_norm_vec)
+        # put qwS_norm's in stale_samples
+        for term_id in range(self.num_terms):
+            (sw, qw, qw_norm, _) = stale_samples[term_id]
+            stale_samples[term_id] = (sw, qw, qw_norm, qwS_norm[term_id])
+        del qw_norm_vec, qwS_norm
+        return stale_samples
+
+    def generate_stale_samples(self, term_id, stale_samples, num_samples, sim_graph, update_qwSnorm=True):
         """
         Computes dense component of topic conditional distr for term_id qw as well as it's normalization qw_norm,
         then computes num_samples samples using AliasSampler and stores them in sw.
@@ -364,7 +393,6 @@ class LDAModelGrS(ABCTopicModel):
 
         """
         logger.debug("generate stale samples for term: {0}".format(term_id))
-
         # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
         qw = np.zeros(self.num_topics, self.dtype)
         for topic_id in range(self.num_topics):
@@ -372,13 +400,23 @@ class LDAModelGrS(ABCTopicModel):
                            / (self.terms_per_topic[topic_id] + self.w_beta)
         qw_norm = sum(qw)
         qw = qw / qw_norm
-        # TODO ??Just to be sure:
-        qw = qw / sum(qw)
+        logger.debug("is qw normalized properly? answer: sum(qw) = {0}".format(sum(qw)))
         # Sample num_topics samples from above distribution using the alias method
         alias_sampler = AliasSampler(qw, self.dtype)
         sw = alias_sampler.generate(num_samples)
         del alias_sampler
-        stale_samples[term_id] = (sw, qw, qw_norm)
+        # if asked to do so update qwS_norm
+        if update_qwSnorm:
+            qw_norm_vec = np.empty(self.num_terms)
+            logger.debug("allocating an empty vec is efficient but risky! make sure everything's OK")
+            for neighb in sim_graph.neighbours[term_id]:
+                (_, _, qw_norm_vec[neighb], _) = stale_samples[neighb]
+            qwS_norm = sim_graph.row_dot_vec(qw_norm_vec)
+            logger.debug("qwS_norm[{0}] = {1}".format(term_id, qwS_norm))
+            del qw_norm_vec
+            stale_samples[term_id] = (sw, qw, qw_norm, qwS_norm)
+        else:
+            stale_samples[term_id] = (sw, qw, qw_norm, None)
 
     def get_theta_phi(self):
         raise NotImplementedError

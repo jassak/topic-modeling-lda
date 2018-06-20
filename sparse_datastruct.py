@@ -6,8 +6,10 @@ Created on 12 June 2018
 @author: jason
 """
 
+import numpy as np
 from collections import defaultdict
 from scipy.sparse import dok_matrix, csr_matrix
+from aliassampler import AliasSampler
 
 
 class SparseCounter():
@@ -15,6 +17,7 @@ class SparseCounter():
     The constructor takes a list of items and counts their occurrences.
     In this implementation counts cannot be negative and exceptions are raised otherwise.
     """
+
     def __init__(self, seq):
         self.__count = defaultdict()
         for elem in seq:
@@ -84,12 +87,60 @@ class SparseVector():
 
 
 class SparseGraph():
+    """Sparse graph constructed from a sparse adjacency matrix dense_matr.
+    Contains an alias sampler for every node in order to sample nodes according to the probs in dense_matr.
+    dot_vec method implements sparse dot multiplication with vector
+    in O(average_deg * nnodes) on average."""
+
     def __init__(self, dense_matr, dtype):
         self.__matr = csr_matrix(dense_matr, dtype=dtype)
+        self.nnodes = self.__matr.shape[0]
+        self.avdeg = self.get_average_deg()
+        # Init neighbourhoods
+        self.neighbours = []
+        for node in range(self.nnodes):
+            self.neighbours[node] = self.get_neighbours(node)
+        # Init graph alias samplers
+        self.aliassamplers = []
+        for node in range(self.nnodes):
+            neighbs = self.neighbours[node]
+            weights = np.zeros(len(neighbs), dtype)
+            for (idx, neighb) in enumerate(neighbs):
+                weights[idx] = self[node, neighb]
+            aliassampler = AliasSampler(weights, dtype)
+            self.aliassamplers.append((neighbs, aliassampler))
+
+    def sample_neighbour(self, node):
+        neighbs, sampler = self.aliassamplers[node]
+        idx = sampler.generate_once()
+        return neighbs[idx]
+
+    def get_neighbours(self, node):
+        _, neighbs = self.__matr[node].nonzero()
+        return neighbs
+
+    def dot_vec(self, vector):
+        result = np.zeros(self.nnodes)
+        for node in range(self.nnodes):
+            result[node] = self.row_dot_vec(node, vector)
+        return result
+
+    def row_dot_vec(self, node, vector):
+        if len(vector) != self.nnodes:
+            raise ValueError("vector dimensions don't match matrix")
+        result = 0
+        neighbs = self.neighbours[node]
+        for neighb in neighbs:
+            result += self[node, neighb] * vector[neighb]
+        return result
+
+    def get_average_deg(self):
+        avdeg = 0
+        for node in self.nnodes:
+            neighbs = self.neighbours[node]
+            avdeg += len(neighbs) - 1
+        avdeg /= self.nnodes
+        return avdeg
 
     def __getitem__(self, item):
         return self.__matr[item]
-
-    def neighbours(self, node):
-        _, neighbs = self.__matr[node].nonzero()
-        return  neighbs

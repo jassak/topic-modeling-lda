@@ -15,7 +15,7 @@ import random
 
 from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
-from useful_datatypes import SparseCounter, SparseVector
+from sparse_datastruct import SparseCounter, SparseVector
 from aliassampler import AliasSampler
 
 logger = logging.getLogger(__name__)
@@ -233,7 +233,7 @@ class LDAModelMHW(ABCTopicModel):
                     .format(self.num_topics, lencorpus, num_passes)
         )
 
-        # Create blank stale_samples which will be used throughout training
+        # Init stale_samples
         stale_samples = {}
 
         # Perform num_passes rounds of Gibbs sampling.
@@ -300,13 +300,13 @@ class LDAModelMHW(ABCTopicModel):
 
             # Accept new_topic with prob_ratio
             prob_ratio = (doc_topic_count.get_count(new_topic) + self.alpha[new_topic]) \
-                         / (doc_topic_count.get_count(old_topic) + self.alpha[old_topic])
-            prob_ratio *= (self.term_topic_counts[term_id][new_topic] + self.beta[term_id]) \
-                          / (self.term_topic_counts[term_id][old_topic] + self.beta[term_id])
-            prob_ratio *= (self.terms_per_topic[old_topic] + self.w_beta) \
-                          / (self.terms_per_topic[new_topic] + self.w_beta)
-            prob_ratio *= ((pdw_norm * pdw[old_topic]) + (qw_norm * qw[old_topic])) \
-                          / ((pdw_norm * pdw[new_topic]) + (qw_norm * qw[new_topic]))
+                         / (doc_topic_count.get_count(old_topic) + self.alpha[old_topic]) \
+                         * (self.term_topic_counts[term_id][new_topic] + self.beta[term_id]) \
+                         / (self.term_topic_counts[term_id][old_topic] + self.beta[term_id]) \
+                         * (self.terms_per_topic[old_topic] + self.w_beta) \
+                         / (self.terms_per_topic[new_topic] + self.w_beta) \
+                         * ((pdw_norm * pdw[old_topic]) + (qw_norm * qw[old_topic])) \
+                         / ((pdw_norm * pdw[new_topic]) + (qw_norm * qw[new_topic]))
             if prob_ratio >= 1.0:
                 accept = True
             else:
