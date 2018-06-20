@@ -322,10 +322,10 @@ class LDAModelGrS(ABCTopicModel):
             self.term_topic_counts[term_id][old_topic] -= 1
             self.terms_per_topic[old_topic] -= 1
 
-            # TODO
             # Compute dense component pdw^S and pdw_norm^S
-            (pdwS, pdwS_norm) = self.compute_dense_comp(term_id, sim_graph, doc_topic_count)
+            (pdwS, pdwS_norm) = self.compute_dense_comp(term_id, sim_graph, doc_topic_count, num_neighb=5)
 
+            # TODO
             # Draw from proposal distribution q(t, w, d)^S with bucket sampling
             new_topic = self.bucket_sampling(pdwS, pdwS_norm, sw, qwS_norm)
 
@@ -343,17 +343,45 @@ class LDAModelGrS(ABCTopicModel):
 
         # Update seqs and counts document-wise
 
-    def compute_dense_comp(self, term_id, sim_graph, doc_topic_count):
-        raise NotImplementedError
+    def compute_dense_comp(self, term_id, sim_graph, doc_topic_count, num_neighb=5):
+        # sample num_neighb nodes from graph alias sampler O(1)
+        nodes = [0] * num_neighb
+        for n in range(num_neighb):
+            nodes[n] = sim_graph.sample_neighbour(term_id)
+        # compute pdwS and pdwS_norm O(k_d)
+        pdwS = SparseVector(self.num_topics, dtype=self.dtype)
+        pdwS_norm = 0
+        for topic_id in doc_topic_count:
+            pdwS[topic_id] = doc_topic_count.get_count(topic_id) \
+                             / (self.terms_per_topic[topic_id] + self.w_beta)
+            sum = 0
+            for node in nodes:
+                sum += (self.term_topic_counts[node][topic_id] + self.beta[node])
+            pdwS[topic_id] *= sum / num_neighb
+            pdwS_norm += pdwS[topic_id]
+        return pdwS, pdwS_norm
 
-    def bucket_sampling(self, pdwS, pdwS_norm, sw, qwS_norm):
-        # If in dense bucket:
-        #       Draw node from graph_aliassamplers[term_id]
-        #       Check if stale samples are exhausted and generate if needed
-        #       Draw topic from stale_samples[node]
-        # If in sparse bucket:
-        #       Draw from pdw^S in ﻿O(k_d) time
-        raise NotImplementedError
+    def bucket_sampling(self, term_id, pdwS, pdwS_norm, sw, qwS_norm, sim_graph):
+        # Determine by coin flip to draw from sparse or dense bucket
+        if random.random() < pdwS_norm / (pdwS_norm + qwS_norm):
+            # TODO check if correct: for topic_id in pdwS returns topic_ids? if not change in mhw as well
+            # If in sparse bucket: Draw from pdw^S in ﻿O(k_d) time
+            num_nnztopics = pdwS.get_nnz()
+            topic_indices = []
+            topic_weights = np.empty(num_nnztopics, dtype=self.dtype)
+            for topic_id, weight_id in zip(pdwS, range(num_nnztopics)):
+                topic_indices.append(topic_id)
+                topic_weights[weight_id] = pdwS[topic_id]
+            new_topic_idx = np.random.choice(num_nnztopics, p=topic_weights)
+            return topic_indices[new_topic_idx]
+        else:
+            # If in dense bucket:
+            # Draw node from graph_aliassamplers[term_id]
+            node = sim_graph.sample_neighbour(term_id)
+            # TODO HERE
+            # Check if stale samples for node are exhausted and generate if needed
+            # Draw topic from stale_samples[node]
+            pass
 
     def init_stale_sample(self, sim_graph):
         """

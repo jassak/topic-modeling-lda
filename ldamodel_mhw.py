@@ -373,7 +373,8 @@ class LDAModelMHW(ABCTopicModel):
         # TODO comments
         logger.debug("compute sparse distribution for term: {0}".format(term_id))
 
-        doc_num_topics = len(doc_topic_count)
+        # TODO delete this??
+        # doc_num_topics = len(doc_topic_count)
         pdw = SparseVector(self.num_topics, dtype=self.dtype)
         pdw_norm = 0.
         for topic_id in doc_topic_count:
