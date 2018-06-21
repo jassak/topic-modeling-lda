@@ -71,7 +71,7 @@ class LDAModelMHW(ABCTopicModel):
                             ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
-        logger.info("creating a new lda mhw model with {0} topics".format(num_topics))
+        logger.info("creating a new lda metropolis-hastings-walker model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary

@@ -70,7 +70,7 @@ class LDAModelCGS(ABCTopicModel):
                             ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
-        logger.info("creating a new lda cgs model with {0} topics".format(num_topics))
+        logger.info("creating a new lda collapsed gibbs sampling model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary
@@ -98,8 +98,8 @@ class LDAModelCGS(ABCTopicModel):
         self.w_beta = sum(self.beta)
 
         self.term_seqs, self.topic_seqs, \
-            self.doc_topic_counts, self.term_topic_counts, \
-            self.terms_per_topic = \
+        self.doc_topic_counts, self.term_topic_counts, \
+        self.terms_per_topic = \
             self.get_seqs_and_counts(corpus=corpus)
 
         self.num_docs = len(self.term_seqs)

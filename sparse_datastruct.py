@@ -95,11 +95,12 @@ class SparseGraph():
     def __init__(self, dense_matr, dtype):
         self.__matr = csr_matrix(dense_matr, dtype=dtype)
         self.nnodes = self.__matr.shape[0]
-        self.avdeg = self.get_average_deg()
         # Init neighbourhoods
         self.neighbours = []
         for node in range(self.nnodes):
-            self.neighbours[node] = self.get_neighbours(node)
+            self.neighbours.append(self.get_neighbours(node))
+        # Init avdeg
+        self.avdeg = self.get_average_deg()
         # Init graph alias samplers
         self.aliassamplers = []
         for node in range(self.nnodes):
@@ -136,9 +137,9 @@ class SparseGraph():
 
     def get_average_deg(self):
         avdeg = 0
-        for node in self.nnodes:
+        for node in range(self.nnodes):
             neighbs = self.neighbours[node]
-            avdeg += len(neighbs) - 1
+            avdeg += len(neighbs)
         avdeg /= self.nnodes
         return avdeg
 

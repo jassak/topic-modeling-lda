@@ -77,7 +77,7 @@ class LDAModelGrS(ABCTopicModel):
                             ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
-        logger.info("creating a new lda mhw model with {0} topics".format(num_topics))
+        logger.info("creating a new lda graph sampler model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary
@@ -282,7 +282,7 @@ class LDAModelGrS(ABCTopicModel):
         """
 
         for doc_id in range(self.num_docs):
-            if doc_id % 100 == 0:
+            if doc_id % 1 == 0:
                 logger.info("doc: {0}".format(doc_id))
             else:
                 logger.debug("doc: {0}".format(doc_id))
@@ -314,7 +314,8 @@ class LDAModelGrS(ABCTopicModel):
             # Check if stale samples for term_id are exhausted and generate if needed
             # If that's the case recompute qwS_norm
             if not stale_samples[term_id][0]:
-                self.generate_stale_samples(term_id, stale_samples, self.num_topics + sim_graph.avdeg, sim_graph)
+                self.generate_stale_samples(term_id, stale_samples, self.num_topics + round(sim_graph.avdeg) - 1,
+                                            sim_graph)
             (sw, _, _, qwS_norm) = stale_samples[term_id]
 
             # Remove current topic from counts
@@ -322,28 +323,62 @@ class LDAModelGrS(ABCTopicModel):
             self.term_topic_counts[term_id][old_topic] -= 1
             self.terms_per_topic[old_topic] -= 1
 
-            # Compute dense component pdw^S and pdw_norm^S
-            (pdwS, pdwS_norm) = self.compute_dense_comp(term_id, sim_graph, doc_topic_count, num_neighb=5)
+            # Compute sparse component pdw^S and pdw_norm^S
+            (pdwS, pdwS_norm) = self.compute_sparse_comp(term_id, sim_graph, doc_topic_count, num_neighb=5)
 
-            # TODO
             # Draw from proposal distribution q(t, w, d)^S with bucket sampling
-            new_topic = self.bucket_sampling(pdwS, pdwS_norm, sw, qwS_norm)
+            new_topic = self.bucket_sampling(term_id, pdwS, pdwS_norm, stale_samples, qwS_norm, sim_graph)
+
+            # Draw a neighbour of term_id as a shortcut to compute qwS_approx (see paper)
+            term_neighbour = sim_graph.sample_neighbour(term_id)
+            (_, qwS_approx, _, _) = stale_samples[term_neighbour]
 
             # Accept new_topic with prob_ratio according to Metropolis-Hastings
-            prob_ratio = []
+            prob_ratio = (doc_topic_count.get_count(new_topic) + self.alpha[new_topic]) \
+                         / (doc_topic_count.get_count(old_topic) + self.alpha[old_topic]) \
+                         * (self.term_topic_counts[term_id][new_topic] + self.beta[term_id]) \
+                         / (self.term_topic_counts[term_id][old_topic] + self.beta[term_id]) \
+                         * (self.terms_per_topic[old_topic] + self.w_beta) \
+                         / (self.terms_per_topic[new_topic] + self.w_beta) \
+                         * ((pdwS_norm * pdwS[old_topic]) + (qwS_norm * qwS_approx[old_topic])) \
+                         / ((pdwS_norm * pdwS[new_topic]) + (qwS_norm * qwS_approx[new_topic]))
             if prob_ratio >= 1.0:
                 accept = True
             else:
                 accept = (random.random() < prob_ratio)
 
             # If move is accepted put new topic into seqs and counts
+            if accept:
+                logger.debug("new topic accepted: {0}".format(new_topic))
+                doc_topic_seq[si] = new_topic
+                doc_topic_count.incr_count(new_topic)
+                self.term_topic_counts[term_id][new_topic] += 1
+                self.terms_per_topic[new_topic] += 1
             # Else put back old topic
-
-            # Exit loop
+            else:
+                logger.debug("new topic was not accepted")
+                doc_topic_seq[si] = old_topic
+                doc_topic_count.incr_count(old_topic)
+                self.term_topic_counts[term_id][old_topic] += 1
+                self.terms_per_topic[old_topic] += 1
 
         # Update seqs and counts document-wise
+        self.topic_seqs[doc_id] = doc_topic_seq
+        self.doc_topic_counts[doc_id] = doc_topic_count
 
-    def compute_dense_comp(self, term_id, sim_graph, doc_topic_count, num_neighb=5):
+    def compute_sparse_comp(self, term_id, sim_graph, doc_topic_count, num_neighb=5):
+        """
+
+        Args:
+            term_id:
+            sim_graph:
+            doc_topic_count:
+            num_neighb:
+
+        Returns:
+
+        """
+        # TODO comments + logging
         # sample num_neighb nodes from graph alias sampler O(1)
         nodes = [0] * num_neighb
         for n in range(num_neighb):
@@ -359,13 +394,29 @@ class LDAModelGrS(ABCTopicModel):
                 sum += (self.term_topic_counts[node][topic_id] + self.beta[node])
             pdwS[topic_id] *= sum / num_neighb
             pdwS_norm += pdwS[topic_id]
+        pdwS /= pdwS_norm
         return pdwS, pdwS_norm
 
-    def bucket_sampling(self, term_id, pdwS, pdwS_norm, sw, qwS_norm, sim_graph):
+    def bucket_sampling(self, term_id, pdwS, pdwS_norm, stale_samples, qwS_norm, sim_graph):
+        """
+
+        Args:
+            term_id:
+            pdwS:
+            pdwS_norm:
+            stale_samples:
+            qwS_norm:
+            sim_graph:
+
+        Returns:
+
+        """
+        # TODO comments + logging
+
         # Determine by coin flip to draw from sparse or dense bucket
         if random.random() < pdwS_norm / (pdwS_norm + qwS_norm):
             # TODO check if correct: for topic_id in pdwS returns topic_ids? if not change in mhw as well
-            # If in sparse bucket: Draw from pdw^S in ﻿O(k_d) time
+            # If in sparse bucket: Draw from pdw^S in ﻿O(k_d)
             num_nnztopics = pdwS.get_nnz()
             topic_indices = []
             topic_weights = np.empty(num_nnztopics, dtype=self.dtype)
@@ -376,12 +427,15 @@ class LDAModelGrS(ABCTopicModel):
             return topic_indices[new_topic_idx]
         else:
             # If in dense bucket:
-            # Draw node from graph_aliassamplers[term_id]
-            node = sim_graph.sample_neighbour(term_id)
-            # TODO HERE
-            # Check if stale samples for node are exhausted and generate if needed
-            # Draw topic from stale_samples[node]
-            pass
+            # Draw neighb from graph_aliassamplers[term_id] in O(1)
+            neighb = sim_graph.sample_neighbour(term_id)
+            # Check if stale samples for neighb are exhausted and generate if needed
+            if not stale_samples[neighb][0]:
+                self.generate_stale_samples(neighb, stale_samples, self.num_topics + round(sim_graph.avdeg) - 1,
+                                            sim_graph)
+            (sneighb, _, _, _) = stale_samples[neighb]
+            # Draw topic from stale_samples[neighb] in O(1)
+            return sneighb.pop()
 
     def init_stale_sample(self, sim_graph):
         """
@@ -392,15 +446,17 @@ class LDAModelGrS(ABCTopicModel):
         Returns:
 
         """
+        # TODO comments + logging
+
         # generate stale samples for all term_ids
         stale_samples = {}
         for term_id in range(self.num_terms):
-            self.generate_stale_samples(term_id, stale_samples, self.num_topics + sim_graph.avdeg, sim_graph,
+            self.generate_stale_samples(term_id, stale_samples, self.num_topics + round(sim_graph.avdeg) - 1, sim_graph,
                                         update_qwSnorm=False)
         # compute all qwS_norm by sparse dot-product between sim_graph and qw_norm's
         qw_norm_vec = np.empty(self.num_terms)
         for term_id in range(self.num_terms):
-            (_, _, qw_norm_vec[term_id]) = stale_samples[term_id]
+            (_, _, qw_norm_vec[term_id], _) = stale_samples[term_id]
         qwS_norm = sim_graph.dot_vec(qw_norm_vec)
         # put qwS_norm's in stale_samples
         for term_id in range(self.num_terms):
@@ -447,4 +503,110 @@ class LDAModelGrS(ABCTopicModel):
             stale_samples[term_id] = (sw, qw, qw_norm, None)
 
     def get_theta_phi(self):
-        raise NotImplementedError
+        """
+
+        Returns:
+
+        """
+        logger.info("computing theta and phi")
+        theta = np.empty(shape=(self.num_docs, self.num_topics), dtype=self.dtype)
+        phi = np.empty(shape=(self.num_topics, self.num_terms), dtype=self.dtype)
+
+        for doc_id in range(self.num_docs):
+            doc_topic_count = self.doc_topic_counts[doc_id]
+            for topic_id in range(self.num_topics):
+                theta[doc_id][topic_id] = doc_topic_count.get_count(topic_id) + self.alpha[topic_id]
+            theta[doc_id] = theta[doc_id] / sum(theta[doc_id])
+
+        for topic_id in range(self.num_topics):
+            for term_id in range(self.num_terms):
+                phi[topic_id][term_id] = self.term_topic_counts[term_id][topic_id] + self.beta[term_id]
+            phi[topic_id] = phi[topic_id] / sum(phi[topic_id])
+
+        return theta, phi
+
+    def get_topic_terms(self, topic_id, topn=10, readable=True):
+        # TODO move this and similar methods to parent class
+        """
+
+        Args:
+            topic_id:
+            topn:
+            readable: If False returns term_id, if True returns the actual word.
+
+        Returns:
+             A list of tuples (term, prob) of the topn terms in topic_id, formated according to format.
+
+        """
+
+        topic_term_probs = self.phi[topic_id]
+        bestn = matutils.argsort(topic_term_probs, topn, reverse=True)
+        if readable:
+            return [(self.id2word[idx], topic_term_probs[idx]) for idx in bestn]
+        else:
+            return [(idx, topic_term_probs[idx]) for idx in bestn]
+
+    def get_term_topics(self, term_id, topn=10, minimum_prob=0):
+        """
+
+        Args:
+            term_id:
+            topn:
+            minimum_prob:
+
+        Returns:
+            A list of tuples (topic, prob) of topics containing term_id with prob greater than minimum_prob.
+
+        """
+
+        term_topic_probs = self.phi.transpose()[term_id]
+        sorted_probs = matutils.argsort(term_topic_probs, topn=topn, reverse=True)
+        return [(topic_id, term_topic_probs[topic_id]) for topic_id in sorted_probs
+                if term_topic_probs[topic_id] > minimum_prob]
+
+    def get_document_topics(self, doc_id, minimum_prob=0, readable=True):
+        """
+
+        Args:
+            doc_id:
+            minimum_prob: Ignore topics below this probability.
+            readable: If False returns topic_id's. Else returns a string of the top 10 words in topic.
+
+        Returns:
+            A list of tuples (topic, probability) for document[doc_id]. topic is either topic_id or a string.
+
+        """
+
+        if minimum_prob is None:
+            minimum_prob = self.minimum_probability
+        minimum_prob = max(minimum_prob, 1e-8)  # never allow zero values in sparse output. (Why??)
+
+        doc_topic_probs = self.theta[doc_id]
+        sorted_idx = matutils.argsort(doc_topic_probs, reverse=True)
+        if not readable:
+            return [(idx, doc_topic_probs[idx]) for idx in sorted_idx if doc_topic_probs[idx] > minimum_prob]
+        else:
+            doc_topics = []
+            for idx in sorted_idx:
+                if doc_topic_probs[idx] > minimum_prob:
+                    topic_terms = self.get_topic_terms(idx, topn=10, readable=True)
+                    terms_string = " ".join([w[0] for w in topic_terms])
+                    doc_topics.append((terms_string, doc_topic_probs[idx]))
+            return doc_topics
+
+    def get_topic_documents(self, topic_id, topn=10, minimum_prob=0):
+        """
+
+        Args:
+            topic_id:
+            minimum_prob:
+
+        Returns:
+            A list of tuples (doc_id, probability) of documents containing topic_id with prob greater than minimum_prob.
+
+        """
+
+        topic_docs_probs = self.theta.transpose()[topic_id]
+        sorted_probs = matutils.argsort(topic_docs_probs, topn=topn, reverse=True)
+        return [(doc_id, topic_docs_probs[doc_id]) for doc_id in sorted_probs
+                if topic_docs_probs[doc_id] > minimum_prob]
