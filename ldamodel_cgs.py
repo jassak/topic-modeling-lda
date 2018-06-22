@@ -237,6 +237,8 @@ class LDAModelCGS(ABCTopicModel):
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass()
+            # remove this when you know what you're doing
+            self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
 
     def do_one_pass(self):
         """
@@ -245,7 +247,7 @@ class LDAModelCGS(ABCTopicModel):
         """
 
         for doc_id in range(self.num_docs):
-            if doc_id % 100 == 0:
+            if doc_id % 10 == 0:
                 logger.info("doc: {0}".format(doc_id))
             else:
                 logger.debug("doc: {0}".format(doc_id))

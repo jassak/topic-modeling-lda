@@ -240,6 +240,8 @@ class LDAModelMHW(ABCTopicModel):
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass(stale_samples)
+            # remove this when you know what you're doing
+            self.save('models/model_mhw_currun_pass' + str(pass_i) + '.pkl')
 
         # Delete stale samples
         del stale_samples
@@ -251,7 +253,7 @@ class LDAModelMHW(ABCTopicModel):
         """
 
         for doc_id in range(self.num_docs):
-            if doc_id % 100 == 0:
+            if doc_id % 10 == 0:
                 logger.info("doc: {0}".format(doc_id))
             else:
                 logger.debug("doc: {0}".format(doc_id))
