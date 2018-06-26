@@ -40,6 +40,7 @@ class LDAModelCGS(ABCTopicModel):
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
                  minimum_prob=0.01, random_state=None, dtype=np.float32):
         # TODO Comments
+        # TODO FIX: doesn't work when instantiated without a corpus and then trained later
         """
 
         Args:
@@ -86,7 +87,6 @@ class LDAModelCGS(ABCTopicModel):
         self.alpha, self.optimize_alpha = self.init_dir_prior(alpha, 'alpha')
         assert self.alpha.shape == (self.num_topics,), \
             "Invalid alpha shape. Got shape %s, but expected (%d, )" % (str(self.alpha.shape), self.num_topics)
-
         if isinstance(beta, six.string_types):
             if beta == 'asymmetric':
                 raise ValueError("The 'asymmetric' option cannot be used for beta")
@@ -94,22 +94,13 @@ class LDAModelCGS(ABCTopicModel):
         assert self.beta.shape == (self.num_terms,) or self.beta.shape == (self.num_topics, self.num_terms), (
             "Invalid beta shape. Got shape %s, but expected (%d, 1) or (%d, %d)" %
             (str(self.beta.shape), self.num_terms, self.num_topics, self.num_terms))
-
         self.w_beta = sum(self.beta)
-
-        self.term_seqs, self.topic_seqs, \
-        self.doc_topic_counts, self.term_topic_counts, \
-        self.terms_per_topic = \
-            self.get_seqs_and_counts(corpus=corpus)
-
-        self.num_docs = len(self.term_seqs)
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
             self.train(corpus, num_passes=num_passes)
-            self.theta, self.phi = self.get_theta_phi()
 
-    def get_seqs_and_counts(self, corpus):
+    def init_seqs_and_counts(self, corpus):
         """
             Builds the sequences of terms and topics, and the counts of topics in docs,
             terms in topics and term per topic.
@@ -120,7 +111,7 @@ class LDAModelCGS(ABCTopicModel):
         Returns:
             term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
         """
-        logger.info("creating sequences and counts")
+        logger.info("initializing sequences and counts")
         # Build term_seqs
         term_seqs = []
         for document in corpus:
@@ -153,7 +144,12 @@ class LDAModelCGS(ABCTopicModel):
         for topic in range(self.num_topics):
             for term in range(self.num_terms):
                 terms_per_topic[topic] += term_topic_counts[term][topic]
-        return term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
+        self.term_seqs = term_seqs
+        self.topic_seqs = topic_seqs
+        self.doc_topic_counts = doc_topic_counts
+        self.term_topic_counts = term_topic_counts
+        self.terms_per_topic = terms_per_topic
+        self.num_docs = len(self.term_seqs)
 
     def init_dir_prior(self, prior, name):
         # TODO move this method to the parent class.
@@ -209,7 +205,7 @@ class LDAModelCGS(ABCTopicModel):
 
         return init_prior, is_auto
 
-    def train(self, corpus, num_passes=1):
+    def train(self, corpus, num_passes=10):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
 
@@ -227,18 +223,22 @@ class LDAModelCGS(ABCTopicModel):
             logger.warning("LdaModel.train() called with an empty corpus")
             return
 
+        # init sequences and counts
+        self.init_seqs_and_counts(corpus=corpus)
+
+        # Perform num_passes rounds of Gibbs sampling.
         logger.info(
                 "running collapsed Gibbs sampling for LDA training, {0} topics, over "
                 "the supplied corpus of {1} documents for {2} passes over the whole corpus"
                     .format(self.num_topics, lencorpus, num_passes)
         )
-
-        # Perform num_passes rounds of Gibbs sampling.
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass()
-            # remove this when you know what you're doing
+            # uncomment below for save-while-training
             self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
+
+        self.theta, self.phi = self.get_theta_phi()
 
     def do_one_pass(self):
         """
