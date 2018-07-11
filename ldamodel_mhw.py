@@ -134,10 +134,8 @@ class LDAModelMHW(ABCTopicModel):
         # Init randomly topic_seqs
         topic_seqs = []
         for di in range(len(term_seqs)):
-            # init to the same topic to exploit sparsity from the beginning
-            topic_seq = [0] * len(term_seqs[di])
             # init to a random seq, problem: not sparse
-            # topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
+            topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
             topic_seqs.append(topic_seq)
         # Build doc_topic_counts
         doc_topic_counts = []
