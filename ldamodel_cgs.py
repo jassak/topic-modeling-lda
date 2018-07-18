@@ -39,7 +39,6 @@ class LDAModelCGS(ABCTopicModel):
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
                  minimum_prob=0.01, random_state=None, dtype=np.float32):
-        # TODO Comments
         # TODO FIX: doesn't work when instantiated without a corpus and then trained later
         """
 
@@ -57,9 +56,10 @@ class LDAModelCGS(ABCTopicModel):
             num_passes: The number of passes of the MCMC procedure. One pass is one step per term
                 in each document of the whole corpus.
 
-            minimum_prob: TODO
+            minimum_prob: Minimum probability required for an object (term, topic) to be displayed (TODO should
+            remove this)
 
-            random_state: TODO
+            random_state: TODO findout what is this
 
             dtype: Data-type to use during calculations inside model. All inputs are also converted to this dtype.
                 Available types: `numpy.float16`, `numpy.float32`, `numpy.float64`.
@@ -253,23 +253,20 @@ class LDAModelCGS(ABCTopicModel):
                 logger.debug("doc: {0}".format(doc_id))
             self.sample_topics_for_one_doc(doc_id)
 
-    def sample_topics_for_one_doc(self, di):
+    def sample_topics_for_one_doc(self, doc_id):
         """
         Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
         for one document, according to
         **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
 
         Args:
-            di:
-            doc_term_seq:
-            doc_topic_seq:
-            doc_topic_count:
+            doc_id:
 
         """
-        doc_term_seq = self.term_seqs[di]
+        doc_term_seq = self.term_seqs[doc_id]
         doc_len = len(doc_term_seq)
-        doc_topic_seq = self.topic_seqs[di]
-        doc_topic_count = self.doc_topic_counts[di]
+        doc_topic_seq = self.topic_seqs[doc_id]
+        doc_topic_count = self.doc_topic_counts[doc_id]
         num_topics = len(doc_topic_count)
 
         # Iterate over the positions (words) in the document
@@ -303,8 +300,8 @@ class LDAModelCGS(ABCTopicModel):
             self.terms_per_topic[new_topic] += 1
 
         # Update seqs and counts document-wise
-        self.topic_seqs[di] = doc_topic_seq
-        self.doc_topic_counts[di] = doc_topic_count
+        self.topic_seqs[doc_id] = doc_topic_seq
+        self.doc_topic_counts[doc_id] = doc_topic_count
 
     def get_theta_phi(self):
         """
