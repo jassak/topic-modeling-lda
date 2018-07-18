@@ -40,7 +40,6 @@ class LDAModelMHW(ABCTopicModel):
 
     def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
                  minimum_prob=0.01, random_state=None, dtype=np.float32):
-        # TODO Comments
         """
 
         Args:
@@ -57,9 +56,10 @@ class LDAModelMHW(ABCTopicModel):
             num_passes: The number of passes of the MCMC procedure. One pass is one step per term
                 in each document of the whole corpus.
 
-            minimum_prob: TODO
+            minimum_prob: Minimum probability required for an object (term, topic) to be displayed (TODO should
+            remove this)
 
-            random_state: TODO
+            random_state: TODO findout what is this
 
             dtype: Data-type to use during calculations inside model. All inputs are also converted to this dtype.
                 Available types: `numpy.float16`, `numpy.float32`, `numpy.float64`.
@@ -110,6 +110,7 @@ class LDAModelMHW(ABCTopicModel):
             self.theta, self.phi = self.get_theta_phi()
 
     def get_seqs_and_counts(self, corpus):
+        # TODO change to init_seqs_and_counts as in ldamodel_cgs
         # TODO move to parent class with sparsity condition
         """
             Builds the sequences of terms and topics, and the counts of topics in docs,
@@ -269,7 +270,7 @@ class LDAModelMHW(ABCTopicModel):
 
         Args:
             doc_id:
-            stale_samples:
+            stale_samples: Dictionary containing stale samples (pre-computed using Alias Method)
 
         Returns:
 
@@ -375,9 +376,8 @@ class LDAModelMHW(ABCTopicModel):
             doc_topic_count:
 
         Returns:
-
+            Sparse component and its normalization
         """
-        # TODO comments
         logger.debug("compute sparse distribution for term: {0}".format(term_id))
 
         # TODO delete this??
@@ -396,15 +396,14 @@ class LDAModelMHW(ABCTopicModel):
         """
 
         Args:
-            pdw:
-            pdw_norm:
-            sw:
-            qw_norm:
+            pdw: Dense component
+            pdw_norm: Dense component normalization
+            sw: List of stale samples (qw is not required since we have sw)
+            qw_norm: Sparse component normalization
 
         Returns:
-
+            A new topic sample
         """
-        # TODO comments
         logger.debug("do bucket sampling")
 
         # Determine by coin flip to draw from sparse or dense bucket
