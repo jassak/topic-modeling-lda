@@ -19,12 +19,12 @@ ctypedef np.double_t DTYPE_D_t
 DTYPE_I = np.int
 ctypedef np.int_t DTYPE_I_t
 
-def init_tables(int num_el, np.array[DTYPE_D_t, ndim=1] prob_vector):
+def init_tables(int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_vector):
     """
     TODO comments
     """
     # check consistency of inputs
-    assert prob_vector.dtype == DTYPE
+    assert prob_vector.dtype == DTYPE_D
 
     # cdef variables
     cdef np.ndarray[DTYPE_D_t, ndim=1] prob_table = np.zeros(num_el, dtype=DTYPE_D)
@@ -41,8 +41,8 @@ def init_tables(int num_el, np.array[DTYPE_D_t, ndim=1] prob_vector):
     large = deque()
 
     # init variables
-    for int i in range(num_el):
-        alias_table[i] = None
+    for i in range(num_el):
+        alias_table[i] = -1
         prob_scaled[i] = prob_vector[i] * <double>num_el
 
     # divide prob in small and large
