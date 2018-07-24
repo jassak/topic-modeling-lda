@@ -11,6 +11,11 @@ figures/
 # project files
 main.py
 
+# cython related files
+cython/*.html
+cython/cython_testing.py
+cython/build/
+
 # macos files
 .DS_Store
 
