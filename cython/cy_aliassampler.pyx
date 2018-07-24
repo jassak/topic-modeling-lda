@@ -73,4 +73,33 @@ def init_tables(int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_vector):
         s = small.pop()
         prob_table[s] = 1.0
 
+    return prob_table, alias_table
+
+
+def generate(int num_samples, int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_table,
+            np.ndarray[DTYPE_I_t, ndim=1] alias_table):
+    """
+    TODO comments
+    """
+
+    cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
+    cdef int i
+    cdef int j
+    cdef double p
+
+    for i in range(num_samples):
+        j = random.randrange(num_el)
+        # TODO change 1e-5 below to global EPS
+        if fabs(prob_table[j] - 1.0) < 1e-5:
+            samples[i] = j
+        else:
+            p = random.random()
+            if p <= prob_table[j]:
+                samples[i] = j
+            else:
+                samples[i] = alias_table[j]
+    return samples
+
+
+
     # TODO CONTINUE HERE
