@@ -56,10 +56,7 @@ class AliasSampler():
         self.num_el = num_el
 
         prob_table = np.empty(num_el, dtype=self.dtype)
-        self.prob_table = prob_table
-
         alias_table = [None] * num_el
-        self.alias_table = alias_table
 
         small = deque()
         large = deque()
@@ -86,6 +83,9 @@ class AliasSampler():
         while small:
             s = small.pop()
             prob_table[s] = 1
+
+        self.prob_table = prob_table
+        self.alias_table = alias_table
 
     def generate(self, n=1):
         """
