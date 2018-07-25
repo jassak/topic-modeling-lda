@@ -19,6 +19,8 @@ ctypedef np.double_t DTYPE_D_t
 DTYPE_I = np.int
 ctypedef np.int_t DTYPE_I_t
 
+@cython.boundscheck(False) # turn off bounds-checking for entire function
+@cython.wraparound(False)  # turn off negative index wrapping for entire function
 def init_tables(int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_vector):
     """
     TODO comments
@@ -36,7 +38,7 @@ def init_tables(int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_vector):
     cdef double p
 
     # def ques
-    # TODO someday you might want to cythonize the deques
+    # TODO you might want to cythonize the deques
     small = deque()
     large = deque()
 
@@ -75,18 +77,21 @@ def init_tables(int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_vector):
 
     return prob_table, alias_table
 
-
+@cython.boundscheck(False) # turn off bounds-checking for entire function
+@cython.wraparound(False)  # turn off negative index wrapping for entire function
 def generate(int num_samples, int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_table,
             np.ndarray[DTYPE_I_t, ndim=1] alias_table):
     """
     TODO comments
     """
 
+    # cdef variables
     cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
     cdef int i
     cdef int j
     cdef double p
 
+    # generate num_samples using Walker's alias method
     for i in range(num_samples):
         j = random.randrange(num_el)
         # TODO change 1e-5 below to global EPS
@@ -100,6 +105,22 @@ def generate(int num_samples, int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_tab
                 samples[i] = alias_table[j]
     return samples
 
+@cython.boundscheck(False) # turn off bounds-checking for entire function
+@cython.wraparound(False)  # turn off negative index wrapping for entire function
+def init_and_gen(int num_el, int num_samples, np.ndarray[DTYPE_D_t, ndim=1] prob_vector):
+    """
+    TODO comments
+    """
 
+    # cdef variables
+    cdef np.ndarray[DTYPE_D_t, ndim=1] prob_table = np.zeros(num_el, dtype=DTYPE_D)
+    cdef np.ndarray[DTYPE_I_t, ndim=1] alias_table = np.zeros(num_el, dtype=DTYPE_I)
+    cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
 
-    # TODO CONTINUE HERE
+    # init tables
+    prob_table, alias_table = init_tables(num_el, prob_vector)
+
+    # generate
+    samples = generate(num_samples, num_el, prob_table, alias_table)
+
+    return samples
