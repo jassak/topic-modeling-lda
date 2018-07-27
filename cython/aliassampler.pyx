@@ -15,13 +15,11 @@ import cython
 from libc.math cimport fabs
 cimport numpy as np
 
-DTYPE_D = np.double
-ctypedef np.double_t DTYPE_D_t
-DTYPE_I = np.int
-ctypedef np.int_t DTYPE_I_t
+DTYPE = np.double
+ctypedef np.double_t DTYPE_t
 
 
-class AliasSamplerCy():
+class AliasSampler():
     """
     Implements Walker's Alias Method for efficiently sampling from a categorical distribution (biased die),
     see ﻿A. J. Walker. An efficient method for generating discrete random variables with general distributions.
@@ -44,9 +42,11 @@ class AliasSamplerCy():
         """
 
         self.num_el = len(prob_vector)
-        cdef np.ndarray[DTYPE_D_t, ndim=1] prob_table = np.zeros(self.num_el, dtype=DTYPE_D)
-        cdef np.ndarray[DTYPE_I_t, ndim=1] alias_table = np.zeros(self.num_el, dtype=DTYPE_I)
-        init_tables(self.num_el, self.prob_vector, self.prob_table, self.alias_table)
+        cdef np.ndarray[DTYPE_t, ndim=1] prob_table = np.zeros(self.num_el, dtype=DTYPE)
+        cdef list alias_table = [None] * self.num_el
+        self.prob_table = prob_table
+        self.alias_table = alias_table
+        init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
 
     def generate(self, n=1):
         """
@@ -64,17 +64,17 @@ class AliasSamplerCy():
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
 cdef void init_tables(int num_el,
-                np.ndarray[DTYPE_D_t, ndim=1] prob_vector,
-                np.ndarray[DTYPE_D_t, ndim=1] prob_table,
-                np.ndarray[DTYPE_I_t, ndim=1] alias_table):
+                np.ndarray[DTYPE_t, ndim=1] prob_vector,
+                np.ndarray[DTYPE_t, ndim=1] prob_table,
+                list alias_table):
     """
     TODO comments
     """
     # check consistency of inputs
-    assert prob_vector.dtype == DTYPE_D
+    assert prob_vector.dtype == DTYPE
 
     # cdef variables
-    cdef np.ndarray[DTYPE_D_t, ndim=1] prob_scaled = np.zeros(num_el, dtype=DTYPE_D)
+    cdef np.ndarray[DTYPE_t, ndim=1] prob_scaled = np.zeros(num_el, dtype=DTYPE)
     cdef int i
     cdef int s
     cdef int l
@@ -120,14 +120,15 @@ cdef void init_tables(int num_el,
 
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-def generate(int num_samples, int num_el, np.ndarray[DTYPE_D_t, ndim=1] prob_table,
-            np.ndarray[DTYPE_I_t, ndim=1] alias_table):
+def generate(int num_samples, int num_el, np.ndarray[DTYPE_t, ndim=1] prob_table,
+            list alias_table):
     """
     TODO comments
     """
 
     # cdef variables
-    cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
+#    cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
+    cdef list samples = [None] * num_samples
     cdef int i
     cdef int j
     cdef double p

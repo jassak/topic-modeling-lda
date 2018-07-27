@@ -8,15 +8,15 @@ Created on 11 June 2018
 
 import logging
 import numbers
-import numpy as np
-import six
-from collections import deque
 import random
 
+import numpy as np
+import six
 from gensim import utils, matutils
+
 from abc_topicmodel import ABCTopicModel
-from sparse_datastruct import SparseCounter, SparseVector
 from aliassampler import AliasSampler
+from sparse_datastruct import SparseCounter, SparseVector
 
 logger = logging.getLogger(__name__)
 

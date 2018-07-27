@@ -6,9 +6,11 @@ Created on 12 June 2018
 @author: jason
 """
 
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
 from scipy.sparse import dok_matrix, csr_matrix
+
 from aliassampler import AliasSampler
 
 
