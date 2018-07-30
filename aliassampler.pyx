@@ -18,6 +18,7 @@ cimport numpy as np
 DTYPE = np.double
 ctypedef np.double_t DTYPE_t
 
+# TODO Only works with float64! Make compatible with all float types (see cython/fused type)
 
 class AliasSampler():
     """
