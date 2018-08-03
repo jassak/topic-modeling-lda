@@ -54,6 +54,7 @@ if __name__ == '__main__':
     import numpy as np
     import random
     import cProfile
+    import cython_testing
 
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(filename="logs/logger.log",
@@ -62,5 +63,7 @@ if __name__ == '__main__':
                         )
 
     logger = logging.getLogger(__name__)
-    main()
+    # main()
     # cProfile.run('main()')
+
+    cython_testing.cy_vs_py()
