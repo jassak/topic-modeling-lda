@@ -1035,12 +1035,12 @@ typedef npy_double __pyx_t_5numpy_double_t;
  */
 typedef npy_longdouble __pyx_t_5numpy_longdouble_t;
 
-/* "aliassampler.pyx":19
+/* "aliassampler.pyx":21
  * 
  * DTYPE = np.double
  * ctypedef np.double_t DTYPE_t             # <<<<<<<<<<<<<<
  * 
- * 
+ * # TODO Only works with float64! Make compatible with all float types (see cython/fused type)
  */
 typedef __pyx_t_5numpy_double_t __pyx_t_12aliassampler_DTYPE_t;
 /* Declarations.proto */
@@ -1777,6 +1777,7 @@ static const char __pyx_k_j[] = "j";
 static const char __pyx_k_n[] = "n";
 static const char __pyx_k_p[] = "p";
 static const char __pyx_k_np[] = "np";
+static const char __pyx_k__10[] = "*";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_pop[] = "pop";
 static const char __pyx_k_init[] = "__init__";
@@ -1787,6 +1788,7 @@ static const char __pyx_k_DTYPE[] = "DTYPE";
 static const char __pyx_k_deque[] = "deque";
 static const char __pyx_k_dtype[] = "dtype";
 static const char __pyx_k_numpy[] = "numpy";
+static const char __pyx_k_queue[] = "queue";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_append[] = "append";
@@ -1816,6 +1818,7 @@ static const char __pyx_k_aliassampler_pyx[] = "aliassampler.pyx";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_AliasSampler___init[] = "AliasSampler.__init__";
 static const char __pyx_k_AliasSampler_generate[] = "AliasSampler.generate";
+static const char __pyx_k_cython_utils_cythonf_queue[] = "cython_utils.cythonf.queue";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
 static const char __pyx_k_Cython_version_of_aliassampler[] = "\nCython version of aliassampler.py using functions found in cython/cy_aliassampler.pyx\n\nCreated on 25 July 2018\n\n@author: jason\n";
 static const char __pyx_k_Implements_Walker_s_Alias_Metho[] = "\n    Implements Walker's Alias Method for efficiently sampling from a categorical distribution (biased die),\n    see \357\273\277A. J. Walker. An efficient method for generating discrete random variables with general distributions.\n\n    For the initialization step in particular, it implements Vose's O(n) method, found in\n    M. D. Vose. A Linear Algorithm For Generating Random Numbers With a Given Distribution.\n\n    The constructor takes a probability vector and builds the probability and alias tables in O(n) time.\n    ";
@@ -1837,12 +1840,14 @@ static PyObject *__pyx_n_s_ImportError;
 static PyObject *__pyx_kp_u_Non_native_byte_order_not_suppor;
 static PyObject *__pyx_n_s_RuntimeError;
 static PyObject *__pyx_n_s_ValueError;
+static PyObject *__pyx_n_s__10;
 static PyObject *__pyx_n_s_alias_table;
 static PyObject *__pyx_n_s_aliassampler;
 static PyObject *__pyx_kp_s_aliassampler_pyx;
 static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_collections;
+static PyObject *__pyx_n_s_cython_utils_cythonf_queue;
 static PyObject *__pyx_n_s_deque;
 static PyObject *__pyx_n_s_doc;
 static PyObject *__pyx_n_s_double;
@@ -1871,6 +1876,7 @@ static PyObject *__pyx_n_s_prepare;
 static PyObject *__pyx_n_s_prob_table;
 static PyObject *__pyx_n_s_prob_vector;
 static PyObject *__pyx_n_s_qualname;
+static PyObject *__pyx_n_s_queue;
 static PyObject *__pyx_n_s_random;
 static PyObject *__pyx_n_s_randrange;
 static PyObject *__pyx_n_s_range;
@@ -1897,16 +1903,16 @@ static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_tuple__10;
-static PyObject *__pyx_tuple__12;
-static PyObject *__pyx_tuple__14;
+static PyObject *__pyx_tuple__11;
+static PyObject *__pyx_tuple__13;
 static PyObject *__pyx_tuple__15;
-static PyObject *__pyx_codeobj__11;
-static PyObject *__pyx_codeobj__13;
-static PyObject *__pyx_codeobj__16;
+static PyObject *__pyx_tuple__16;
+static PyObject *__pyx_codeobj__12;
+static PyObject *__pyx_codeobj__14;
+static PyObject *__pyx_codeobj__17;
 /* Late includes */
 
-/* "aliassampler.pyx":33
+/* "aliassampler.pyx":36
  *     """
  * 
  *     def __init__(self, prob_vector, dtype=np.float32):             # <<<<<<<<<<<<<<
@@ -1921,12 +1927,12 @@ static PyObject *__pyx_pf_12aliassampler_2__defaults__(CYTHON_UNUSED PyObject *_
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__defaults__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__Pyx_CyFunction_Defaults(__pyx_defaults, __pyx_self)->__pyx_arg_dtype);
   __Pyx_GIVEREF(__Pyx_CyFunction_Defaults(__pyx_defaults, __pyx_self)->__pyx_arg_dtype);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __Pyx_CyFunction_Defaults(__pyx_defaults, __pyx_self)->__pyx_arg_dtype);
-  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
@@ -1988,7 +1994,7 @@ static PyObject *__pyx_pw_12aliassampler_12AliasSampler_1__init__(PyObject *__py
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_prob_vector)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 3, 1); __PYX_ERR(0, 33, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 3, 1); __PYX_ERR(0, 36, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -1998,7 +2004,7 @@ static PyObject *__pyx_pw_12aliassampler_12AliasSampler_1__init__(PyObject *__py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 33, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 36, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2016,7 +2022,7 @@ static PyObject *__pyx_pw_12aliassampler_12AliasSampler_1__init__(PyObject *__py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 33, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 36, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("aliassampler.AliasSampler.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2049,56 +2055,56 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler___init__(CYTHON_UNUSED P
   __pyx_pybuffernd_prob_table.data = NULL;
   __pyx_pybuffernd_prob_table.rcbuffer = &__pyx_pybuffer_prob_table;
 
-  /* "aliassampler.pyx":44
+  /* "aliassampler.pyx":47
  *         """
  * 
  *         self.num_el = len(prob_vector)             # <<<<<<<<<<<<<<
  *         cdef np.ndarray[DTYPE_t, ndim=1] prob_table = np.zeros(self.num_el, dtype=DTYPE)
  *         cdef list alias_table = [None] * self.num_el
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_prob_vector); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 44, __pyx_L1_error)
-  __pyx_t_2 = PyInt_FromSsize_t(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_prob_vector); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_2 = PyInt_FromSsize_t(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_num_el, __pyx_t_2) < 0) __PYX_ERR(0, 44, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_num_el, __pyx_t_2) < 0) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "aliassampler.pyx":45
+  /* "aliassampler.pyx":48
  * 
  *         self.num_el = len(prob_vector)
  *         cdef np.ndarray[DTYPE_t, ndim=1] prob_table = np.zeros(self.num_el, dtype=DTYPE)             # <<<<<<<<<<<<<<
  *         cdef list alias_table = [None] * self.num_el
  *         self.prob_table = prob_table
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_2);
   PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_DTYPE); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_DTYPE); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 45, __pyx_L1_error)
+  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 48, __pyx_L1_error)
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_5);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_table.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_prob_table = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 45, __pyx_L1_error)
+      __PYX_ERR(0, 48, __pyx_L1_error)
     } else {__pyx_pybuffernd_prob_table.diminfo[0].strides = __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_prob_table.diminfo[0].shape = __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -2106,21 +2112,21 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler___init__(CYTHON_UNUSED P
   __pyx_v_prob_table = ((PyArrayObject *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "aliassampler.pyx":46
+  /* "aliassampler.pyx":49
  *         self.num_el = len(prob_vector)
  *         cdef np.ndarray[DTYPE_t, ndim=1] prob_table = np.zeros(self.num_el, dtype=DTYPE)
  *         cdef list alias_table = [None] * self.num_el             # <<<<<<<<<<<<<<
  *         self.prob_table = prob_table
  *         self.alias_table = alias_table
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(Py_None);
   __Pyx_GIVEREF(Py_None);
   PyList_SET_ITEM(__pyx_t_2, 0, Py_None);
-  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_temp)) __PYX_ERR(0, 46, __pyx_L1_error)
+  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_temp)) __PYX_ERR(0, 49, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_temp);
     __Pyx_DECREF(__pyx_t_2);
     __pyx_t_2 = __pyx_temp;
@@ -2129,47 +2135,47 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler___init__(CYTHON_UNUSED P
   __pyx_v_alias_table = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "aliassampler.pyx":47
+  /* "aliassampler.pyx":50
  *         cdef np.ndarray[DTYPE_t, ndim=1] prob_table = np.zeros(self.num_el, dtype=DTYPE)
  *         cdef list alias_table = [None] * self.num_el
  *         self.prob_table = prob_table             # <<<<<<<<<<<<<<
  *         self.alias_table = alias_table
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_prob_table, ((PyObject *)__pyx_v_prob_table)) < 0) __PYX_ERR(0, 47, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_prob_table, ((PyObject *)__pyx_v_prob_table)) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
 
-  /* "aliassampler.pyx":48
+  /* "aliassampler.pyx":51
  *         cdef list alias_table = [None] * self.num_el
  *         self.prob_table = prob_table
  *         self.alias_table = alias_table             # <<<<<<<<<<<<<<
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
  * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_alias_table, __pyx_v_alias_table) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_alias_table, __pyx_v_alias_table) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
 
-  /* "aliassampler.pyx":49
+  /* "aliassampler.pyx":52
  *         self.prob_table = prob_table
  *         self.alias_table = alias_table
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)             # <<<<<<<<<<<<<<
  * 
  *     def generate(self, n=1):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_v_prob_vector) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_prob_vector, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 49, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_prob_table); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
+  if (!(likely(((__pyx_v_prob_vector) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_prob_vector, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_prob_table); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 49, __pyx_L1_error)
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_alias_table); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 49, __pyx_L1_error)
+  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_alias_table); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 49, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 52, __pyx_L1_error)
   __pyx_f_12aliassampler_init_tables(__pyx_t_7, ((PyArrayObject *)__pyx_v_prob_vector), ((PyArrayObject *)__pyx_t_2), ((PyObject*)__pyx_t_5));
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "aliassampler.pyx":33
+  /* "aliassampler.pyx":36
  *     """
  * 
  *     def __init__(self, prob_vector, dtype=np.float32):             # <<<<<<<<<<<<<<
@@ -2204,7 +2210,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler___init__(CYTHON_UNUSED P
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":51
+/* "aliassampler.pyx":54
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
  * 
  *     def generate(self, n=1):             # <<<<<<<<<<<<<<
@@ -2250,7 +2256,7 @@ static PyObject *__pyx_pw_12aliassampler_12AliasSampler_3generate(PyObject *__py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "generate") < 0)) __PYX_ERR(0, 51, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "generate") < 0)) __PYX_ERR(0, 54, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2266,7 +2272,7 @@ static PyObject *__pyx_pw_12aliassampler_12AliasSampler_3generate(PyObject *__py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 51, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 54, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("aliassampler.AliasSampler.generate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2292,7 +2298,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
   PyObject *__pyx_t_8 = NULL;
   __Pyx_RefNannySetupContext("generate", 0);
 
-  /* "aliassampler.pyx":62
+  /* "aliassampler.pyx":65
  *         """
  * 
  *         return generate(n, self.num_el, self.prob_table, self.alias_table)             # <<<<<<<<<<<<<<
@@ -2300,13 +2306,13 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_generate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_generate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_num_el); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_prob_table); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_prob_table); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_alias_table); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_alias_table); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   __pyx_t_7 = 0;
@@ -2323,7 +2329,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[5] = {__pyx_t_6, __pyx_v_n, __pyx_t_3, __pyx_t_4, __pyx_t_5};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 4+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 4+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2334,7 +2340,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[5] = {__pyx_t_6, __pyx_v_n, __pyx_t_3, __pyx_t_4, __pyx_t_5};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 4+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 4+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2343,7 +2349,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
   } else
   #endif
   {
-    __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 62, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 65, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     if (__pyx_t_6) {
       __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2360,7 +2366,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
     __pyx_t_3 = 0;
     __pyx_t_4 = 0;
     __pyx_t_5 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
@@ -2369,7 +2375,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":51
+  /* "aliassampler.pyx":54
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
  * 
  *     def generate(self, n=1):             # <<<<<<<<<<<<<<
@@ -2394,7 +2400,7 @@ static PyObject *__pyx_pf_12aliassampler_12AliasSampler_2generate(CYTHON_UNUSED 
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":66
+/* "aliassampler.pyx":69
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * cdef void init_tables(int num_el,             # <<<<<<<<<<<<<<
@@ -2454,16 +2460,16 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
   __pyx_pybuffernd_prob_table.rcbuffer = &__pyx_pybuffer_prob_table;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_vector.rcbuffer->pybuffer, (PyObject*)__pyx_v_prob_vector, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 66, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_vector.rcbuffer->pybuffer, (PyObject*)__pyx_v_prob_vector, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 69, __pyx_L1_error)
   }
   __pyx_pybuffernd_prob_vector.diminfo[0].strides = __pyx_pybuffernd_prob_vector.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_prob_vector.diminfo[0].shape = __pyx_pybuffernd_prob_vector.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_table.rcbuffer->pybuffer, (PyObject*)__pyx_v_prob_table, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 66, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_table.rcbuffer->pybuffer, (PyObject*)__pyx_v_prob_table, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 69, __pyx_L1_error)
   }
   __pyx_pybuffernd_prob_table.diminfo[0].strides = __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_prob_table.diminfo[0].shape = __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.shape[0];
 
-  /* "aliassampler.pyx":74
+  /* "aliassampler.pyx":77
  *     """
  *     # check consistency of inputs
  *     assert prob_vector.dtype == DTYPE             # <<<<<<<<<<<<<<
@@ -2472,59 +2478,59 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_prob_vector), __pyx_n_s_dtype); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_prob_vector), __pyx_n_s_dtype); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_DTYPE); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_DTYPE); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
+    __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 74, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     if (unlikely(!__pyx_t_4)) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 74, __pyx_L1_error)
+      __PYX_ERR(0, 77, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "aliassampler.pyx":77
+  /* "aliassampler.pyx":80
  * 
  *     # cdef variables
  *     cdef np.ndarray[DTYPE_t, ndim=1] prob_scaled = np.zeros(num_el, dtype=DTYPE)             # <<<<<<<<<<<<<<
  *     cdef int i
  *     cdef int s
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_num_el); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_num_el); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_DTYPE); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_DTYPE); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 80, __pyx_L1_error)
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_5);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_prob_scaled = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 77, __pyx_L1_error)
+      __PYX_ERR(0, 80, __pyx_L1_error)
     } else {__pyx_pybuffernd_prob_scaled.diminfo[0].strides = __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_prob_scaled.diminfo[0].shape = __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -2532,14 +2538,14 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
   __pyx_v_prob_scaled = ((PyArrayObject *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "aliassampler.pyx":85
- *     # def ques
- *     # TODO you might want to cythonize the deques
+  /* "aliassampler.pyx":88
+ *     # def queues
+ *     # using dequeue from collections (actually faster than c-algorithms queue...)
  *     small = deque()             # <<<<<<<<<<<<<<
  *     large = deque()
- * 
+ *     # using c-algorithms queue
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_deque); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_deque); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2552,24 +2558,24 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     }
   }
   if (__pyx_t_1) {
-    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 85, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 88, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
-    __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 85, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_small = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "aliassampler.pyx":86
- *     # TODO you might want to cythonize the deques
+  /* "aliassampler.pyx":89
+ *     # using dequeue from collections (actually faster than c-algorithms queue...)
  *     small = deque()
  *     large = deque()             # <<<<<<<<<<<<<<
- * 
- *     # init variables
+ *     # using c-algorithms queue
+ *     # small = queue.Queue()
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_deque); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_deque); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2582,17 +2588,17 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     }
   }
   if (__pyx_t_1) {
-    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 89, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
-    __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 89, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_large = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "aliassampler.pyx":89
+  /* "aliassampler.pyx":95
  * 
  *     # init variables
  *     for i in range(num_el):             # <<<<<<<<<<<<<<
@@ -2604,7 +2610,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "aliassampler.pyx":90
+    /* "aliassampler.pyx":96
  *     # init variables
  *     for i in range(num_el):
  *         alias_table[i] = -1             # <<<<<<<<<<<<<<
@@ -2613,11 +2619,11 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  */
     if (unlikely(__pyx_v_alias_table == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 90, __pyx_L1_error)
+      __PYX_ERR(0, 96, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_alias_table, __pyx_v_i, __pyx_int_neg_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 90, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_alias_table, __pyx_v_i, __pyx_int_neg_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 96, __pyx_L1_error)
 
-    /* "aliassampler.pyx":91
+    /* "aliassampler.pyx":97
  *     for i in range(num_el):
  *         alias_table[i] = -1
  *         prob_scaled[i] = prob_vector[i] * <double>num_el             # <<<<<<<<<<<<<<
@@ -2629,7 +2635,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     *__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_prob_scaled.diminfo[0].strides) = ((*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_vector.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_prob_vector.diminfo[0].strides)) * ((double)__pyx_v_num_el));
   }
 
-  /* "aliassampler.pyx":94
+  /* "aliassampler.pyx":100
  * 
  *     # divide prob in small and large
  *     for i in range(num_el):             # <<<<<<<<<<<<<<
@@ -2641,7 +2647,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "aliassampler.pyx":95
+    /* "aliassampler.pyx":101
  *     # divide prob in small and large
  *     for i in range(num_el):
  *         p = prob_scaled[i]             # <<<<<<<<<<<<<<
@@ -2651,7 +2657,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     __pyx_t_12 = __pyx_v_i;
     __pyx_v_p = (*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_12, __pyx_pybuffernd_prob_scaled.diminfo[0].strides));
 
-    /* "aliassampler.pyx":96
+    /* "aliassampler.pyx":102
  *     for i in range(num_el):
  *         p = prob_scaled[i]
  *         if p < 1.0:             # <<<<<<<<<<<<<<
@@ -2661,19 +2667,19 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     __pyx_t_4 = ((__pyx_v_p < 1.0) != 0);
     if (__pyx_t_4) {
 
-      /* "aliassampler.pyx":97
+      /* "aliassampler.pyx":103
  *         p = prob_scaled[i]
  *         if p < 1.0:
  *             small.append(i)             # <<<<<<<<<<<<<<
  *         else:
  *             large.append(i)
  */
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_small, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 97, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_small, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 103, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "aliassampler.pyx":96
+      /* "aliassampler.pyx":102
  *     for i in range(num_el):
  *         p = prob_scaled[i]
  *         if p < 1.0:             # <<<<<<<<<<<<<<
@@ -2683,7 +2689,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
       goto __pyx_L7;
     }
 
-    /* "aliassampler.pyx":99
+    /* "aliassampler.pyx":105
  *             small.append(i)
  *         else:
  *             large.append(i)             # <<<<<<<<<<<<<<
@@ -2691,15 +2697,15 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  *     # take from large and give to small (main idea)
  */
     /*else*/ {
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_large, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 99, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_large, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 105, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __pyx_L7:;
   }
 
-  /* "aliassampler.pyx":102
+  /* "aliassampler.pyx":108
  * 
  *     # take from large and give to small (main idea)
  *     while small and large:             # <<<<<<<<<<<<<<
@@ -2707,44 +2713,44 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  *         l = large.pop()
  */
   while (1) {
-    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_v_small); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 102, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_v_small); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 108, __pyx_L1_error)
     if (__pyx_t_14) {
     } else {
       __pyx_t_4 = __pyx_t_14;
       goto __pyx_L10_bool_binop_done;
     }
-    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_v_large); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 102, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_v_large); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 108, __pyx_L1_error)
     __pyx_t_4 = __pyx_t_14;
     __pyx_L10_bool_binop_done:;
     if (!__pyx_t_4) break;
 
-    /* "aliassampler.pyx":103
+    /* "aliassampler.pyx":109
  *     # take from large and give to small (main idea)
  *     while small and large:
  *         s = small.pop()             # <<<<<<<<<<<<<<
  *         l = large.pop()
  *         prob_table[s] = prob_scaled[s]
  */
-    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_small); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_small); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 109, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_s = __pyx_t_7;
 
-    /* "aliassampler.pyx":104
+    /* "aliassampler.pyx":110
  *     while small and large:
  *         s = small.pop()
  *         l = large.pop()             # <<<<<<<<<<<<<<
  *         prob_table[s] = prob_scaled[s]
  *         alias_table[s] = l
  */
-    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_large); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_large); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 110, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 110, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_l = __pyx_t_7;
 
-    /* "aliassampler.pyx":105
+    /* "aliassampler.pyx":111
  *         s = small.pop()
  *         l = large.pop()
  *         prob_table[s] = prob_scaled[s]             # <<<<<<<<<<<<<<
@@ -2755,23 +2761,23 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     __pyx_t_16 = __pyx_v_s;
     *__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_prob_table.diminfo[0].strides) = (*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_prob_scaled.diminfo[0].strides));
 
-    /* "aliassampler.pyx":106
+    /* "aliassampler.pyx":112
  *         l = large.pop()
  *         prob_table[s] = prob_scaled[s]
  *         alias_table[s] = l             # <<<<<<<<<<<<<<
  *         prob_scaled[l] = (prob_scaled[s] + prob_scaled[l]) - 1.0
  *         if prob_scaled[l] < 1.0:
  */
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_l); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_l); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     if (unlikely(__pyx_v_alias_table == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 106, __pyx_L1_error)
+      __PYX_ERR(0, 112, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_alias_table, __pyx_v_s, __pyx_t_5, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 106, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_alias_table, __pyx_v_s, __pyx_t_5, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 112, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "aliassampler.pyx":107
+    /* "aliassampler.pyx":113
  *         prob_table[s] = prob_scaled[s]
  *         alias_table[s] = l
  *         prob_scaled[l] = (prob_scaled[s] + prob_scaled[l]) - 1.0             # <<<<<<<<<<<<<<
@@ -2783,7 +2789,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     __pyx_t_19 = __pyx_v_l;
     *__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_prob_scaled.diminfo[0].strides) = (((*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_prob_scaled.diminfo[0].strides)) + (*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_prob_scaled.diminfo[0].strides))) - 1.0);
 
-    /* "aliassampler.pyx":108
+    /* "aliassampler.pyx":114
  *         alias_table[s] = l
  *         prob_scaled[l] = (prob_scaled[s] + prob_scaled[l]) - 1.0
  *         if prob_scaled[l] < 1.0:             # <<<<<<<<<<<<<<
@@ -2794,19 +2800,19 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     __pyx_t_4 = (((*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_scaled.rcbuffer->pybuffer.buf, __pyx_t_20, __pyx_pybuffernd_prob_scaled.diminfo[0].strides)) < 1.0) != 0);
     if (__pyx_t_4) {
 
-      /* "aliassampler.pyx":109
+      /* "aliassampler.pyx":115
  *         prob_scaled[l] = (prob_scaled[s] + prob_scaled[l]) - 1.0
  *         if prob_scaled[l] < 1.0:
  *             small.append(l)             # <<<<<<<<<<<<<<
  *         else:
  *             large.append(l)
  */
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_l); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_l); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 115, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_small, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 109, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_small, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 115, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "aliassampler.pyx":108
+      /* "aliassampler.pyx":114
  *         alias_table[s] = l
  *         prob_scaled[l] = (prob_scaled[s] + prob_scaled[l]) - 1.0
  *         if prob_scaled[l] < 1.0:             # <<<<<<<<<<<<<<
@@ -2816,7 +2822,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
       goto __pyx_L12;
     }
 
-    /* "aliassampler.pyx":111
+    /* "aliassampler.pyx":117
  *             small.append(l)
  *         else:
  *             large.append(l)             # <<<<<<<<<<<<<<
@@ -2824,15 +2830,15 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  *     # pad 1s to small and large
  */
     /*else*/ {
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_l); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 111, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_l); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 117, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_large, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 111, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_Append(__pyx_v_large, __pyx_t_5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 117, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __pyx_L12:;
   }
 
-  /* "aliassampler.pyx":114
+  /* "aliassampler.pyx":120
  * 
  *     # pad 1s to small and large
  *     while large:             # <<<<<<<<<<<<<<
@@ -2840,23 +2846,23 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  *         prob_table[l] = 1.0
  */
   while (1) {
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_large); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 114, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_large); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 120, __pyx_L1_error)
     if (!__pyx_t_4) break;
 
-    /* "aliassampler.pyx":115
+    /* "aliassampler.pyx":121
  *     # pad 1s to small and large
  *     while large:
  *         l = large.pop()             # <<<<<<<<<<<<<<
  *         prob_table[l] = 1.0
  *     while small:
  */
-    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_large); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 115, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_large); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 121, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 121, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_l = __pyx_t_7;
 
-    /* "aliassampler.pyx":116
+    /* "aliassampler.pyx":122
  *     while large:
  *         l = large.pop()
  *         prob_table[l] = 1.0             # <<<<<<<<<<<<<<
@@ -2867,7 +2873,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     *__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_prob_table.diminfo[0].strides) = 1.0;
   }
 
-  /* "aliassampler.pyx":117
+  /* "aliassampler.pyx":123
  *         l = large.pop()
  *         prob_table[l] = 1.0
  *     while small:             # <<<<<<<<<<<<<<
@@ -2875,23 +2881,23 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
  *         prob_table[s] = 1.0
  */
   while (1) {
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_small); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 117, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_small); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 123, __pyx_L1_error)
     if (!__pyx_t_4) break;
 
-    /* "aliassampler.pyx":118
+    /* "aliassampler.pyx":124
  *         prob_table[l] = 1.0
  *     while small:
  *         s = small.pop()             # <<<<<<<<<<<<<<
  *         prob_table[s] = 1.0
  * 
  */
-    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_small); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Pop(__pyx_v_small); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_s = __pyx_t_7;
 
-    /* "aliassampler.pyx":119
+    /* "aliassampler.pyx":125
  *     while small:
  *         s = small.pop()
  *         prob_table[s] = 1.0             # <<<<<<<<<<<<<<
@@ -2902,7 +2908,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
     *__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_prob_table.diminfo[0].strides) = 1.0;
   }
 
-  /* "aliassampler.pyx":66
+  /* "aliassampler.pyx":69
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * cdef void init_tables(int num_el,             # <<<<<<<<<<<<<<
@@ -2938,7 +2944,7 @@ static void __pyx_f_12aliassampler_init_tables(int __pyx_v_num_el, PyArrayObject
   __Pyx_RefNannyFinishContext();
 }
 
-/* "aliassampler.pyx":123
+/* "aliassampler.pyx":129
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * def generate(int num_samples, int num_el, np.ndarray[DTYPE_t, ndim=1] prob_table,             # <<<<<<<<<<<<<<
@@ -2985,23 +2991,23 @@ static PyObject *__pyx_pw_12aliassampler_1generate(PyObject *__pyx_self, PyObjec
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_el)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, 1); __PYX_ERR(0, 123, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, 1); __PYX_ERR(0, 129, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_prob_table)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, 2); __PYX_ERR(0, 123, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, 2); __PYX_ERR(0, 129, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_alias_table)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, 3); __PYX_ERR(0, 123, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, 3); __PYX_ERR(0, 129, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "generate") < 0)) __PYX_ERR(0, 123, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "generate") < 0)) __PYX_ERR(0, 129, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3011,21 +3017,21 @@ static PyObject *__pyx_pw_12aliassampler_1generate(PyObject *__pyx_self, PyObjec
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_num_samples = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_num_samples == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L3_error)
-    __pyx_v_num_el = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_num_el == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L3_error)
+    __pyx_v_num_samples = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_num_samples == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L3_error)
+    __pyx_v_num_el = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_num_el == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L3_error)
     __pyx_v_prob_table = ((PyArrayObject *)values[2]);
     __pyx_v_alias_table = ((PyObject*)values[3]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 123, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 129, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("aliassampler.generate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_prob_table), __pyx_ptype_5numpy_ndarray, 1, "prob_table", 0))) __PYX_ERR(0, 123, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_alias_table), (&PyList_Type), 1, "alias_table", 1))) __PYX_ERR(0, 124, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_prob_table), __pyx_ptype_5numpy_ndarray, 1, "prob_table", 0))) __PYX_ERR(0, 129, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_alias_table), (&PyList_Type), 1, "alias_table", 1))) __PYX_ERR(0, 130, __pyx_L1_error)
   __pyx_r = __pyx_pf_12aliassampler_generate(__pyx_self, __pyx_v_num_samples, __pyx_v_num_el, __pyx_v_prob_table, __pyx_v_alias_table);
 
   /* function exit code */
@@ -3066,18 +3072,18 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
   __pyx_pybuffernd_prob_table.rcbuffer = &__pyx_pybuffer_prob_table;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_table.rcbuffer->pybuffer, (PyObject*)__pyx_v_prob_table, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 123, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_prob_table.rcbuffer->pybuffer, (PyObject*)__pyx_v_prob_table, &__Pyx_TypeInfo_nn___pyx_t_12aliassampler_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 129, __pyx_L1_error)
   }
   __pyx_pybuffernd_prob_table.diminfo[0].strides = __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_prob_table.diminfo[0].shape = __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.shape[0];
 
-  /* "aliassampler.pyx":131
+  /* "aliassampler.pyx":137
  *     # cdef variables
- * #    cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
+ *     # cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
  *     cdef list samples = [None] * num_samples             # <<<<<<<<<<<<<<
  *     cdef int i
  *     cdef int j
  */
-  __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_samples<0) ? 0:__pyx_v_num_samples)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_samples<0) ? 0:__pyx_v_num_samples)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   { Py_ssize_t __pyx_temp;
     for (__pyx_temp=0; __pyx_temp < __pyx_v_num_samples; __pyx_temp++) {
@@ -3089,7 +3095,7 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
   __pyx_v_samples = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "aliassampler.pyx":137
+  /* "aliassampler.pyx":143
  * 
  *     # generate num_samples using Walker's alias method
  *     for i in range(num_samples):             # <<<<<<<<<<<<<<
@@ -3101,19 +3107,19 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "aliassampler.pyx":138
+    /* "aliassampler.pyx":144
  *     # generate num_samples using Walker's alias method
  *     for i in range(num_samples):
  *         j = random.randrange(num_el)             # <<<<<<<<<<<<<<
  *         # TODO change 1e-5 below to global EPS
  *         if fabs(prob_table[j] - 1.0) < 1e-5:
  */
-    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_random); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 138, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_random); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_randrange); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 138, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_randrange); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_num_el); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 138, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_num_el); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_7 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -3126,14 +3132,14 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
       }
     }
     if (!__pyx_t_7) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_6)) {
         PyObject *__pyx_temp[2] = {__pyx_t_7, __pyx_t_5};
-        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -3142,30 +3148,30 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
         PyObject *__pyx_temp[2] = {__pyx_t_7, __pyx_t_5};
-        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       } else
       #endif
       {
-        __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 138, __pyx_L1_error)
+        __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 144, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
         __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_7); __pyx_t_7 = NULL;
         __Pyx_GIVEREF(__pyx_t_5);
         PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_t_5);
         __pyx_t_5 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       }
     }
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_j = __pyx_t_9;
 
-    /* "aliassampler.pyx":140
+    /* "aliassampler.pyx":146
  *         j = random.randrange(num_el)
  *         # TODO change 1e-5 below to global EPS
  *         if fabs(prob_table[j] - 1.0) < 1e-5:             # <<<<<<<<<<<<<<
@@ -3176,19 +3182,19 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
     __pyx_t_11 = ((fabs(((*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_prob_table.diminfo[0].strides)) - 1.0)) < 1e-5) != 0);
     if (__pyx_t_11) {
 
-      /* "aliassampler.pyx":141
+      /* "aliassampler.pyx":147
  *         # TODO change 1e-5 below to global EPS
  *         if fabs(prob_table[j] - 1.0) < 1e-5:
  *             samples[i] = j             # <<<<<<<<<<<<<<
  *         else:
  *             p = random.random()
  */
-      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_samples, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 141, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_samples, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "aliassampler.pyx":140
+      /* "aliassampler.pyx":146
  *         j = random.randrange(num_el)
  *         # TODO change 1e-5 below to global EPS
  *         if fabs(prob_table[j] - 1.0) < 1e-5:             # <<<<<<<<<<<<<<
@@ -3198,7 +3204,7 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
       goto __pyx_L5;
     }
 
-    /* "aliassampler.pyx":143
+    /* "aliassampler.pyx":149
  *             samples[i] = j
  *         else:
  *             p = random.random()             # <<<<<<<<<<<<<<
@@ -3206,9 +3212,9 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
  *                 samples[i] = j
  */
     /*else*/ {
-      __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_random); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 143, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_random); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_random); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 143, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_random); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_t_6 = NULL;
@@ -3222,18 +3228,18 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
         }
       }
       if (__pyx_t_6) {
-        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       } else {
-        __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_12 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 143, __pyx_L1_error)
+      __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_12 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_v_p = __pyx_t_12;
 
-      /* "aliassampler.pyx":144
+      /* "aliassampler.pyx":150
  *         else:
  *             p = random.random()
  *             if p <= prob_table[j]:             # <<<<<<<<<<<<<<
@@ -3244,19 +3250,19 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
       __pyx_t_11 = ((__pyx_v_p <= (*__Pyx_BufPtrStrided1d(__pyx_t_12aliassampler_DTYPE_t *, __pyx_pybuffernd_prob_table.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_prob_table.diminfo[0].strides))) != 0);
       if (__pyx_t_11) {
 
-        /* "aliassampler.pyx":145
+        /* "aliassampler.pyx":151
  *             p = random.random()
  *             if p <= prob_table[j]:
  *                 samples[i] = j             # <<<<<<<<<<<<<<
  *             else:
  *                 samples[i] = alias_table[j]
  */
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        if (unlikely(__Pyx_SetItemInt(__pyx_v_samples, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 145, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_v_samples, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 151, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "aliassampler.pyx":144
+        /* "aliassampler.pyx":150
  *         else:
  *             p = random.random()
  *             if p <= prob_table[j]:             # <<<<<<<<<<<<<<
@@ -3266,7 +3272,7 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
         goto __pyx_L6;
       }
 
-      /* "aliassampler.pyx":147
+      /* "aliassampler.pyx":153
  *                 samples[i] = j
  *             else:
  *                 samples[i] = alias_table[j]             # <<<<<<<<<<<<<<
@@ -3275,11 +3281,11 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
       /*else*/ {
         if (unlikely(__pyx_v_alias_table == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 147, __pyx_L1_error)
+          __PYX_ERR(0, 153, __pyx_L1_error)
         }
         __pyx_t_1 = PyList_GET_ITEM(__pyx_v_alias_table, __pyx_v_j);
         __Pyx_INCREF(__pyx_t_1);
-        if (unlikely(__Pyx_SetItemInt(__pyx_v_samples, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 147, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_v_samples, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 0, 0) < 0)) __PYX_ERR(0, 153, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
       __pyx_L6:;
@@ -3287,7 +3293,7 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
     __pyx_L5:;
   }
 
-  /* "aliassampler.pyx":148
+  /* "aliassampler.pyx":154
  *             else:
  *                 samples[i] = alias_table[j]
  *     return samples             # <<<<<<<<<<<<<<
@@ -3297,7 +3303,7 @@ static PyObject *__pyx_pf_12aliassampler_generate(CYTHON_UNUSED PyObject *__pyx_
   __pyx_r = __pyx_v_samples;
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":123
+  /* "aliassampler.pyx":129
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * def generate(int num_samples, int num_el, np.ndarray[DTYPE_t, ndim=1] prob_table,             # <<<<<<<<<<<<<<
@@ -5840,12 +5846,14 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u_Non_native_byte_order_not_suppor, __pyx_k_Non_native_byte_order_not_suppor, sizeof(__pyx_k_Non_native_byte_order_not_suppor), 0, 1, 0, 0},
   {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
+  {&__pyx_n_s__10, __pyx_k__10, sizeof(__pyx_k__10), 0, 0, 1, 1},
   {&__pyx_n_s_alias_table, __pyx_k_alias_table, sizeof(__pyx_k_alias_table), 0, 0, 1, 1},
   {&__pyx_n_s_aliassampler, __pyx_k_aliassampler, sizeof(__pyx_k_aliassampler), 0, 0, 1, 1},
   {&__pyx_kp_s_aliassampler_pyx, __pyx_k_aliassampler_pyx, sizeof(__pyx_k_aliassampler_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_collections, __pyx_k_collections, sizeof(__pyx_k_collections), 0, 0, 1, 1},
+  {&__pyx_n_s_cython_utils_cythonf_queue, __pyx_k_cython_utils_cythonf_queue, sizeof(__pyx_k_cython_utils_cythonf_queue), 0, 0, 1, 1},
   {&__pyx_n_s_deque, __pyx_k_deque, sizeof(__pyx_k_deque), 0, 0, 1, 1},
   {&__pyx_n_s_doc, __pyx_k_doc, sizeof(__pyx_k_doc), 0, 0, 1, 1},
   {&__pyx_n_s_double, __pyx_k_double, sizeof(__pyx_k_double), 0, 0, 1, 1},
@@ -5874,6 +5882,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_prob_table, __pyx_k_prob_table, sizeof(__pyx_k_prob_table), 0, 0, 1, 1},
   {&__pyx_n_s_prob_vector, __pyx_k_prob_vector, sizeof(__pyx_k_prob_vector), 0, 0, 1, 1},
   {&__pyx_n_s_qualname, __pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 0, 1, 1},
+  {&__pyx_n_s_queue, __pyx_k_queue, sizeof(__pyx_k_queue), 0, 0, 1, 1},
   {&__pyx_n_s_random, __pyx_k_random, sizeof(__pyx_k_random), 0, 0, 1, 1},
   {&__pyx_n_s_randrange, __pyx_k_randrange, sizeof(__pyx_k_randrange), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
@@ -5885,7 +5894,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 95, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 229, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 810, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 1000, __pyx_L1_error)
@@ -5995,44 +6004,44 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "aliassampler.pyx":33
+  /* "aliassampler.pyx":36
  *     """
  * 
  *     def __init__(self, prob_vector, dtype=np.float32):             # <<<<<<<<<<<<<<
  *         """
  *         Calls corresponding cython function
  */
-  __pyx_tuple__10 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_prob_vector, __pyx_n_s_dtype, __pyx_n_s_prob_table, __pyx_n_s_alias_table); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 33, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_init, 33, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_prob_vector, __pyx_n_s_dtype, __pyx_n_s_prob_table, __pyx_n_s_alias_table); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_init, 36, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 36, __pyx_L1_error)
 
-  /* "aliassampler.pyx":51
+  /* "aliassampler.pyx":54
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
  * 
  *     def generate(self, n=1):             # <<<<<<<<<<<<<<
  *         """
  *         Calls corresponding cython function
  */
-  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_n); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 51, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__12);
-  __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_generate, 51, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 51, __pyx_L1_error)
-  __pyx_tuple__14 = PyTuple_Pack(1, ((PyObject *)__pyx_int_1)); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 51, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__14);
-  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_n); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_generate, 54, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(1, ((PyObject *)__pyx_int_1)); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
 
-  /* "aliassampler.pyx":123
+  /* "aliassampler.pyx":129
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * def generate(int num_samples, int num_el, np.ndarray[DTYPE_t, ndim=1] prob_table,             # <<<<<<<<<<<<<<
  *             list alias_table):
  *     """
  */
-  __pyx_tuple__15 = PyTuple_Pack(8, __pyx_n_s_num_samples, __pyx_n_s_num_el, __pyx_n_s_prob_table, __pyx_n_s_alias_table, __pyx_n_s_samples, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_p); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 123, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_generate, 123, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(8, __pyx_n_s_num_samples, __pyx_n_s_num_el, __pyx_n_s_prob_table, __pyx_n_s_alias_table, __pyx_n_s_samples, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_p); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_generate, 129, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 129, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -6322,7 +6331,7 @@ if (!__Pyx_RefNanny) {
  * import numpy as np
  * import random             # <<<<<<<<<<<<<<
  * from collections import deque
- * import cython
+ * import cython_utils.cythonf.queue as queue
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_random, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6333,8 +6342,8 @@ if (!__Pyx_RefNanny) {
  * import numpy as np
  * import random
  * from collections import deque             # <<<<<<<<<<<<<<
- * import cython
- * from libc.math cimport fabs
+ * import cython_utils.cythonf.queue as queue
+ * 
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6350,100 +6359,118 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "aliassampler.pyx":18
+  /* "aliassampler.pyx":14
+ * import random
+ * from collections import deque
+ * import cython_utils.cythonf.queue as queue             # <<<<<<<<<<<<<<
+ * 
+ * import cython
+ */
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_n_s__10);
+  __Pyx_GIVEREF(__pyx_n_s__10);
+  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s__10);
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_cython_utils_cythonf_queue, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_queue, __pyx_t_1) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "aliassampler.pyx":20
  * cimport numpy as np
  * 
  * DTYPE = np.double             # <<<<<<<<<<<<<<
  * ctypedef np.double_t DTYPE_t
  * 
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_double); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DTYPE, __pyx_t_1) < 0) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_double); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DTYPE, __pyx_t_2) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "aliassampler.pyx":22
- * 
+  /* "aliassampler.pyx":25
+ * # TODO Only works with float64! Make compatible with all float types (see cython/fused type)
  * 
  * class AliasSampler():             # <<<<<<<<<<<<<<
  *     """
  *     Implements Walker's Alias Method for efficiently sampling from a categorical distribution (biased die),
  */
-  __pyx_t_1 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_AliasSampler, __pyx_n_s_AliasSampler, (PyObject *) NULL, __pyx_n_s_aliassampler, __pyx_kp_s_Implements_Walker_s_Alias_Metho); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_AliasSampler, __pyx_n_s_AliasSampler, (PyObject *) NULL, __pyx_n_s_aliassampler, __pyx_kp_s_Implements_Walker_s_Alias_Metho); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
 
-  /* "aliassampler.pyx":33
+  /* "aliassampler.pyx":36
  *     """
  * 
  *     def __init__(self, prob_vector, dtype=np.float32):             # <<<<<<<<<<<<<<
  *         """
  *         Calls corresponding cython function
  */
-  __pyx_t_2 = __Pyx_CyFunction_NewEx(&__pyx_mdef_12aliassampler_12AliasSampler_1__init__, 0, __pyx_n_s_AliasSampler___init, NULL, __pyx_n_s_aliassampler, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (!__Pyx_CyFunction_InitDefaults(__pyx_t_2, sizeof(__pyx_defaults), 1)) __PYX_ERR(0, 33, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_12aliassampler_12AliasSampler_1__init__, 0, __pyx_n_s_AliasSampler___init, NULL, __pyx_n_s_aliassampler, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (!__Pyx_CyFunction_InitDefaults(__pyx_t_1, sizeof(__pyx_defaults), 1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float32); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float32); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_CyFunction_Defaults(__pyx_defaults, __pyx_t_2)->__pyx_arg_dtype = __pyx_t_4;
+  __Pyx_CyFunction_Defaults(__pyx_defaults, __pyx_t_1)->__pyx_arg_dtype = __pyx_t_4;
   __Pyx_GIVEREF(__pyx_t_4);
   __pyx_t_4 = 0;
-  __Pyx_CyFunction_SetDefaultsGetter(__pyx_t_2, __pyx_pf_12aliassampler_2__defaults__);
-  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_init, __pyx_t_2) < 0) __PYX_ERR(0, 33, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_CyFunction_SetDefaultsGetter(__pyx_t_1, __pyx_pf_12aliassampler_2__defaults__);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_init, __pyx_t_1) < 0) __PYX_ERR(0, 36, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "aliassampler.pyx":51
+  /* "aliassampler.pyx":54
  *         init_tables(self.num_el, prob_vector, self.prob_table, self.alias_table)
  * 
  *     def generate(self, n=1):             # <<<<<<<<<<<<<<
  *         """
  *         Calls corresponding cython function
  */
-  __pyx_t_2 = __Pyx_CyFunction_NewEx(&__pyx_mdef_12aliassampler_12AliasSampler_3generate, 0, __pyx_n_s_AliasSampler_generate, NULL, __pyx_n_s_aliassampler, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_tuple__14);
-  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_generate, __pyx_t_2) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_12aliassampler_12AliasSampler_3generate, 0, __pyx_n_s_AliasSampler_generate, NULL, __pyx_n_s_aliassampler, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_1, __pyx_tuple__15);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_generate, __pyx_t_1) < 0) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "aliassampler.pyx":22
- * 
+  /* "aliassampler.pyx":25
+ * # TODO Only works with float64! Make compatible with all float types (see cython/fused type)
  * 
  * class AliasSampler():             # <<<<<<<<<<<<<<
  *     """
  *     Implements Walker's Alias Method for efficiently sampling from a categorical distribution (biased die),
  */
-  __pyx_t_2 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_AliasSampler, __pyx_empty_tuple, __pyx_t_1, NULL, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 22, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_AliasSampler, __pyx_t_2) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_AliasSampler, __pyx_empty_tuple, __pyx_t_2, NULL, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_AliasSampler, __pyx_t_1) < 0) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "aliassampler.pyx":123
+  /* "aliassampler.pyx":129
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * def generate(int num_samples, int num_el, np.ndarray[DTYPE_t, ndim=1] prob_table,             # <<<<<<<<<<<<<<
  *             list alias_table):
  *     """
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12aliassampler_1generate, NULL, __pyx_n_s_aliassampler); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_generate, __pyx_t_1) < 0) __PYX_ERR(0, 123, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_12aliassampler_1generate, NULL, __pyx_n_s_aliassampler); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_generate, __pyx_t_2) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "aliassampler.pyx":1
  * #!/usr/bin/env cython             # <<<<<<<<<<<<<<
  * # coding: utf-8
  * # cython: embedsignature=True
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "../../../../../Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":1008
  *         raise ImportError("numpy.core.umath failed to import")

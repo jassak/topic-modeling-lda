@@ -11,6 +11,8 @@ Created on 25 July 2018
 import numpy as np
 import random
 from collections import deque
+import cython_utils.cythonf.queue as queue
+
 import cython
 from libc.math cimport fabs
 cimport numpy as np
@@ -81,10 +83,13 @@ cdef void init_tables(int num_el,
     cdef int l
     cdef double p
 
-    # def ques
-    # TODO you might want to cythonize the deques
+    # def queues
+    # using dequeue from collections (actually faster than c-algorithms queue...)
     small = deque()
     large = deque()
+    # using c-algorithms queue
+    # small = queue.Queue()
+    # large = queue.Queue()
 
     # init variables
     for i in range(num_el):
@@ -128,7 +133,7 @@ def generate(int num_samples, int num_el, np.ndarray[DTYPE_t, ndim=1] prob_table
     """
 
     # cdef variables
-#    cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
+    # cdef np.ndarray[DTYPE_I_t, ndim=1] samples = np.zeros(num_samples, dtype=DTYPE_I)
     cdef list samples = [None] * num_samples
     cdef int i
     cdef int j
