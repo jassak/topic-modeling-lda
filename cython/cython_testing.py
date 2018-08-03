@@ -48,22 +48,6 @@ probs = probs / sum(probs)
 
     print('cy is ', time_py/time_cy, 'times faster than py')
 
-    # sampler_py = AliasSamplerPy(probs)
-    # samples_py = sampler_py.generate(num_samples)
-    #
-    # counts_cy = [0] * num_el
-    # for i in range(num_samples):
-    #     counts_cy[samples_cy[i]] += 1 / num_samples
-    # dist_cy = 1 - spatial.distance.cosine(probs, counts_cy)
-    #
-    # counts_py = [0] * num_el
-    # for i in range(num_samples):
-    #     counts_py[samples_py[i]] += 1 / num_samples
-    # dist_py = 1 - spatial.distance.cosine(probs, counts_py)
-    #
-    # print('dist_cy = ', dist_cy)
-    # print('dist_py = ', dist_py)
-
 
 
 
