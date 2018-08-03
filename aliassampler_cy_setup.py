@@ -1,8 +1,9 @@
 from distutils.core import setup
+from distutils.extension import Extension
 from Cython.Build import cythonize
 import numpy
 
 setup(
-    ext_modules=cythonize("aliassampler.pyx"),
+    ext_modules=cythonize([Extension("aliassampler", ["aliassampler.pyx"])]),
     include_dirs=[numpy.get_include()]
 )
