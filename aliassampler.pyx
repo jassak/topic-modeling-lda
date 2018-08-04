@@ -11,7 +11,6 @@ Created on 25 July 2018
 import numpy as np
 import random
 from collections import deque
-import cython_utils.cythonf.queue as queue
 
 import cython
 from libc.math cimport fabs
@@ -87,9 +86,6 @@ cdef void init_tables(int num_el,
     # using dequeue from collections (actually faster than c-algorithms queue...)
     small = deque()
     large = deque()
-    # using c-algorithms queue
-    # small = queue.Queue()
-    # large = queue.Queue()
 
     # init variables
     for i in range(num_el):

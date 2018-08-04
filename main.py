@@ -41,11 +41,11 @@ def make_rand_sim_matrix(num_terms, avdeg):
     return sim_mat
 
 def main():
-    from ldamodel_mhw import LDAModelMHW
+    from ldamodel_cgs import LDAModelCGS
     from nipscorpus import NipsCorpus
 
     corpus = NipsCorpus()
-    model = LDAModelMHW(corpus, num_topics=100, num_passes=5, dtype=np.float64)
+    model = LDAModelCGS(corpus, num_topics=100, num_passes=5, dtype=np.float64)
     model.save('models/test_model_mhw_t100p5.pkl')
 
 

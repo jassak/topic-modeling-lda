@@ -1,3 +1,4 @@
+
 cdef extern from "../src/queue.h":
     ctypedef struct Queue:
         pass
