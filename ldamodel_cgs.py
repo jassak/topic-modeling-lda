@@ -18,6 +18,10 @@ from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
 from corpusutils import get_seqs_and_counts
 
+from _sampling_utils_py import cgs_sample_topics_for_one_doc
+
+from profiling_utils import profileit
+
 logger = logging.getLogger(__name__)
 
 DTYPE_TO_EPS = {
@@ -240,19 +244,23 @@ class LDAModelCGS(ABCTopicModel):
 
         self.theta, self.phi = self.get_theta_phi()
 
+    @profileit
     def do_one_pass(self):
         """
         Performs one iteration of Gibbs sampling, across all documents.
 
         """
 
+        # TODO restore this!
         for doc_id in range(self.num_docs):
+        # for doc_id in range(1):
             if doc_id % 10 == 0:
                 logger.info("doc: {0}".format(doc_id))
             else:
                 logger.debug("doc: {0}".format(doc_id))
             self.sample_topics_for_one_doc(doc_id)
 
+    # @profileit
     def sample_topics_for_one_doc(self, doc_id):
         """
         Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
@@ -263,45 +271,87 @@ class LDAModelCGS(ABCTopicModel):
             doc_id:
 
         """
-        doc_term_seq = self.term_seqs[doc_id]
-        doc_len = len(doc_term_seq)
-        doc_topic_seq = self.topic_seqs[doc_id]
-        doc_topic_count = self.doc_topic_counts[doc_id]
-        num_topics = len(doc_topic_count)
+        doc_len = len(self.term_seqs[doc_id])
+        # CORRECTED BUG HERE, used to be num_topics = len(doc_topics_counts[docid])
+        # corrected to num_topics = self.num_topics
+        num_topics = self.num_topics
+        # num_topics = len(self.doc_topic_counts[doc_id])
 
+        # allocate topic weights
+        # topic_weights = [0] * num_topics
+        # topic_weights = np.zeros(num_topics, self.dtype)
+
+
+        #========NEW METHOD============
+        # TODO verify that new method gives correct results!!!
+        # prepare arguments
+        w_beta = self.w_beta
+        alpha = self.alpha
+        beta = self.beta
+        cur_doc_topic_count = self.doc_topic_counts[doc_id]
+        cur_term_seq = self.term_seqs[doc_id]
+        cur_topic_seq = self.topic_seqs[doc_id]
+        term_topic_counts = self.term_topic_counts
+        terms_per_topic = self.terms_per_topic
+
+        cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics,
+                                      alpha, beta, w_beta,
+                                      cur_term_seq, cur_topic_seq,
+                                      cur_doc_topic_count, term_topic_counts, terms_per_topic)
+
+        #==========OLD METHOD============
         # Iterate over the positions (words) in the document
-        for si in range(doc_len):
-            term_id = doc_term_seq[si]
-            old_topic = doc_topic_seq[si]
-            logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
-                         .format(si, term_id, old_topic))
-
-            # Remove this topic from all counts
-            doc_topic_count[old_topic] -= 1
-            self.term_topic_counts[term_id][old_topic] -= 1
-            self.terms_per_topic[old_topic] -= 1
-
-            # Build a distribution over topics for this term
-            topic_weights = np.zeros(num_topics, self.dtype)
-            current_term_topic_count = self.term_topic_counts[term_id]
-            for ti in range(num_topics):
-                tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.w_beta)) \
-                     * (doc_topic_count[ti] + self.alpha[ti])
-                topic_weights[ti] = tw
-            topic_weights = topic_weights / sum(topic_weights)
-
-            # Sample a topic assignment from this distribution
-            new_topic = np.random.choice(num_topics, p=topic_weights)
-
-            # Put that new topic into the counts
-            doc_topic_seq[si] = new_topic
-            doc_topic_count[new_topic] += 1
-            self.term_topic_counts[term_id][new_topic] += 1
-            self.terms_per_topic[new_topic] += 1
+        # cur_doc_topic_count = self.doc_topic_counts[doc_id]
+        # w_beta = self.w_beta
+        # alpha = self.alpha
+        #
+        # for si in range(doc_len):
+        #     term_id = self.term_seqs[doc_id][si]
+        #     old_topic = self.topic_seqs[doc_id][si]
+        #     # logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
+        #     #              .format(si, term_id, old_topic))
+        #
+        #     # Remove this topic from all counts
+        #     self.doc_topic_counts[doc_id][old_topic] -= 1
+        #     self.term_topic_counts[term_id][old_topic] -= 1
+        #     self.terms_per_topic[old_topic] -= 1
+        #
+        #     # Build a distribution over topics for this term
+        #     # tw_sum = 0
+        #     # for ti in range(num_topics):
+        #     #     tw = ((self.term_topic_counts[term_id][ti] + self.beta[term_id])
+        #     #         / (self.terms_per_topic[ti] + self.w_beta)
+        #     #         * (self.doc_topic_counts[doc_id][ti] + self.alpha[ti]))
+        #     #     topic_weights[ti] = tw
+        #     #     tw_sum += tw
+        #     # topic_weights = topic_weights / tw_sum
+        #
+        #     terms_per_topic = self.terms_per_topic
+        #     cur_term_topic_count = self.term_topic_counts[term_id]
+        #     beta = self.beta[term_id]
+        #
+        #     topic_weights = [((cur_term_topic_count[ti] + beta)
+        #             / (terms_per_topic[ti] + w_beta)
+        #             * (cur_doc_topic_count[ti] + alpha[ti])) for ti in range(num_topics)]
+        #     tw_sum = sum(topic_weights)
+        #     topic_weights = [topic_weights[ti] / tw_sum for ti in  range(num_topics)]
+        #
+        #     # topic_weights = [((self.term_topic_counts[term_id][ti] + self.beta[term_id])
+        #     #         / (self.terms_per_topic[ti] + self.w_beta)
+        #     #         * (self.doc_topic_counts[doc_id][ti] + self.alpha[ti])) for ti in range(num_topics)]
+        #
+        #     # Sample a topic assignment from this distribution
+        #     new_topic = np.random.choice(num_topics, p=topic_weights)
+        #
+        #     # Put that new topic into the counts
+        #     self.topic_seqs[doc_id][si] = new_topic
+        #     self.doc_topic_counts[doc_id][new_topic] += 1
+        #     self.term_topic_counts[term_id][new_topic] += 1
+        #     self.terms_per_topic[new_topic] += 1
 
         # Update seqs and counts document-wise
-        self.topic_seqs[doc_id] = doc_topic_seq
-        self.doc_topic_counts[doc_id] = doc_topic_count
+        # self.topic_seqs[doc_id] = doc_topic_seq
+        # self.doc_topic_counts[doc_id] = doc_topic_count
 
     def get_theta_phi(self):
         """
