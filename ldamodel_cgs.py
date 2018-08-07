@@ -18,7 +18,7 @@ from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
 from corpusutils import get_seqs_and_counts
 
-from _sampling_utils_py import cgs_sample_topics_for_one_doc
+from _sampling_utils import cgs_sample_topics_for_one_doc, cgs_do_one_pass
 
 from profiling_utils import profileit
 
@@ -240,9 +240,9 @@ class LDAModelCGS(ABCTopicModel):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass()
             # uncomment below for save-while-training
-            self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
+            # self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
 
-        self.theta, self.phi = self.get_theta_phi()
+        # self.theta, self.phi = self.get_theta_phi()
 
     @profileit
     def do_one_pass(self):
@@ -251,7 +251,11 @@ class LDAModelCGS(ABCTopicModel):
 
         """
 
-        # TODO restore this!
+        # call external func (cython avaliable)
+        # cgs_do_one_pass(self.num_docs, self.num_topics, self.alpha, self.beta, self.w_beta, self.term_seqs,
+        #                 self.topic_seqs, self.doc_topic_counts, self.term_topic_counts, self.terms_per_topic)
+
+        # or, do it locally
         for doc_id in range(self.num_docs):
         # for doc_id in range(1):
             if doc_id % 10 == 0:

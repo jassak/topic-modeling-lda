@@ -5,6 +5,7 @@
 # TODO follow gensim: a python wraper using def calling a cython function using cdef
 # TODO cythonize do_one_pass
 # TODO try various methods of pre-allocation for topic_weights
+# TODO check if possible to remove doc_id from args
 
 """
 Created on 5 August 2018
@@ -17,7 +18,6 @@ import numpy as np
 cimport numpy as np
 ctypedef cython.floating DTYPE_t
 
-
 #def cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics,
 #                                    alpha, beta, w_beta,
 #                                    term_seq, topic_seq,
@@ -26,6 +26,27 @@ ctypedef cython.floating DTYPE_t
 #                                    alpha, beta, w_beta,
 #                                    term_seq, topic_seq,
 #                                    cur_doc_topic_count, term_topic_counts, terms_per_topic)
+
+
+def cgs_do_one_pass(int num_docs, int num_topics,
+                    DTYPE_t[:] alpha, DTYPE_t[:] beta, DTYPE_t w_beta,
+                    list term_seqs, list topic_seqs,
+                    list doc_topic_counts, list term_topic_counts, list terms_per_topic):
+
+    # cdefs
+    cdef int doc_id
+    cdef int doc_len
+
+    for doc_id in range(num_docs):
+        if doc_id % 10 == 0:
+            print(doc_id)
+        doc_len = len(term_seqs[doc_id])
+        cur_doc_topic_count = doc_topic_counts[doc_id]
+        cur_term_seq = term_seqs[doc_id]
+        cur_topic_seq = topic_seqs[doc_id]
+        cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics, alpha, beta, w_beta, cur_term_seq, cur_topic_seq,
+                                      cur_doc_topic_count, term_topic_counts, terms_per_topic)
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -40,7 +61,9 @@ def cgs_sample_topics_for_one_doc(int doc_id, int doc_len, int num_topics,
     cdef int term_id
     cdef int old_topic
     # TODO try various methods of pre-allocation for topic_weights
-    #    cdef double *topic_weights = <DTYPE_t *> malloc(num_topics * sizeof(DTYPE_t))
+#    cdef np.ndarray[DTYPE_t, ndim=1] topic_weights = np.zeros(num_topics, dtype=np.double)
+#    cdef double tw
+#    cdef double tw_sum
 
     # Iterate over the positions (words) in the document
     for si in range(doc_len):
@@ -55,19 +78,22 @@ def cgs_sample_topics_for_one_doc(int doc_id, int doc_len, int num_topics,
         terms_per_topic[old_topic] -= 1
 
         # TODO try different methods of building topic_weights
-        # Build a distribution over topics for this term
-        # tw_sum = 0
-        # for ti in range(num_topics):
-        #     tw = ((self.term_topic_counts[term_id][ti] + self.beta[term_id])
-        #         / (self.terms_per_topic[ti] + self.w_beta)
-        #         * (self.doc_topic_counts[doc_id][ti] + self.alpha[ti]))
-        #     topic_weights[ti] = tw
-        #     tw_sum += tw
-        # topic_weights = topic_weights / tw_sum
+        # IF YOU REMOVE THIS, REMOVE ALLOCS ABOVE ALSO
+        # Build a distribution over topics for this term (C-style)
+#        tw_sum = 0
+#        for ti in range(num_topics):
+#            tw = ((term_topic_counts[term_id][ti] + beta[term_id])
+#                 / (terms_per_topic[ti] + w_beta)
+#                 * (cur_doc_topic_count[ti] + alpha[ti]))
+#            topic_weights[ti] = tw
+#            tw_sum += tw
+#        for ti in range(num_topics):
+#            topic_weights[ti] /= tw_sum
 
         cur_term_topic_count = term_topic_counts[term_id]
         one_beta = beta[term_id]
 
+        # Build a distribution over topics for this term (Python-style)
         topic_weights = [((cur_term_topic_count[ti] + one_beta)
                 / (terms_per_topic[ti] + w_beta)
                 * (cur_doc_topic_count[ti] + alpha[ti])) for ti in range(num_topics)]

@@ -11,10 +11,22 @@ Created on 5 August 2018
 
 import numpy as np
 
-def cgs_do_one_pass(num_docs, num_topics):
-    pass
+def cgs_do_one_pass(num_docs, num_topics, alpha, beta, w_beta, term_seqs, topic_seqs, doc_topic_counts,
+                    term_topic_counts, terms_per_topic):
 
-def cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics, alpha, vec_beta, w_beta, term_seq, topic_seq,
+    for doc_id in range(num_docs):
+        if doc_id % 10 == 0:
+            print(doc_id)
+        doc_len = len(term_seqs[doc_id])
+        cur_doc_topic_count = doc_topic_counts[doc_id]
+        cur_term_seq = term_seqs[doc_id]
+        cur_topic_seq = topic_seqs[doc_id]
+
+        cgs_sample_topics_for_one_doc(doc_len, num_topics, alpha, beta, w_beta, cur_term_seq, cur_topic_seq,
+                                      cur_doc_topic_count, term_topic_counts, terms_per_topic)
+
+
+def cgs_sample_topics_for_one_doc(doc_len, num_topics, alpha, vec_beta, w_beta, term_seq, topic_seq,
                                   cur_doc_topic_count,
                                   term_topic_counts, terms_per_topic):
 
