@@ -9,7 +9,6 @@ figures/
 .idea/
 
 # project files
-main.py
 
 # cython related files
 cython/*.html

@@ -3,8 +3,6 @@
 # cython: embedsignature=True
 
 # TODO follow gensim: a python wraper using def calling a cython function using cdef
-# TODO cythonize do_one_pass
-# TODO try various methods of pre-allocation for topic_weights
 # TODO check if possible to remove doc_id from args
 
 """
@@ -18,20 +16,15 @@ import numpy as np
 cimport numpy as np
 ctypedef cython.floating DTYPE_t
 
-#def cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics,
-#                                    alpha, beta, w_beta,
-#                                    term_seq, topic_seq,
-#                                    cur_doc_topic_count, term_topic_counts, terms_per_topic):
-#    _cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics,
-#                                    alpha, beta, w_beta,
-#                                    term_seq, topic_seq,
-#                                    cur_doc_topic_count, term_topic_counts, terms_per_topic)
-
 
 def cgs_do_one_pass(int num_docs, int num_topics,
                     DTYPE_t[:] alpha, DTYPE_t[:] beta, DTYPE_t w_beta,
                     list term_seqs, list topic_seqs,
                     list doc_topic_counts, list term_topic_counts, list terms_per_topic):
+    """
+    Performs one iteration of Gibbs sampling, across all documents.
+
+    """
 
     # cdefs
     cdef int doc_id
@@ -55,45 +48,37 @@ def cgs_sample_topics_for_one_doc(int doc_id, int doc_len, int num_topics,
                                         DTYPE_t[:] alpha, DTYPE_t[:] beta, DTYPE_t w_beta,
                                         list term_seq, list topic_seq,
                                         list cur_doc_topic_count, list term_topic_counts, list terms_per_topic):
+    """
+    Cython version:
+    Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
+    for one document, according to
+    **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
+
+    Args:
+        doc_id:
+
+    """
 
     # cdefs
     cdef int si
     cdef int term_id
     cdef int old_topic
-    # TODO try various methods of pre-allocation for topic_weights
-#    cdef np.ndarray[DTYPE_t, ndim=1] topic_weights = np.zeros(num_topics, dtype=np.double)
-#    cdef double tw
-#    cdef double tw_sum
 
     # Iterate over the positions (words) in the document
     for si in range(doc_len):
         term_id = term_seq[si]
         old_topic = topic_seq[si]
-        # logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
-        #              .format(si, term_id, old_topic))
 
         # Remove this topic from all counts
         cur_doc_topic_count[old_topic] -= 1
         term_topic_counts[term_id][old_topic] -= 1
         terms_per_topic[old_topic] -= 1
 
-        # TODO try different methods of building topic_weights
-        # IF YOU REMOVE THIS, REMOVE ALLOCS ABOVE ALSO
-        # Build a distribution over topics for this term (C-style)
-#        tw_sum = 0
-#        for ti in range(num_topics):
-#            tw = ((term_topic_counts[term_id][ti] + beta[term_id])
-#                 / (terms_per_topic[ti] + w_beta)
-#                 * (cur_doc_topic_count[ti] + alpha[ti]))
-#            topic_weights[ti] = tw
-#            tw_sum += tw
-#        for ti in range(num_topics):
-#            topic_weights[ti] /= tw_sum
-
+        # localize some variables
         cur_term_topic_count = term_topic_counts[term_id]
         one_beta = beta[term_id]
 
-        # Build a distribution over topics for this term (Python-style)
+        # Build a distribution over topics for this term
         topic_weights = [((cur_term_topic_count[ti] + one_beta)
                 / (terms_per_topic[ti] + w_beta)
                 * (cur_doc_topic_count[ti] + alpha[ti])) for ti in range(num_topics)]
@@ -108,5 +93,3 @@ def cgs_sample_topics_for_one_doc(int doc_id, int doc_len, int num_topics,
         cur_doc_topic_count[new_topic] += 1
         term_topic_counts[term_id][new_topic] += 1
         terms_per_topic[new_topic] += 1
-
-
