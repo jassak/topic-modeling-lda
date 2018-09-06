@@ -18,6 +18,10 @@ from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
 from corpusutils import get_seqs_and_counts
 
+from _sampling_utils import cgs_sample_topics_for_one_doc, cgs_do_one_pass
+
+from profiling_utils import profileit
+
 logger = logging.getLogger(__name__)
 
 DTYPE_TO_EPS = {
@@ -236,7 +240,7 @@ class LDAModelCGS(ABCTopicModel):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
             self.do_one_pass()
             # uncomment below for save-while-training
-            self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
+            # self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
 
         self.theta, self.phi = self.get_theta_phi()
 
@@ -246,15 +250,25 @@ class LDAModelCGS(ABCTopicModel):
 
         """
 
-        for doc_id in range(self.num_docs):
-            if doc_id % 10 == 0:
-                logger.info("doc: {0}".format(doc_id))
-            else:
-                logger.debug("doc: {0}".format(doc_id))
-            self.sample_topics_for_one_doc(doc_id)
+        # call external func (cython avaliable)
+        cgs_do_one_pass(self.num_docs, self.num_topics, self.alpha, self.beta, self.w_beta, self.term_seqs,
+                        self.topic_seqs, self.doc_topic_counts, self.term_topic_counts, self.terms_per_topic)
+
+        # or, do it locally (SEE TODO comment in sample_topics_for_one_doc)
+        # for doc_id in range(self.num_docs):
+        # # for doc_id in range(1):
+        #     if doc_id % 10 == 0:
+        #         logger.info("doc: {0}".format(doc_id))
+        #     else:
+        #         logger.debug("doc: {0}".format(doc_id))
+        #     self.sample_topics_for_one_doc(doc_id)
 
     def sample_topics_for_one_doc(self, doc_id):
+        # TODO this function could be deleted if calling cgs_do_one_pass would give faster results
+        # For the time being however both approaches (calling cgs_do_one_pass once or calling cgs_sample.. num_doc times
+        # seem do be equally fast. I keep this function until I understand why.
         """
+
         Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
         for one document, according to
         **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
@@ -263,45 +277,24 @@ class LDAModelCGS(ABCTopicModel):
             doc_id:
 
         """
-        doc_term_seq = self.term_seqs[doc_id]
-        doc_len = len(doc_term_seq)
-        doc_topic_seq = self.topic_seqs[doc_id]
-        doc_topic_count = self.doc_topic_counts[doc_id]
-        num_topics = len(doc_topic_count)
+        doc_len = len(self.term_seqs[doc_id])
+        num_topics = self.num_topics
 
-        # Iterate over the positions (words) in the document
-        for si in range(doc_len):
-            term_id = doc_term_seq[si]
-            old_topic = doc_topic_seq[si]
-            logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
-                         .format(si, term_id, old_topic))
+        # prepare arguments
+        w_beta = self.w_beta
+        alpha = self.alpha
+        beta = self.beta
+        cur_doc_topic_count = self.doc_topic_counts[doc_id]
+        cur_term_seq = self.term_seqs[doc_id]
+        cur_topic_seq = self.topic_seqs[doc_id]
+        term_topic_counts = self.term_topic_counts
+        terms_per_topic = self.terms_per_topic
 
-            # Remove this topic from all counts
-            doc_topic_count[old_topic] -= 1
-            self.term_topic_counts[term_id][old_topic] -= 1
-            self.terms_per_topic[old_topic] -= 1
+        cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics,
+                                      alpha, beta, w_beta,
+                                      cur_term_seq, cur_topic_seq,
+                                      cur_doc_topic_count, term_topic_counts, terms_per_topic)
 
-            # Build a distribution over topics for this term
-            topic_weights = np.zeros(num_topics, self.dtype)
-            current_term_topic_count = self.term_topic_counts[term_id]
-            for ti in range(num_topics):
-                tw = ((current_term_topic_count[ti] + self.beta[term_id]) / (self.terms_per_topic[ti] + self.w_beta)) \
-                     * (doc_topic_count[ti] + self.alpha[ti])
-                topic_weights[ti] = tw
-            topic_weights = topic_weights / sum(topic_weights)
-
-            # Sample a topic assignment from this distribution
-            new_topic = np.random.choice(num_topics, p=topic_weights)
-
-            # Put that new topic into the counts
-            doc_topic_seq[si] = new_topic
-            doc_topic_count[new_topic] += 1
-            self.term_topic_counts[term_id][new_topic] += 1
-            self.terms_per_topic[new_topic] += 1
-
-        # Update seqs and counts document-wise
-        self.topic_seqs[doc_id] = doc_topic_seq
-        self.doc_topic_counts[doc_id] = doc_topic_count
 
     def get_theta_phi(self):
         """

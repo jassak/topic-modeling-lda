@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-TODO in LDAModelMHW:
-    run profiler to see what's going on with the cython function
-    consider cythonize the entire gen_stale_samples
-    cythonize compute_sparse_comp and bucket_sampling
-"""
 
 """
 @author: jason
@@ -45,7 +39,8 @@ def main():
     from nipscorpus import NipsCorpus
 
     corpus = NipsCorpus()
-    model = LDAModelCGS(corpus, num_topics=100, num_passes=5, dtype=np.float64)
+
+    model = LDAModelCGS(corpus, num_topics=100, num_passes=1, dtype=np.float64)
     model.save('models/test_model_mhw_t100p5.pkl')
 
 
@@ -54,7 +49,9 @@ if __name__ == '__main__':
     import numpy as np
     import random
     import cProfile
-    import cython_testing
+
+    from ldamodel_cgs import LDAModelCGS
+    from nipscorpus import NipsCorpus
 
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(filename="logs/logger.log",
@@ -64,6 +61,16 @@ if __name__ == '__main__':
 
     logger = logging.getLogger(__name__)
     # main()
-    # cProfile.run('main()')
 
-    cython_testing.cy_vs_py()
+    #==============#
+    # QUICK TESTS: #
+    #==============#
+    # DO THIS FIRST FOR EVERY NEW MODEL:============================================#
+    # corpus = NipsCorpus()
+    # model = LDAModelCGS(corpus, num_topics=20, num_passes=30, dtype=np.float64)
+    # model.save('models/test_model.pkl')
+    # THEN DO THIS:=================================================================#
+    model = LDAModelCGS.load('models/test_model.pkl')
+    model.do_one_pass()
+    #===============================================================================#
+
