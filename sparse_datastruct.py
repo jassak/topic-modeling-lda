@@ -13,6 +13,11 @@ from scipy.sparse import dok_matrix, csr_matrix
 
 from aliassampler import AliasSampler
 
+DTYPE_TO_EPS = {
+    np.float16: 1e-5,
+    np.float32: 1e-35,
+    np.float64: 1e-100,
+}
 
 class SparseCounter():
     """Implements a counter object that stores counts in a sparse way, using a dictionary.
@@ -63,30 +68,54 @@ class SparseCounter():
     def __len__(self):
         return len(self.__count)
 
-
 class SparseVector():
-    """Implements a sparse one-dimensional vector, encapsulating the cumbersome shape=(1, N) scipy dok_matrix"""
+    """
+    Implements a sparse one-dimensional vector equipped with normalize method
+    (replacing very slow version using scipy.dok_matrix)
+    """
 
     def __init__(self, vec_size, dtype):
-        self.__spmat = dok_matrix((1, vec_size), dtype=dtype)
+        self.__dict = {}
+        self.vec_size = vec_size
+        self.nnz = 0
+        self.dtype = dtype
 
-    def __getitem__(self, item):
-        return self.__spmat[0, item]
+    def __getitem__(self, key):
+        if 0 <= key < self.vec_size:
+            try:
+                return self.__dict[key]
+            except:
+                return 0
+        else:
+            raise IndexError('index out of bounds')
 
     def __setitem__(self, key, value):
-        self.__spmat[0, key] = value
+        if 0 <= key < self.vec_size:
+            if not value == 0:
+                self.__dict[key] = value
+                self.nnz += 1
+            else:
+                del self.__dict[key]
+                self.nnz -= 1
+        else:
+            raise IndexError('index out of bounds')
 
     def __iter__(self):
-        for key in self.__spmat.keys():
-            yield key[1]
+        for key in self.__dict:
+            yield key
 
-    def __truediv__(self, other):
-        self.__spmat = self.__spmat / other
-        return self
+    def normalize(self):
+        vecsum = 0
+        for key in self.__dict:
+            vecsum += self.__dict[key]
+        if abs(vecsum) > DTYPE_TO_EPS[self.dtype]:
+            for key in self.__dict:
+                self.__dict[key] /= vecsum
+        else:
+            raise ValueError('cannot normalize zero vector')
 
     def get_nnz(self):
-        return self.__spmat.nnz
-
+        return self.nnz
 
 class SparseGraph():
     """Sparse graph constructed from a sparse adjacency matrix dense_matr.
