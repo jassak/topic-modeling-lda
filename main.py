@@ -35,22 +35,32 @@ def make_rand_sim_matrix(num_terms, avdeg):
     return sim_mat
 
 def main():
-    from ldamodel_cgs import LDAModelCGS
+    # from ldamodel_cgs import LDAModelCGS
+    from ldamodel_mhw import LDAModelMHW
+    # from ldamodel_gs import LDAModelGrS
     from nipscorpus import NipsCorpus
 
-    corpus = NipsCorpus()
-
-    model = LDAModelCGS(corpus, num_topics=100, num_passes=1, dtype=np.float64)
-    model.save('models/test_model_mhw_t100p5.pkl')
+    #==============#
+    # QUICK TESTS: #
+    #==============#
+    # DO THIS FIRST FOR EVERY NEW MODEL:============================================#
+    # corpus = NipsCorpus()
+    # model = LDAModelMHW(corpus, num_topics=20, num_passes=1, dtype=np.float64)
+    # model.save('models/test_model_mhw.pkl')
+    # THEN DO THIS:=================================================================#
+    model = LDAModelMHW.load('models/test_model_mhw.pkl')
+    stale_samples = {}
+    model.do_one_pass(stale_samples)
+    #===============================================================================#
 
 
 if __name__ == '__main__':
     import logging
     import numpy as np
     import random
-    import cProfile
 
-    from ldamodel_cgs import LDAModelCGS
+    # from ldamodel_cgs import LDAModelCGS
+    from ldamodel_mhw import LDAModelMHW
     from nipscorpus import NipsCorpus
 
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -60,17 +70,6 @@ if __name__ == '__main__':
                         )
 
     logger = logging.getLogger(__name__)
-    # main()
+    main()
 
-    #==============#
-    # QUICK TESTS: #
-    #==============#
-    # DO THIS FIRST FOR EVERY NEW MODEL:============================================#
-    # corpus = NipsCorpus()
-    # model = LDAModelCGS(corpus, num_topics=20, num_passes=30, dtype=np.float64)
-    # model.save('models/test_model.pkl')
-    # THEN DO THIS:=================================================================#
-    model = LDAModelCGS.load('models/test_model.pkl')
-    model.do_one_pass()
-    #===============================================================================#
 

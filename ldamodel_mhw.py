@@ -18,6 +18,8 @@ from abc_topicmodel import ABCTopicModel
 from aliassampler import AliasSampler
 from sparse_datastruct import SparseCounter, SparseVector
 
+from profiling_utils import profileit
+
 logger = logging.getLogger(__name__)
 
 DTYPE_TO_EPS = {
@@ -252,6 +254,7 @@ class LDAModelMHW(ABCTopicModel):
         # Delete stale samples
         del stale_samples
 
+    @profileit
     def do_one_pass(self, stale_samples):
         """
         Performs one iteration of Gibbs sampling, across all documents.
@@ -265,6 +268,7 @@ class LDAModelMHW(ABCTopicModel):
                 logger.debug("doc: {0}".format(doc_id))
             self.sample_topics_for_one_doc(doc_id, stale_samples)
 
+    # @profileit
     def sample_topics_for_one_doc(self, doc_id, stale_samples):
         """
 
@@ -382,7 +386,12 @@ class LDAModelMHW(ABCTopicModel):
 
         # TODO delete this??
         # doc_num_topics = len(doc_topic_count)
-        pdw = SparseVector(self.num_topics, dtype=self.dtype)
+        # SPARSE VS DENSE TEST
+        # <===============
+        # pdw = SparseVector(self.num_topics, dtype=self.dtype)
+        # ================
+        pdw = np.zeros(self.num_topics, dtype=self.dtype)
+        # ===============>
         pdw_norm = 0.
         for topic_id in doc_topic_count:
             pdw[topic_id] = doc_topic_count.get_count(topic_id) \
@@ -409,14 +418,19 @@ class LDAModelMHW(ABCTopicModel):
         # Determine by coin flip to draw from sparse or dense bucket
         if random.random() < pdw_norm / (pdw_norm + qw_norm):
             # draw from sparse bucket
-            num_nnztopics = pdw.get_nnz()
-            topic_indices = []
-            topic_weights = np.empty(num_nnztopics, dtype=self.dtype)
-            for topic_id, weight_id in zip(pdw, range(num_nnztopics)):
-                topic_indices.append(topic_id)
-                topic_weights[weight_id] = pdw[topic_id]
-            new_topic_idx = np.random.choice(num_nnztopics, p=topic_weights)
-            return topic_indices[new_topic_idx]
+            # SPARSE VS DENSE TEST
+            # <=================
+            # num_nnztopics = pdw.get_nnz()
+            # topic_indices = []
+            # topic_weights = np.empty(num_nnztopics, dtype=self.dtype)
+            # for topic_id, weight_id in zip(pdw, range(num_nnztopics)):
+            #     topic_indices.append(topic_id)
+            #     topic_weights[weight_id] = pdw[topic_id]
+            # new_topic_idx = np.random.choice(num_nnztopics, p=topic_weights)
+            # return topic_indices[new_topic_idx]
+            # ===================
+            return np.random.choice(self.num_topics, p=pdw)
+            # ==================>
         else:
             # draw from dense bucket
             return sw.pop()
@@ -425,6 +439,8 @@ class LDAModelMHW(ABCTopicModel):
         """
 
         Returns:
+            theta:
+            phi:
 
         """
         logger.info("computing theta and phi")
