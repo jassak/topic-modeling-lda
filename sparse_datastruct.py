@@ -75,7 +75,7 @@ class SparseVector():
     """
 
     def __init__(self, vec_size, dtype):
-        self.__dict = {}
+        self.__dict = defaultdict()
         self.vec_size = vec_size
         self.nnz = 0
         self.dtype = dtype
@@ -113,6 +113,14 @@ class SparseVector():
                 self.__dict[key] /= vecsum
         else:
             raise ValueError('cannot normalize zero vector')
+
+    def make_weight_vec(self):
+        weight_vec = np.zeros(self.nnz, dtype=self.dtype)
+        index_map = [0] * self.nnz
+        for idx, key in enumerate(self.__dict):
+            weight_vec[idx] = self.__dict[key]
+            index_map[idx] = key
+        return index_map, weight_vec
 
     def get_nnz(self):
         return self.nnz
