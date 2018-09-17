@@ -44,13 +44,13 @@ def main():
     # QUICK TESTS: #
     #==============#
     # DO THIS FIRST FOR EVERY NEW MODEL:============================================#
-    # corpus = NipsCorpus()
-    # model = LDAModelMHW(corpus, num_topics=20, num_passes=1, dtype=np.float64)
-    # model.save('models/test_model_mhw.pkl')
+    corpus = NipsCorpus()
+    model = LDAModelMHW(corpus, num_topics=100, num_passes=1, dtype=np.float64)
+    model.save('models/test_model_mhw.pkl')
     # THEN DO THIS:=================================================================#
-    model = LDAModelMHW.load('models/test_model_mhw.pkl')
-    stale_samples = {}
-    model.do_one_pass(stale_samples)
+    # model = LDAModelMHW.load('models/test_model_mhw.pkl')
+    # stale_samples = {}
+    # model.do_one_pass(stale_samples)
     #===============================================================================#
 
 

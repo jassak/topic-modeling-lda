@@ -16,7 +16,7 @@ from gensim import utils, matutils
 
 from abc_topicmodel import ABCTopicModel
 from aliassampler import AliasSampler
-from sparse_datastruct import SparseCounter, SparseVector
+from _sparse_datastruct import SparseCounter, SparseVector
 
 from profiling_utils import profileit
 
@@ -138,8 +138,16 @@ class LDAModelMHW(ABCTopicModel):
         topic_seqs = []
         for di in range(len(term_seqs)):
             # init to a random seq, problem: not sparse
-            topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
+            # topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
+            # topic_seqs.append(topic_seq)
+            # ================================
+            # FOR TESTING: init to uniform sequence
+            # topic_seq = [0] * len(term_seqs[di])
+            # topic_seqs.append(topic_seq)
+            # init to a random seq, with a few topics
+            topic_seq = np.random.randint(8, size=len(term_seqs[di])).tolist()
             topic_seqs.append(topic_seq)
+            # ================================
         # Build doc_topic_counts
         doc_topic_counts = []
         for topic_seq in topic_seqs:
@@ -384,21 +392,14 @@ class LDAModelMHW(ABCTopicModel):
         """
         logger.debug("compute sparse distribution for term: {0}".format(term_id))
 
-        # TODO delete this??
-        # doc_num_topics = len(doc_topic_count)
-        # SPARSE VS DENSE TEST
-        # <===============
-        # pdw = SparseVector(self.num_topics, dtype=self.dtype)
-        # ================
-        pdw = np.zeros(self.num_topics, dtype=self.dtype)
-        # ===============>
+        pdw = SparseVector(self.num_topics, dtype=self.dtype)
         pdw_norm = 0.
         for topic_id in doc_topic_count:
             pdw[topic_id] = doc_topic_count.get_count(topic_id) \
                             * (self.term_topic_counts[term_id][topic_id] + self.beta[term_id]) \
                             / (self.terms_per_topic[topic_id] + self.w_beta)
             pdw_norm += pdw[topic_id]
-        pdw = pdw / pdw_norm
+        pdw.normalize()
         return pdw, pdw_norm
 
     def bucket_sampling(self, pdw, pdw_norm, sw, qw_norm):
@@ -418,19 +419,10 @@ class LDAModelMHW(ABCTopicModel):
         # Determine by coin flip to draw from sparse or dense bucket
         if random.random() < pdw_norm / (pdw_norm + qw_norm):
             # draw from sparse bucket
-            # SPARSE VS DENSE TEST
-            # <=================
-            # num_nnztopics = pdw.get_nnz()
-            # topic_indices = []
-            # topic_weights = np.empty(num_nnztopics, dtype=self.dtype)
-            # for topic_id, weight_id in zip(pdw, range(num_nnztopics)):
-            #     topic_indices.append(topic_id)
-            #     topic_weights[weight_id] = pdw[topic_id]
-            # new_topic_idx = np.random.choice(num_nnztopics, p=topic_weights)
-            # return topic_indices[new_topic_idx]
-            # ===================
-            return np.random.choice(self.num_topics, p=pdw)
-            # ==================>
+            index_map, weights = pdw.make_weight_vec()
+            num_nnztopics = pdw.get_nnz()
+            new_topic_idx = np.random.choice(num_nnztopics, p=weights)
+            return index_map[new_topic_idx]
         else:
             # draw from dense bucket
             return sw.pop()
