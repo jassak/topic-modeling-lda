@@ -13,10 +13,10 @@ import string
 import enchant
 
 STOPLIST = stoplist = set('for a of the and to in an st is that are with by we as be this on from can which '
-                          'it i all have each or at was not if has these will only our where were such '
+                          'it i all have each or at was not if has these will only our where were such thus'
                           'given there other but when then also been may its use any over their than same '
                           'a b c d e f g h i j k l m n o p q r s t u v w x y z  very so after must should they '
-                          'et many through no most from how would do let about almost another some one two trhee '
+                          'et many through no most from how would do let about almost another some one two three '
                           'four five six seven eight nine ten zero both therefore does had because did into what'
                           ''.split() +
                           list(string.punctuation))
