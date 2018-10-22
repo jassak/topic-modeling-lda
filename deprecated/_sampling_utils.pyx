@@ -44,7 +44,7 @@ def cgs_do_one_pass(int num_docs, int num_topics,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def cgs_sample_topics_for_one_doc(int doc_id, int doc_len, int num_topics,
+cdef void cgs_sample_topics_for_one_doc(int doc_id, int doc_len, int num_topics,
                                         DTYPE_t[:] alpha, DTYPE_t[:] beta, DTYPE_t w_beta,
                                         list term_seq, list topic_seq,
                                         list cur_doc_topic_count, list term_topic_counts, list terms_per_topic):

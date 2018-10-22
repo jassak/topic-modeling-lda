@@ -4,6 +4,6 @@ from Cython.Build import cythonize
 import numpy
 
 setup(
-    ext_modules=cythonize([Extension("_sampling_utils", ["_sampling_utils.pyx"])]),
+    ext_modules=cythonize([Extension("_sampling_utils_cdef", ["_sampling_utils_cdef.pyx"])]),
     include_dirs=[numpy.get_include()]
 )
