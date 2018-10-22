@@ -7,20 +7,11 @@ Created on 21 May 2018
 """
 
 import logging
-import numbers
-import os
-
+import _ldacgs_train
 import numpy as np
-import six
 
 from gensim import utils, matutils
-
 from abc_topicmodel import ABCTopicModel
-from corpusutils import get_seqs_and_counts
-
-from _sampling_utils import cgs_sample_topics_for_one_doc, cgs_do_one_pass
-
-from profiling_utils import profileit
 
 logger = logging.getLogger(__name__)
 
@@ -88,127 +79,23 @@ class LDAModelCGS(ABCTopicModel):
         self.minimum_probability = minimum_prob
         self.random_state = utils.get_random_state(random_state)
 
-        self.alpha, self.optimize_alpha = self.init_dir_prior(alpha, 'alpha')
-        assert self.alpha.shape == (self.num_topics,), \
-            "Invalid alpha shape. Got shape %s, but expected (%d, )" % (str(self.alpha.shape), self.num_topics)
-        if isinstance(beta, six.string_types):
-            if beta == 'asymmetric':
-                raise ValueError("The 'asymmetric' option cannot be used for beta")
-        self.beta, self.optimize_beta = self.init_dir_prior(beta, 'beta')
-        assert self.beta.shape == (self.num_terms,) or self.beta.shape == (self.num_topics, self.num_terms), (
-            "Invalid beta shape. Got shape %s, but expected (%d, 1) or (%d, %d)" %
-            (str(self.beta.shape), self.num_terms, self.num_topics, self.num_terms))
-        self.w_beta = sum(self.beta)
+        # self.alpha, self.optimize_alpha = init_dir_prior(self.num_topics, self.num_terms, self.dtype, alpha, 'alpha')
+        # assert self.alpha.shape == (self.num_topics,), \
+        #     "Invalid alpha shape. Got shape %s, but expected (%d, )" % (str(self.alpha.shape), self.num_topics)
+        # if isinstance(beta, six.string_types):
+        #     if beta == 'asymmetric':
+        #         raise ValueError("The 'asymmetric' option cannot be used for beta")
+        # self.beta, self.optimize_beta = init_dir_prior(self.num_topics, self.num_terms, self.dtype, beta, 'beta')
+        # assert self.beta.shape == (self.num_terms,) or self.beta.shape == (self.num_topics, self.num_terms), (
+        #     "Invalid beta shape. Got shape %s, but expected (%d, 1) or (%d, %d)" %
+        #     (str(self.beta.shape), self.num_terms, self.num_topics, self.num_terms))
+        # self.w_beta = sum(self.beta)
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
             self.train(corpus, num_passes=num_passes)
 
-    def init_seqs_and_counts(self, corpus):
-        """
-            Builds the sequences of terms and topics, and the counts of topics in docs,
-            terms in topics and term per topic.
-
-        Args:
-            corpus:
-
-        Returns:
-            term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
-        """
-        logger.info("initializing sequences and counts")
-        # Build term_seqs
-        term_seqs = []
-        for document in corpus:
-            term_seq = []
-            for term_pair in document:
-                term_seq += [term_pair[0]] * int(term_pair[1])
-            term_seqs.append(term_seq)
-        # Init randomly topic_seqs
-        topic_seqs = []
-        for di in range(len(term_seqs)):
-            topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
-            topic_seqs.append(topic_seq)
-        # Build doc_topic_counts
-        doc_topic_counts = []
-        for topic_seq in topic_seqs:
-            topic_count = [0] * self.num_topics
-            for topic in topic_seq:
-                topic_count[topic] += 1
-            doc_topic_counts.append(topic_count)
-        # Build term_topic_counts
-        term_topic_counts = [None] * self.num_terms
-        for term in range(self.num_terms):
-            term_topic_counts[term] = [0] * self.num_topics
-        for di in range(len(term_seqs)):
-            assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
-            for term, topic in zip(term_seqs[di], topic_seqs[di]):
-                term_topic_counts[term][topic] += 1
-        # Sum above across terms to build terms_per_topic
-        terms_per_topic = [0] * self.num_topics
-        for topic in range(self.num_topics):
-            for term in range(self.num_terms):
-                terms_per_topic[topic] += term_topic_counts[term][topic]
-        self.term_seqs = term_seqs
-        self.topic_seqs = topic_seqs
-        self.doc_topic_counts = doc_topic_counts
-        self.term_topic_counts = term_topic_counts
-        self.terms_per_topic = terms_per_topic
-        self.num_docs = len(self.term_seqs)
-
-    def init_dir_prior(self, prior, name):
-        # TODO move this method to the parent class.
-        """
-        Initializes the Dirichlet priors. Copied from gensim.
-
-        Args:
-            prior:
-            name:
-
-        Returns:
-
-        """
-
-        if prior is None:
-            prior = 'symmetric'
-
-        if name == 'alpha':
-            prior_shape = self.num_topics
-        elif name == 'beta':
-            prior_shape = self.num_terms
-        else:
-            raise ValueError("'name' must be 'alpha' or 'beta'")
-
-        is_auto = False
-
-        # TODO Something is wrong here, I think it assigns beta = 1/num_topics for prior=symmetric
-        if isinstance(prior, six.string_types):
-            if prior == 'symmetric':
-                logger.info("using symmetric %s at %s", name, 1.0 / self.num_topics)
-                init_prior = np.asarray([1.0 / self.num_topics for _ in range(prior_shape)], dtype=self.dtype)
-            elif prior == 'asymmetric':
-                init_prior = \
-                    np.asarray([1.0 / (i + np.sqrt(prior_shape)) for i in range(prior_shape)], dtype=self.dtype)
-                init_prior /= init_prior.sum()
-                logger.info("using asymmetric %s %s", name, list(init_prior))
-            elif prior == 'auto':
-                is_auto = True
-                # This is obviously wrong since it's the same as symmetric. Maybe in future correct it.
-                init_prior = np.asarray([1.0 / self.num_topics for _ in range(prior_shape)], dtype=self.dtype)
-                if name == 'alpha':
-                    logger.info("using autotuned %s, starting with %s", name, list(init_prior))
-            else:
-                raise ValueError("Unable to determine proper %s value given '%s'" % (name, prior))
-        elif isinstance(prior, list):
-            init_prior = np.asarray(prior, dtype=self.dtype)
-        elif isinstance(prior, np.ndarray):
-            init_prior = prior.astype(self.dtype, copy=False)
-        elif isinstance(prior, np.number) or isinstance(prior, numbers.Real):
-            init_prior = np.asarray([prior] * prior_shape, dtype=self.dtype)
-        else:
-            raise ValueError("%s must be either a np array of scalars, list of scalars, or scalar" % name)
-
-        return init_prior, is_auto
-
+    # @profileit
     def train(self, corpus, num_passes=10):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
@@ -224,11 +111,11 @@ class LDAModelCGS(ABCTopicModel):
             logger.warning("input corpus stream has no len(); counting documents")
             lencorpus = sum(1 for _ in corpus)
         if lencorpus == 0:
-            logger.warning("LdaModel.train() called with an empty corpus")
+            logger.warning("LdaModelCGS.train() called with an empty corpus")
             return
 
         # init sequences and counts
-        self.init_seqs_and_counts(corpus=corpus)
+        # self.init_seqs_and_counts(corpus=corpus)
 
         # Perform num_passes rounds of Gibbs sampling.
         logger.info(
@@ -236,88 +123,7 @@ class LDAModelCGS(ABCTopicModel):
                 "the supplied corpus of {1} documents for {2} passes over the whole corpus"
                     .format(self.num_topics, lencorpus, num_passes)
         )
-        for pass_i in range(num_passes):
-            logger.info("gibbs sampling pass: {0}".format(pass_i))
-            self.do_one_pass()
-            # uncomment below for save-while-training
-            # self.save('models/model_cgs_currun_pass' + str(pass_i) + '.pkl')
-
-        self.theta, self.phi = self.get_theta_phi()
-
-    def do_one_pass(self):
-        """
-        Performs one iteration of Gibbs sampling, across all documents.
-
-        """
-
-        # call external func (cython avaliable)
-        cgs_do_one_pass(self.num_docs, self.num_topics, self.alpha, self.beta, self.w_beta, self.term_seqs,
-                        self.topic_seqs, self.doc_topic_counts, self.term_topic_counts, self.terms_per_topic)
-
-        # or, do it locally (SEE TODO comment in sample_topics_for_one_doc)
-        # for doc_id in range(self.num_docs):
-        # # for doc_id in range(1):
-        #     if doc_id % 10 == 0:
-        #         logger.info("doc: {0}".format(doc_id))
-        #     else:
-        #         logger.debug("doc: {0}".format(doc_id))
-        #     self.sample_topics_for_one_doc(doc_id)
-
-    def sample_topics_for_one_doc(self, doc_id):
-        # TODO this function could be deleted if calling cgs_do_one_pass would give faster results
-        # For the time being however both approaches (calling cgs_do_one_pass once or calling cgs_sample.. num_doc times
-        # seem do be equally fast. I keep this function until I understand why.
-        """
-
-        Samples a sequence of topics by performing one pass of collapsed Gibbs sampling
-        for one document, according to
-        **﻿Griffiths, Steyvers: Finding ﻿scientific topics, PNAS 2004**
-
-        Args:
-            doc_id:
-
-        """
-        doc_len = len(self.term_seqs[doc_id])
-        num_topics = self.num_topics
-
-        # prepare arguments
-        w_beta = self.w_beta
-        alpha = self.alpha
-        beta = self.beta
-        cur_doc_topic_count = self.doc_topic_counts[doc_id]
-        cur_term_seq = self.term_seqs[doc_id]
-        cur_topic_seq = self.topic_seqs[doc_id]
-        term_topic_counts = self.term_topic_counts
-        terms_per_topic = self.terms_per_topic
-
-        cgs_sample_topics_for_one_doc(doc_id, doc_len, num_topics,
-                                      alpha, beta, w_beta,
-                                      cur_term_seq, cur_topic_seq,
-                                      cur_doc_topic_count, term_topic_counts, terms_per_topic)
-
-
-    def get_theta_phi(self):
-        """
-
-        Returns:
-            theta and phi. Matrices whose vectors are the predictive distributions of
-            topic|doc and term|topic respectively.
-        """
-        logger.info("computing theta and phi")
-        theta = np.empty(shape=(self.num_docs, self.num_topics), dtype=self.dtype)
-        phi = np.empty(shape=(self.num_topics, self.num_terms), dtype=self.dtype)
-
-        for doc_id in range(self.num_docs):
-            for topic_id in range(self.num_topics):
-                theta[doc_id][topic_id] = self.doc_topic_counts[doc_id][topic_id] + self.alpha[topic_id]
-            theta[doc_id] = theta[doc_id] / sum(theta[doc_id])
-
-        for topic_id in range(self.num_topics):
-            for term_id in range(self.num_terms):
-                phi[topic_id][term_id] = self.term_topic_counts[term_id][topic_id] + self.beta[term_id]
-            phi[topic_id] = phi[topic_id] / sum(phi[topic_id])
-
-        return theta, phi
+        self.theta, self.phi = _ldacgs_train.train(self.num_topics, num_passes, corpus)
 
     def get_topic_terms(self, topic_id, topn=10, readable=True):
         # TODO move this and similar methods to parent class
