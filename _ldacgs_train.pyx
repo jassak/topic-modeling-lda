@@ -23,7 +23,7 @@ def init_seqs_and_counts(num_topics, num_terms, corpus):
         for term_pair in document:
             term_seq += [term_pair[0]] * int(term_pair[1])
         term_seqs.append(term_seq)
-    # Init randomly topic_seqs[d][t]
+    # Init randomly topic_seqs[d][s]
     topic_seqs = []
     for docid in range(len(term_seqs)):
         topic_seq = np.random.randint(num_topics, size=len(term_seqs[docid])).tolist()
