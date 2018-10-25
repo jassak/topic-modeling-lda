@@ -102,6 +102,10 @@ cdef int * genSamplesAlias(int n, int k, double * weights):
     # gen samples
     generateMany(n, k, probTable, aliasTable, samples)
 
+    # dealloc
+    PyMem_Free(aliasTable)
+    PyMem_Free(probTable)
+
     return samples
 # ================================ End of Alias Sampler =========================== #
 # ================================ Stack =========================== #

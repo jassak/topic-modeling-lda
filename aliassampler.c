@@ -791,7 +791,7 @@ static const char *__pyx_f[] = {
 struct __pyx_t_12aliassampler_StackNode;
 typedef struct __pyx_t_12aliassampler_StackNode __pyx_t_12aliassampler_StackNode;
 
-/* "aliassampler.pyx":108
+/* "aliassampler.pyx":112
  * # ================================ End of Alias Sampler =========================== #
  * # ================================ Stack =========================== #
  * ctypedef struct StackNode:             # <<<<<<<<<<<<<<
@@ -1564,12 +1564,30 @@ static int *__pyx_f_12aliassampler_genSamplesAlias(int __pyx_v_n, int __pyx_v_k,
  *     # gen samples
  *     generateMany(n, k, probTable, aliasTable, samples)             # <<<<<<<<<<<<<<
  * 
- *     return samples
+ *     # dealloc
  */
   __pyx_f_12aliassampler_generateMany(__pyx_v_n, __pyx_v_k, __pyx_v_probTable, __pyx_v_aliasTable, __pyx_v_samples);
 
-  /* "aliassampler.pyx":105
- *     generateMany(n, k, probTable, aliasTable, samples)
+  /* "aliassampler.pyx":106
+ * 
+ *     # dealloc
+ *     PyMem_Free(aliasTable)             # <<<<<<<<<<<<<<
+ *     PyMem_Free(probTable)
+ * 
+ */
+  PyMem_Free(__pyx_v_aliasTable);
+
+  /* "aliassampler.pyx":107
+ *     # dealloc
+ *     PyMem_Free(aliasTable)
+ *     PyMem_Free(probTable)             # <<<<<<<<<<<<<<
+ * 
+ *     return samples
+ */
+  PyMem_Free(__pyx_v_probTable);
+
+  /* "aliassampler.pyx":109
+ *     PyMem_Free(probTable)
  * 
  *     return samples             # <<<<<<<<<<<<<<
  * # ================================ End of Alias Sampler =========================== #
@@ -1592,7 +1610,7 @@ static int *__pyx_f_12aliassampler_genSamplesAlias(int __pyx_v_n, int __pyx_v_k,
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":112
+/* "aliassampler.pyx":116
  *     StackNode * next
  * 
  * cdef StackNode * newStackNode(int data):             # <<<<<<<<<<<<<<
@@ -1606,7 +1624,7 @@ static __pyx_t_12aliassampler_StackNode *__pyx_f_12aliassampler_newStackNode(int
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("newStackNode", 0);
 
-  /* "aliassampler.pyx":114
+  /* "aliassampler.pyx":118
  * cdef StackNode * newStackNode(int data):
  *     cdef StackNode * stackNode
  *     stackNode = <StackNode *> PyMem_Malloc(sizeof(StackNode))             # <<<<<<<<<<<<<<
@@ -1615,7 +1633,7 @@ static __pyx_t_12aliassampler_StackNode *__pyx_f_12aliassampler_newStackNode(int
  */
   __pyx_v_stackNode = ((__pyx_t_12aliassampler_StackNode *)PyMem_Malloc((sizeof(__pyx_t_12aliassampler_StackNode))));
 
-  /* "aliassampler.pyx":115
+  /* "aliassampler.pyx":119
  *     cdef StackNode * stackNode
  *     stackNode = <StackNode *> PyMem_Malloc(sizeof(StackNode))
  *     stackNode.data = data             # <<<<<<<<<<<<<<
@@ -1624,7 +1642,7 @@ static __pyx_t_12aliassampler_StackNode *__pyx_f_12aliassampler_newStackNode(int
  */
   __pyx_v_stackNode->data = __pyx_v_data;
 
-  /* "aliassampler.pyx":116
+  /* "aliassampler.pyx":120
  *     stackNode = <StackNode *> PyMem_Malloc(sizeof(StackNode))
  *     stackNode.data = data
  *     stackNode.next = NULL             # <<<<<<<<<<<<<<
@@ -1633,7 +1651,7 @@ static __pyx_t_12aliassampler_StackNode *__pyx_f_12aliassampler_newStackNode(int
  */
   __pyx_v_stackNode->next = NULL;
 
-  /* "aliassampler.pyx":117
+  /* "aliassampler.pyx":121
  *     stackNode.data = data
  *     stackNode.next = NULL
  *     return stackNode             # <<<<<<<<<<<<<<
@@ -1643,7 +1661,7 @@ static __pyx_t_12aliassampler_StackNode *__pyx_f_12aliassampler_newStackNode(int
   __pyx_r = __pyx_v_stackNode;
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":112
+  /* "aliassampler.pyx":116
  *     StackNode * next
  * 
  * cdef StackNode * newStackNode(int data):             # <<<<<<<<<<<<<<
@@ -1657,7 +1675,7 @@ static __pyx_t_12aliassampler_StackNode *__pyx_f_12aliassampler_newStackNode(int
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":119
+/* "aliassampler.pyx":123
  *     return stackNode
  * 
  * cdef bint isEmpty(StackNode * root):             # <<<<<<<<<<<<<<
@@ -1670,7 +1688,7 @@ static int __pyx_f_12aliassampler_isEmpty(__pyx_t_12aliassampler_StackNode *__py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("isEmpty", 0);
 
-  /* "aliassampler.pyx":120
+  /* "aliassampler.pyx":124
  * 
  * cdef bint isEmpty(StackNode * root):
  *     return not root             # <<<<<<<<<<<<<<
@@ -1680,7 +1698,7 @@ static int __pyx_f_12aliassampler_isEmpty(__pyx_t_12aliassampler_StackNode *__py
   __pyx_r = (!(__pyx_v_root != 0));
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":119
+  /* "aliassampler.pyx":123
  *     return stackNode
  * 
  * cdef bint isEmpty(StackNode * root):             # <<<<<<<<<<<<<<
@@ -1694,7 +1712,7 @@ static int __pyx_f_12aliassampler_isEmpty(__pyx_t_12aliassampler_StackNode *__py
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":122
+/* "aliassampler.pyx":126
  *     return not root
  * 
  * cdef void push(StackNode ** root, int data):             # <<<<<<<<<<<<<<
@@ -1707,7 +1725,7 @@ static void __pyx_f_12aliassampler_push(__pyx_t_12aliassampler_StackNode **__pyx
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("push", 0);
 
-  /* "aliassampler.pyx":124
+  /* "aliassampler.pyx":128
  * cdef void push(StackNode ** root, int data):
  *     cdef StackNode * stackNode
  *     stackNode = newStackNode(data)             # <<<<<<<<<<<<<<
@@ -1716,25 +1734,25 @@ static void __pyx_f_12aliassampler_push(__pyx_t_12aliassampler_StackNode **__pyx
  */
   __pyx_v_stackNode = __pyx_f_12aliassampler_newStackNode(__pyx_v_data);
 
-  /* "aliassampler.pyx":125
+  /* "aliassampler.pyx":129
  *     cdef StackNode * stackNode
  *     stackNode = newStackNode(data)
  *     stackNode.next = root[0]             # <<<<<<<<<<<<<<
  *     root[0] = stackNode
- * #    printf("%d pushed to stack\n", data)
+ * 
  */
   __pyx_v_stackNode->next = (__pyx_v_root[0]);
 
-  /* "aliassampler.pyx":126
+  /* "aliassampler.pyx":130
  *     stackNode = newStackNode(data)
  *     stackNode.next = root[0]
  *     root[0] = stackNode             # <<<<<<<<<<<<<<
- * #    printf("%d pushed to stack\n", data)
  * 
+ * cdef int pop(StackNode ** root):
  */
   (__pyx_v_root[0]) = __pyx_v_stackNode;
 
-  /* "aliassampler.pyx":122
+  /* "aliassampler.pyx":126
  *     return not root
  * 
  * cdef void push(StackNode ** root, int data):             # <<<<<<<<<<<<<<
@@ -1746,8 +1764,8 @@ static void __pyx_f_12aliassampler_push(__pyx_t_12aliassampler_StackNode **__pyx
   __Pyx_RefNannyFinishContext();
 }
 
-/* "aliassampler.pyx":129
- * #    printf("%d pushed to stack\n", data)
+/* "aliassampler.pyx":132
+ *     root[0] = stackNode
  * 
  * cdef int pop(StackNode ** root):             # <<<<<<<<<<<<<<
  *     if isEmpty(root[0]):
@@ -1764,7 +1782,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("pop", 0);
 
-  /* "aliassampler.pyx":130
+  /* "aliassampler.pyx":133
  * 
  * cdef int pop(StackNode ** root):
  *     if isEmpty(root[0]):             # <<<<<<<<<<<<<<
@@ -1774,7 +1792,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
   __pyx_t_1 = (__pyx_f_12aliassampler_isEmpty((__pyx_v_root[0])) != 0);
   if (__pyx_t_1) {
 
-    /* "aliassampler.pyx":131
+    /* "aliassampler.pyx":134
  * cdef int pop(StackNode ** root):
  *     if isEmpty(root[0]):
  *         printf("pop error: stack empty!\n")             # <<<<<<<<<<<<<<
@@ -1783,7 +1801,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
  */
     (void)(printf(((char const *)"pop error: stack empty!\n")));
 
-    /* "aliassampler.pyx":130
+    /* "aliassampler.pyx":133
  * 
  * cdef int pop(StackNode ** root):
  *     if isEmpty(root[0]):             # <<<<<<<<<<<<<<
@@ -1792,7 +1810,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
  */
   }
 
-  /* "aliassampler.pyx":134
+  /* "aliassampler.pyx":137
  *     cdef StackNode * tmp
  *     cdef int popped
  *     tmp = root[0]             # <<<<<<<<<<<<<<
@@ -1801,7 +1819,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
  */
   __pyx_v_tmp = (__pyx_v_root[0]);
 
-  /* "aliassampler.pyx":135
+  /* "aliassampler.pyx":138
  *     cdef int popped
  *     tmp = root[0]
  *     root[0] = root[0].next             # <<<<<<<<<<<<<<
@@ -1811,7 +1829,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
   __pyx_t_2 = (__pyx_v_root[0])->next;
   (__pyx_v_root[0]) = __pyx_t_2;
 
-  /* "aliassampler.pyx":136
+  /* "aliassampler.pyx":139
  *     tmp = root[0]
  *     root[0] = root[0].next
  *     popped = tmp.data             # <<<<<<<<<<<<<<
@@ -1821,7 +1839,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
   __pyx_t_3 = __pyx_v_tmp->data;
   __pyx_v_popped = __pyx_t_3;
 
-  /* "aliassampler.pyx":137
+  /* "aliassampler.pyx":140
  *     root[0] = root[0].next
  *     popped = tmp.data
  *     PyMem_Free(tmp)             # <<<<<<<<<<<<<<
@@ -1830,7 +1848,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
  */
   PyMem_Free(__pyx_v_tmp);
 
-  /* "aliassampler.pyx":138
+  /* "aliassampler.pyx":141
  *     popped = tmp.data
  *     PyMem_Free(tmp)
  *     return popped             # <<<<<<<<<<<<<<
@@ -1840,8 +1858,8 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
   __pyx_r = __pyx_v_popped;
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":129
- * #    printf("%d pushed to stack\n", data)
+  /* "aliassampler.pyx":132
+ *     root[0] = stackNode
  * 
  * cdef int pop(StackNode ** root):             # <<<<<<<<<<<<<<
  *     if isEmpty(root[0]):
@@ -1854,7 +1872,7 @@ static int __pyx_f_12aliassampler_pop(__pyx_t_12aliassampler_StackNode **__pyx_v
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":142
+/* "aliassampler.pyx":145
  * 
  * # ========================= Tests ===========================#
  * def test_aliasTable():             # <<<<<<<<<<<<<<
@@ -1881,7 +1899,7 @@ static PyObject *__pyx_pf_12aliassampler_test_aliasTable(CYTHON_UNUSED PyObject 
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("test_aliasTable", 0);
 
-  /* "aliassampler.pyx":143
+  /* "aliassampler.pyx":146
  * # ========================= Tests ===========================#
  * def test_aliasTable():
  *     c_test_aliasTable()             # <<<<<<<<<<<<<<
@@ -1890,7 +1908,7 @@ static PyObject *__pyx_pf_12aliassampler_test_aliasTable(CYTHON_UNUSED PyObject 
  */
   __pyx_f_12aliassampler_c_test_aliasTable();
 
-  /* "aliassampler.pyx":142
+  /* "aliassampler.pyx":145
  * 
  * # ========================= Tests ===========================#
  * def test_aliasTable():             # <<<<<<<<<<<<<<
@@ -1905,7 +1923,7 @@ static PyObject *__pyx_pf_12aliassampler_test_aliasTable(CYTHON_UNUSED PyObject 
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":148
+/* "aliassampler.pyx":151
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void c_test_aliasTable():             # <<<<<<<<<<<<<<
@@ -1928,7 +1946,7 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("c_test_aliasTable", 0);
 
-  /* "aliassampler.pyx":150
+  /* "aliassampler.pyx":153
  * cdef void c_test_aliasTable():
  *     cdef:
  *         int i, k = 1000, n = 1000000             # <<<<<<<<<<<<<<
@@ -1938,7 +1956,7 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
   __pyx_v_k = 0x3E8;
   __pyx_v_n = 0xF4240;
 
-  /* "aliassampler.pyx":151
+  /* "aliassampler.pyx":154
  *     cdef:
  *         int i, k = 1000, n = 1000000
  *         double w_norm = 0.0             # <<<<<<<<<<<<<<
@@ -1947,36 +1965,36 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
  */
   __pyx_v_w_norm = 0.0;
 
-  /* "aliassampler.pyx":157
+  /* "aliassampler.pyx":159
+ *         double * weights
  *     # malloc
- * #    printf("malloc\n")
  *     counts = <int *> PyMem_Malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
  *     weights = <double *> PyMem_Malloc(k * sizeof(double))
  *     # init rand
  */
   __pyx_v_counts = ((int *)PyMem_Malloc((__pyx_v_k * (sizeof(int)))));
 
-  /* "aliassampler.pyx":158
- * #    printf("malloc\n")
+  /* "aliassampler.pyx":160
+ *     # malloc
  *     counts = <int *> PyMem_Malloc(k * sizeof(int))
  *     weights = <double *> PyMem_Malloc(k * sizeof(double))             # <<<<<<<<<<<<<<
  *     # init rand
- * #    printf("init rangd\n")
+ *     srand(time(NULL))
  */
   __pyx_v_weights = ((double *)PyMem_Malloc((__pyx_v_k * (sizeof(double)))));
 
-  /* "aliassampler.pyx":161
+  /* "aliassampler.pyx":162
+ *     weights = <double *> PyMem_Malloc(k * sizeof(double))
  *     # init rand
- * #    printf("init rangd\n")
  *     srand(time(NULL))             # <<<<<<<<<<<<<<
  *     # init variables
- * #    printf("init var\n")
+ *     for i in range(k):
  */
   srand(time(NULL));
 
   /* "aliassampler.pyx":164
+ *     srand(time(NULL))
  *     # init variables
- * #    printf("init var\n")
  *     for i in range(k):             # <<<<<<<<<<<<<<
  *         counts[i] = 0
  *         weights[i] = randUniform()
@@ -1987,7 +2005,7 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
     __pyx_v_i = __pyx_t_3;
 
     /* "aliassampler.pyx":165
- * #    printf("init var\n")
+ *     # init variables
  *     for i in range(k):
  *         counts[i] = 0             # <<<<<<<<<<<<<<
  *         weights[i] = randUniform()
@@ -2031,24 +2049,24 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
  *     for i in range(k):
  *         weights[i] /= w_norm             # <<<<<<<<<<<<<<
  *     # gen samples
- * #    printf("gen samples\n")
+ *     samples = genSamplesAlias(n, k, weights)
  */
     __pyx_t_4 = __pyx_v_i;
     (__pyx_v_weights[__pyx_t_4]) = ((__pyx_v_weights[__pyx_t_4]) / __pyx_v_w_norm);
   }
 
-  /* "aliassampler.pyx":172
+  /* "aliassampler.pyx":171
+ *         weights[i] /= w_norm
  *     # gen samples
- * #    printf("gen samples\n")
  *     samples = genSamplesAlias(n, k, weights)             # <<<<<<<<<<<<<<
  *     # count samples
- * #    printf("count\n")
+ *     for i in range(n):
  */
   __pyx_v_samples = __pyx_f_12aliassampler_genSamplesAlias(__pyx_v_n, __pyx_v_k, __pyx_v_weights);
 
-  /* "aliassampler.pyx":175
+  /* "aliassampler.pyx":173
+ *     samples = genSamplesAlias(n, k, weights)
  *     # count samples
- * #    printf("count\n")
  *     for i in range(n):             # <<<<<<<<<<<<<<
  *         counts[samples[i]] += 1
  *     # print results
@@ -2058,8 +2076,8 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "aliassampler.pyx":176
- * #    printf("count\n")
+    /* "aliassampler.pyx":174
+ *     # count samples
  *     for i in range(n):
  *         counts[samples[i]] += 1             # <<<<<<<<<<<<<<
  *     # print results
@@ -2069,7 +2087,7 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
     (__pyx_v_counts[__pyx_t_4]) = ((__pyx_v_counts[__pyx_t_4]) + 1);
   }
 
-  /* "aliassampler.pyx":148
+  /* "aliassampler.pyx":151
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void c_test_aliasTable():             # <<<<<<<<<<<<<<
@@ -2081,7 +2099,7 @@ static void __pyx_f_12aliassampler_c_test_aliasTable(void) {
   __Pyx_RefNannyFinishContext();
 }
 
-/* "aliassampler.pyx":181
+/* "aliassampler.pyx":179
  * #        printf("weights[%i] = %f | freq[%i] = %f\n", i, weights[i], i, <double> counts[i] / n)
  * 
  * def test_stack():             # <<<<<<<<<<<<<<
@@ -2110,7 +2128,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("test_stack", 0);
 
-  /* "aliassampler.pyx":184
+  /* "aliassampler.pyx":182
  *     cdef int pp
  *     cdef StackNode * stack
  *     stack = NULL             # <<<<<<<<<<<<<<
@@ -2119,7 +2137,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   __pyx_v_stack = NULL;
 
-  /* "aliassampler.pyx":186
+  /* "aliassampler.pyx":184
  *     stack = NULL
  * 
  *     srand(time(NULL))             # <<<<<<<<<<<<<<
@@ -2128,7 +2146,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   srand(time(NULL));
 
-  /* "aliassampler.pyx":188
+  /* "aliassampler.pyx":186
  *     srand(time(NULL))
  * 
  *     push(&stack, randInt(0, 99))             # <<<<<<<<<<<<<<
@@ -2137,7 +2155,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   __pyx_f_12aliassampler_push((&__pyx_v_stack), __pyx_f_12aliassampler_randInt(0, 99));
 
-  /* "aliassampler.pyx":189
+  /* "aliassampler.pyx":187
  * 
  *     push(&stack, randInt(0, 99))
  *     push(&stack, randInt(0, 99))             # <<<<<<<<<<<<<<
@@ -2146,7 +2164,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   __pyx_f_12aliassampler_push((&__pyx_v_stack), __pyx_f_12aliassampler_randInt(0, 99));
 
-  /* "aliassampler.pyx":190
+  /* "aliassampler.pyx":188
  *     push(&stack, randInt(0, 99))
  *     push(&stack, randInt(0, 99))
  *     push(&stack, randInt(0, 99))             # <<<<<<<<<<<<<<
@@ -2155,7 +2173,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   __pyx_f_12aliassampler_push((&__pyx_v_stack), __pyx_f_12aliassampler_randInt(0, 99));
 
-  /* "aliassampler.pyx":191
+  /* "aliassampler.pyx":189
  *     push(&stack, randInt(0, 99))
  *     push(&stack, randInt(0, 99))
  *     push(&stack, randInt(0, 99))             # <<<<<<<<<<<<<<
@@ -2164,7 +2182,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   __pyx_f_12aliassampler_push((&__pyx_v_stack), __pyx_f_12aliassampler_randInt(0, 99));
 
-  /* "aliassampler.pyx":192
+  /* "aliassampler.pyx":190
  *     push(&stack, randInt(0, 99))
  *     push(&stack, randInt(0, 99))
  *     printf("is empty? %d\n", isEmpty(stack))             # <<<<<<<<<<<<<<
@@ -2173,7 +2191,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   (void)(printf(((char const *)"is empty? %d\n"), __pyx_f_12aliassampler_isEmpty(__pyx_v_stack)));
 
-  /* "aliassampler.pyx":193
+  /* "aliassampler.pyx":191
  *     push(&stack, randInt(0, 99))
  *     printf("is empty? %d\n", isEmpty(stack))
  *     pp = pop(&stack)             # <<<<<<<<<<<<<<
@@ -2182,8 +2200,26 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   __pyx_v_pp = __pyx_f_12aliassampler_pop((&__pyx_v_stack));
 
-  /* "aliassampler.pyx":194
+  /* "aliassampler.pyx":192
  *     printf("is empty? %d\n", isEmpty(stack))
+ *     pp = pop(&stack)
+ *     printf("pop: %d\n", pp)             # <<<<<<<<<<<<<<
+ *     pp = pop(&stack)
+ *     printf("pop: %d\n", pp)
+ */
+  (void)(printf(((char const *)"pop: %d\n"), __pyx_v_pp));
+
+  /* "aliassampler.pyx":193
+ *     pp = pop(&stack)
+ *     printf("pop: %d\n", pp)
+ *     pp = pop(&stack)             # <<<<<<<<<<<<<<
+ *     printf("pop: %d\n", pp)
+ *     pp = pop(&stack)
+ */
+  __pyx_v_pp = __pyx_f_12aliassampler_pop((&__pyx_v_stack));
+
+  /* "aliassampler.pyx":194
+ *     printf("pop: %d\n", pp)
  *     pp = pop(&stack)
  *     printf("pop: %d\n", pp)             # <<<<<<<<<<<<<<
  *     pp = pop(&stack)
@@ -2214,29 +2250,11 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  *     printf("pop: %d\n", pp)
  *     pp = pop(&stack)             # <<<<<<<<<<<<<<
  *     printf("pop: %d\n", pp)
- *     pp = pop(&stack)
- */
-  __pyx_v_pp = __pyx_f_12aliassampler_pop((&__pyx_v_stack));
-
-  /* "aliassampler.pyx":198
- *     printf("pop: %d\n", pp)
- *     pp = pop(&stack)
- *     printf("pop: %d\n", pp)             # <<<<<<<<<<<<<<
- *     pp = pop(&stack)
- *     printf("pop: %d\n", pp)
- */
-  (void)(printf(((char const *)"pop: %d\n"), __pyx_v_pp));
-
-  /* "aliassampler.pyx":199
- *     pp = pop(&stack)
- *     printf("pop: %d\n", pp)
- *     pp = pop(&stack)             # <<<<<<<<<<<<<<
- *     printf("pop: %d\n", pp)
  * #    pp = pop(&stack)
  */
   __pyx_v_pp = __pyx_f_12aliassampler_pop((&__pyx_v_stack));
 
-  /* "aliassampler.pyx":200
+  /* "aliassampler.pyx":198
  *     printf("pop: %d\n", pp)
  *     pp = pop(&stack)
  *     printf("pop: %d\n", pp)             # <<<<<<<<<<<<<<
@@ -2245,7 +2263,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   (void)(printf(((char const *)"pop: %d\n"), __pyx_v_pp));
 
-  /* "aliassampler.pyx":202
+  /* "aliassampler.pyx":200
  *     printf("pop: %d\n", pp)
  * #    pp = pop(&stack)
  *     printf("is empty? %d\n", isEmpty(stack))             # <<<<<<<<<<<<<<
@@ -2254,7 +2272,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
  */
   (void)(printf(((char const *)"is empty? %d\n"), __pyx_f_12aliassampler_isEmpty(__pyx_v_stack)));
 
-  /* "aliassampler.pyx":181
+  /* "aliassampler.pyx":179
  * #        printf("weights[%i] = %f | freq[%i] = %f\n", i, weights[i], i, <double> counts[i] / n)
  * 
  * def test_stack():             # <<<<<<<<<<<<<<
@@ -2269,7 +2287,7 @@ static PyObject *__pyx_pf_12aliassampler_2test_stack(CYTHON_UNUSED PyObject *__p
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":208
+/* "aliassampler.pyx":206
  * # =========================== RNG TODO CHANGE RNG!!! ====================== #
  * @cython.cdivision(True)
  * cdef double randUniform():             # <<<<<<<<<<<<<<
@@ -2282,7 +2300,7 @@ static double __pyx_f_12aliassampler_randUniform(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("randUniform", 0);
 
-  /* "aliassampler.pyx":210
+  /* "aliassampler.pyx":208
  * cdef double randUniform():
  *     cdef double r
  *     return <double> rand() / RAND_MAX             # <<<<<<<<<<<<<<
@@ -2292,7 +2310,7 @@ static double __pyx_f_12aliassampler_randUniform(void) {
   __pyx_r = (((double)rand()) / RAND_MAX);
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":208
+  /* "aliassampler.pyx":206
  * # =========================== RNG TODO CHANGE RNG!!! ====================== #
  * @cython.cdivision(True)
  * cdef double randUniform():             # <<<<<<<<<<<<<<
@@ -2306,7 +2324,7 @@ static double __pyx_f_12aliassampler_randUniform(void) {
   return __pyx_r;
 }
 
-/* "aliassampler.pyx":212
+/* "aliassampler.pyx":210
  *     return <double> rand() / RAND_MAX
  * 
  * cdef int randInt(int low, int high):             # <<<<<<<<<<<<<<
@@ -2319,7 +2337,7 @@ static int __pyx_f_12aliassampler_randInt(int __pyx_v_low, int __pyx_v_high) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("randInt", 0);
 
-  /* "aliassampler.pyx":213
+  /* "aliassampler.pyx":211
  * 
  * cdef int randInt(int low, int high):
  *     return <int> floor((high - low) * randUniform() + low)             # <<<<<<<<<<<<<<
@@ -2328,7 +2346,7 @@ static int __pyx_f_12aliassampler_randInt(int __pyx_v_low, int __pyx_v_high) {
   __pyx_r = ((int)floor((((__pyx_v_high - __pyx_v_low) * __pyx_f_12aliassampler_randUniform()) + __pyx_v_low)));
   goto __pyx_L0;
 
-  /* "aliassampler.pyx":212
+  /* "aliassampler.pyx":210
  *     return <double> rand() / RAND_MAX
  * 
  * cdef int randInt(int low, int high):             # <<<<<<<<<<<<<<
@@ -2402,26 +2420,26 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "aliassampler.pyx":142
+  /* "aliassampler.pyx":145
  * 
  * # ========================= Tests ===========================#
  * def test_aliasTable():             # <<<<<<<<<<<<<<
  *     c_test_aliasTable()
  * 
  */
-  __pyx_codeobj_ = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_test_aliasTable, 142, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj_)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_codeobj_ = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_test_aliasTable, 145, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj_)) __PYX_ERR(0, 145, __pyx_L1_error)
 
-  /* "aliassampler.pyx":181
+  /* "aliassampler.pyx":179
  * #        printf("weights[%i] = %f | freq[%i] = %f\n", i, weights[i], i, <double> counts[i] / n)
  * 
  * def test_stack():             # <<<<<<<<<<<<<<
  *     cdef int pp
  *     cdef StackNode * stack
  */
-  __pyx_tuple__2 = PyTuple_Pack(2, __pyx_n_s_pp, __pyx_n_s_stack); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(2, __pyx_n_s_pp, __pyx_n_s_stack); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_test_stack, 181, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_aliassampler_pyx, __pyx_n_s_test_stack, 179, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -2673,28 +2691,28 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "aliassampler.pyx":142
+  /* "aliassampler.pyx":145
  * 
  * # ========================= Tests ===========================#
  * def test_aliasTable():             # <<<<<<<<<<<<<<
  *     c_test_aliasTable()
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12aliassampler_1test_aliasTable, NULL, __pyx_n_s_aliassampler); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12aliassampler_1test_aliasTable, NULL, __pyx_n_s_aliassampler); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_aliasTable, __pyx_t_1) < 0) __PYX_ERR(0, 142, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_aliasTable, __pyx_t_1) < 0) __PYX_ERR(0, 145, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "aliassampler.pyx":181
+  /* "aliassampler.pyx":179
  * #        printf("weights[%i] = %f | freq[%i] = %f\n", i, weights[i], i, <double> counts[i] / n)
  * 
  * def test_stack():             # <<<<<<<<<<<<<<
  *     cdef int pp
  *     cdef StackNode * stack
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12aliassampler_3test_stack, NULL, __pyx_n_s_aliassampler); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12aliassampler_3test_stack, NULL, __pyx_n_s_aliassampler); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_stack, __pyx_t_1) < 0) __PYX_ERR(0, 181, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_stack, __pyx_t_1) < 0) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "aliassampler.pyx":1
