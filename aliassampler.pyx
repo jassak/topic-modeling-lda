@@ -76,25 +76,24 @@ cdef int generateOne(int k, double * probTable, int * aliasTable):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef void generateMany(int n, int k, double * probTable, int * aliasTable, int * samples):
-    cdef int i
+cdef void generateMany(int n, int k, double * probTable, int * aliasTable, StackNode ** samples):
+    cdef int i, s
     for i in range(n):
-        samples[i] = generateOne(k, probTable, aliasTable)
+        s = generateOne(k, probTable, aliasTable)
+        push(samples, s)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef int * genSamplesAlias(int n, int k, double * weights):
+cdef void genSamplesAlias(int n, int k, double * weights, StackNode ** samples):
     cdef:
         int i
         int * aliasTable
         double * probTable
-        int * samples
 
     # malloc
     aliasTable = <int *> PyMem_Malloc(k * sizeof(int))
     probTable = <double *> PyMem_Malloc(k * sizeof(double))
-    samples = <int *> PyMem_Malloc(n * sizeof(int))
 
     # init tables
     initializeAliasTables(k, weights, probTable, aliasTable)
@@ -105,8 +104,6 @@ cdef int * genSamplesAlias(int n, int k, double * weights):
     # dealloc
     PyMem_Free(aliasTable)
     PyMem_Free(probTable)
-
-    return samples
 # ================================ End of Alias Sampler =========================== #
 # ================================ Stack =========================== #
 ctypedef struct StackNode:
@@ -128,10 +125,12 @@ cdef void push(StackNode ** root, int data):
     stackNode = newStackNode(data)
     stackNode.next = root[0]
     root[0] = stackNode
+#    printf("pushed %d to stack\n", data)
 
 cdef int pop(StackNode ** root):
     if isEmpty(root[0]):
         printf("pop error: stack empty!\n")
+#        return -9999999
     cdef StackNode * tmp
     cdef int popped
     tmp = root[0]
@@ -150,10 +149,10 @@ def test_aliasTable():
 @cython.cdivision(True)
 cdef void c_test_aliasTable():
     cdef:
-        int i, k = 1000, n = 1000000
+        int i, pp, k = 1000, n = 1000000
         double w_norm = 0.0
         int * counts
-        int * samples
+        StackNode * samples
         double * weights
     # malloc
     counts = <int *> PyMem_Malloc(k * sizeof(int))
@@ -168,10 +167,11 @@ cdef void c_test_aliasTable():
     for i in range(k):
         weights[i] /= w_norm
     # gen samples
-    samples = genSamplesAlias(n, k, weights)
+    genSamplesAlias(n, k, weights, &samples)
     # count samples
     for i in range(n):
-        counts[samples[i]] += 1
+        pp = pop(&samples)
+        counts[pp] += 1
     # print results
 #    for i in range(20):
 #        printf("weights[%i] = %f | freq[%i] = %f\n", i, weights[i], i, <double> counts[i] / n)
