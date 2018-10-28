@@ -12,6 +12,7 @@ figures/
 # main.py
 
 # cython related files
+* html
 cython/*.html
 # cython/cython_testing.py
 cython/build/
