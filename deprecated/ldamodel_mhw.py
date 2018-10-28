@@ -168,58 +168,58 @@ class LDAModelMHW(ABCTopicModel):
                 terms_per_topic[topic] += term_topic_counts[term][topic]
         return term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
 
-    # def init_dir_prior(self, prior, name):
-    #     # TODO move this method to the parent class.
-    #     """
-    #     Initializes the Dirichlet priors. Copied from gensim.
-    #
-    #     Args:
-    #         prior:
-    #         name:
-    #
-    #     Returns:
-    #
-    #     """
-    #     if prior is None:
-    #         prior = 'symmetric'
-    #
-    #     if name == 'alpha':
-    #         prior_shape = self.num_topics
-    #     elif name == 'beta':
-    #         prior_shape = self.num_terms
-    #     else:
-    #         raise ValueError("'name' must be 'alpha' or 'beta'")
-    #
-    #     is_auto = False
-    #
-    #     # TODO Something is wrong here, I think it assigns beta = 1/num_topics for prior=symmetric
-    #     if isinstance(prior, six.string_types):
-    #         if prior == 'symmetric':
-    #             logger.info("using symmetric %s at %s", name, 1.0 / self.num_topics)
-    #             init_prior = np.asarray([1.0 / self.num_topics for _ in range(prior_shape)], dtype=self.dtype)
-    #         elif prior == 'asymmetric':
-    #             init_prior = \
-    #                 np.asarray([1.0 / (i + np.sqrt(prior_shape)) for i in range(prior_shape)], dtype=self.dtype)
-    #             init_prior /= init_prior.sum()
-    #             logger.info("using asymmetric %s %s", name, list(init_prior))
-    #         elif prior == 'auto':
-    #             is_auto = True
-    #             # This is obviously wrong since it's the same as symmetric. Maybe in future correct it.
-    #             init_prior = np.asarray([1.0 / self.num_topics for _ in range(prior_shape)], dtype=self.dtype)
-    #             if name == 'alpha':
-    #                 logger.info("using autotuned %s, starting with %s", name, list(init_prior))
-    #         else:
-    #             raise ValueError("Unable to determine proper %s value given '%s'" % (name, prior))
-    #     elif isinstance(prior, list):
-    #         init_prior = np.asarray(prior, dtype=self.dtype)
-    #     elif isinstance(prior, np.ndarray):
-    #         init_prior = prior.astype(self.dtype, copy=False)
-    #     elif isinstance(prior, np.number) or isinstance(prior, numbers.Real):
-    #         init_prior = np.asarray([prior] * prior_shape, dtype=self.dtype)
-    #     else:
-    #         raise ValueError("%s must be either a np array of scalars, list of scalars, or scalar" % name)
-    #
-    #     return init_prior, is_auto
+    def init_dir_prior(self, prior, name):
+        # TODO move this method to the parent class.
+        """
+        Initializes the Dirichlet priors. Copied from gensim.
+
+        Args:
+            prior:
+            name:
+
+        Returns:
+
+        """
+        if prior is None:
+            prior = 'symmetric'
+
+        if name == 'alpha':
+            prior_shape = self.num_topics
+        elif name == 'beta':
+            prior_shape = self.num_terms
+        else:
+            raise ValueError("'name' must be 'alpha' or 'beta'")
+
+        is_auto = False
+
+        # TODO Something is wrong here, I think it assigns beta = 1/num_topics for prior=symmetric
+        if isinstance(prior, six.string_types):
+            if prior == 'symmetric':
+                logger.info("using symmetric %s at %s", name, 1.0 / self.num_topics)
+                init_prior = np.asarray([1.0 / self.num_topics for _ in range(prior_shape)], dtype=self.dtype)
+            elif prior == 'asymmetric':
+                init_prior = \
+                    np.asarray([1.0 / (i + np.sqrt(prior_shape)) for i in range(prior_shape)], dtype=self.dtype)
+                init_prior /= init_prior.sum()
+                logger.info("using asymmetric %s %s", name, list(init_prior))
+            elif prior == 'auto':
+                is_auto = True
+                # This is obviously wrong since it's the same as symmetric. Maybe in future correct it.
+                init_prior = np.asarray([1.0 / self.num_topics for _ in range(prior_shape)], dtype=self.dtype)
+                if name == 'alpha':
+                    logger.info("using autotuned %s, starting with %s", name, list(init_prior))
+            else:
+                raise ValueError("Unable to determine proper %s value given '%s'" % (name, prior))
+        elif isinstance(prior, list):
+            init_prior = np.asarray(prior, dtype=self.dtype)
+        elif isinstance(prior, np.ndarray):
+            init_prior = prior.astype(self.dtype, copy=False)
+        elif isinstance(prior, np.number) or isinstance(prior, numbers.Real):
+            init_prior = np.asarray([prior] * prior_shape, dtype=self.dtype)
+        else:
+            raise ValueError("%s must be either a np array of scalars, list of scalars, or scalar" % name)
+
+        return init_prior, is_auto
 
     def train(self, corpus, num_passes=0):
         """

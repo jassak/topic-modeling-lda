@@ -7,6 +7,8 @@ Created on 19 October 2018
 @author: jason
 """
 
+# TODO cython decorators where needed (also in sparsecounter.pyx)
+
 cimport cython
 from libc.stdlib cimport malloc, free, rand, RAND_MAX
 from cpython.mem cimport PyMem_Malloc, PyMem_Free

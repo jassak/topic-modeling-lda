@@ -12,11 +12,11 @@ import random
 
 import numpy as np
 import six
+from aliassampler import AliasSampler
 from gensim import utils, matutils
 
 from abc_topicmodel import ABCTopicModel
-from aliassampler import AliasSampler
-from sparse_datastruct import SparseCounter, SparseVector, SparseGraph
+from deprecated.sparse_datastruct import SparseCounter, SparseVector, SparseGraph
 
 logger = logging.getLogger(__name__)
 
