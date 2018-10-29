@@ -12,8 +12,9 @@ figures/
 # main.py
 
 # cython related files
-* html
-cython/*.html
+*.html
+deprecated/*html
+
 # cython/cython_testing.py
 cython/build/
 

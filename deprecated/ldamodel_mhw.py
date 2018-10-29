@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Created on 18 June 2018
+Created on 11 June 2018
 
 @author: jason
 """
@@ -12,11 +12,13 @@ import random
 
 import numpy as np
 import six
-from aliassampler import AliasSampler
 from gensim import utils, matutils
 
 from abc_topicmodel import ABCTopicModel
-from deprecated.sparse_datastruct import SparseCounter, SparseVector, SparseGraph
+from deprecated.aliassampler import AliasSampler
+from deprecated.sparse_datastruct import SparseCounter, SparseVector
+
+from profiling_utils import profileit
 
 logger = logging.getLogger(__name__)
 
@@ -27,29 +29,24 @@ DTYPE_TO_EPS = {
 }
 
 
-class LDAModelGrS(ABCTopicModel):
+class LDAModelMHW(ABCTopicModel):
     """
     The constructor estimates Latent Dirichlet Allocation model parameters based
-    on a training corpus, according to the Graph Sampler variant of
+    on a training corpus, according to the Metropolis-Hasting-Walker variant of
     Gibbs sampling method described in
-    **Ahmed, Long, Silva, Wang: ﻿A Practical Algorithm for Solving the Incoherence
-    Problem of Topic Models In Industrial Applications. KDD 2017**
+    **Li, Ahmed, Ravi, Smola: ﻿Reducing the sampling complexity of topic models. ﻿KDD 2014.**
 
     Example:
-        lda = LDAModelGrS(corpus, num_topics=10)
+        lda = LDAModelMHW(corpus, num_topics=10)
     """
 
-    def __init__(self, corpus=None, similarity_matrix=None, num_topics=100, alpha='symmetric', beta=None,
-                 smooth_factor=0.1, num_passes=10, minimum_prob=0.01, random_state=None, dtype=np.float32):
-        # TODO Comments
+    def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
+                 minimum_prob=0.01, random_state=None, dtype=np.float32):
         """
 
         Args:
             corpus: If given, start training from the iterable `corpus` straight away. If not given,
                 the model is left untrained (presumably because you want to call `train()` manually).
-
-            similarity_matrix: ﻿stochastic matrix representing semantic similarity between words.
-                Should be a numpy array in dense or sparse (scipy.sparse) format.
 
             num_topics: The number of requested latent topics to be extracted from
                 the training corpus.
@@ -58,14 +55,13 @@ class LDAModelGrS(ABCTopicModel):
 
             beta: Hyperparameter of the Dirichlet prior over the terms in a topic.
 
-            smooth_factor: parameter controlling the influence of neighbour words.
-
             num_passes: The number of passes of the MCMC procedure. One pass is one step per term
                 in each document of the whole corpus.
 
-            minimum_prob: TODO
+            minimum_prob: Minimum probability required for an object (term, topic) to be displayed (TODO should
+            remove this)
 
-            random_state: TODO
+            random_state: TODO findout what is this
 
             dtype: Data-type to use during calculations inside model. All inputs are also converted to this dtype.
                 Available types: `numpy.float16`, `numpy.float32`, `numpy.float64`.
@@ -77,7 +73,7 @@ class LDAModelGrS(ABCTopicModel):
                             ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
         self.dtype = dtype
 
-        logger.info("creating a new lda graph sampler model with {0} topics".format(num_topics))
+        logger.info("creating a new lda metropolis-hastings-walker model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary
@@ -112,10 +108,12 @@ class LDAModelGrS(ABCTopicModel):
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
-            self.train(corpus, similarity_matrix=similarity_matrix, smooth_factor=smooth_factor, num_passes=num_passes)
+            self.train(corpus, num_passes=num_passes)
             self.theta, self.phi = self.get_theta_phi()
 
     def get_seqs_and_counts(self, corpus):
+        # TODO change to init_seqs_and_counts as in ldamodel_cgs
+        # TODO move to parent class with sparsity condition
         """
             Builds the sequences of terms and topics, and the counts of topics in docs,
             terms in topics and term per topic.
@@ -139,6 +137,7 @@ class LDAModelGrS(ABCTopicModel):
         # Init randomly topic_seqs
         topic_seqs = []
         for di in range(len(term_seqs)):
+            # init to a random seq, problem: not sparse
             topic_seq = np.random.randint(self.num_topics, size=len(term_seqs[di])).tolist()
             topic_seqs.append(topic_seq)
         # Build doc_topic_counts
@@ -160,22 +159,6 @@ class LDAModelGrS(ABCTopicModel):
             for term in range(self.num_terms):
                 terms_per_topic[topic] += term_topic_counts[term][topic]
         return term_seqs, topic_seqs, doc_topic_counts, term_topic_counts, terms_per_topic
-
-    def get_similarity_graph(self, similarity_matrix, smooth_factor):
-        """
-
-        Args:
-            similarity_graph:
-            smooth_factor: must be in range [0, 1]
-
-        Returns:
-            A sparse_datastruct.SparseGraph corresponding to the matrix:
-            (1 - smooth_factor) * I + smooth_factor * similarity_matrix.
-        """
-        eye = np.eye(self.num_terms, dtype=self.dtype)
-        S = (1 - smooth_factor) * eye + smooth_factor * similarity_matrix
-        sim_graph = SparseGraph(S, dtype=self.dtype)
-        return sim_graph
 
     def init_dir_prior(self, prior, name):
         # TODO move this method to the parent class.
@@ -230,7 +213,7 @@ class LDAModelGrS(ABCTopicModel):
 
         return init_prior, is_auto
 
-    def train(self, corpus, similarity_matrix, smooth_factor, num_passes=0):
+    def train(self, corpus, num_passes=0):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
 
@@ -249,52 +232,49 @@ class LDAModelGrS(ABCTopicModel):
             return
 
         logger.info(
-                "running Graph Sampler sampling for LDA training, {0} topics, over "
+                "running Metropolis-Hastings-Walker sampling for LDA training, {0} topics, over "
                 "the supplied corpus of {1} documents for {2} passes over the whole corpus"
                     .format(self.num_topics, lencorpus, num_passes)
         )
 
-        # Create similarity graph and node alias samplers
-        logger.info("creating similarity graph")
-        if similarity_matrix.shape != (self.num_terms, self.num_terms):
-            raise ValueError("similarity_matrix must have shape (num_terms, num_terms)")
-        if smooth_factor < 0 or smooth_factor > 1:
-            raise ValueError("smooth_factor must be in [0, 1]")
-        sim_graph = self.get_similarity_graph(similarity_matrix, smooth_factor)
-
         # Init stale_samples
-        logger.info("generating stale samples")
-        stale_samples = self.init_stale_sample(sim_graph)
+        stale_samples = {}
 
         # Perform num_passes rounds of Gibbs sampling.
         for pass_i in range(num_passes):
             logger.info("gibbs sampling pass: {0}".format(pass_i))
-            self.do_one_pass(stale_samples, sim_graph)
+            self.do_one_pass(stale_samples)
+            # remove this when you know what you're doing
+            self.save('models/model_mhw_currun_pass' + str(pass_i) + '.pkl')
+            # self.theta, self.phi = self.get_theta_phi()
 
-        # Delete stuff
+        # compute theta and phi
+        self.theta, self.phi = self.get_theta_phi()
+
+        # Delete stale samples
         del stale_samples
-        del sim_graph
 
-    def do_one_pass(self, stale_samples, sim_graph):
+    @profileit
+    def do_one_pass(self, stale_samples):
         """
         Performs one iteration of Gibbs sampling, across all documents.
 
         """
 
         for doc_id in range(self.num_docs):
-            if doc_id % 1 == 0:
+            if doc_id % 10 == 0:
                 logger.info("doc: {0}".format(doc_id))
             else:
                 logger.debug("doc: {0}".format(doc_id))
-            self.sample_topics_for_one_doc(doc_id, stale_samples, sim_graph)
+            self.sample_topics_for_one_doc(doc_id, stale_samples)
 
-    def sample_topics_for_one_doc(self, doc_id, stale_samples, sim_graph):
+    # @profileit
+    def sample_topics_for_one_doc(self, doc_id, stale_samples):
         """
 
         Args:
             doc_id:
-            stale_samples:
-            sim_graph:
+            stale_samples: Dictionary containing stale samples (pre-computed using Alias Method)
 
         Returns:
 
@@ -311,37 +291,34 @@ class LDAModelGrS(ABCTopicModel):
             logger.debug("sample topics for one doc iteration: position:{0}, term: {1}, old topic: {2}"
                          .format(si, term_id, old_topic))
 
-            # Check if stale samples for term_id are exhausted and generate if needed
-            # If that's the case recompute qwS_norm
-            if not stale_samples[term_id][0]:
-                self.generate_stale_samples(term_id, stale_samples, self.num_topics + round(sim_graph.avdeg) - 1,
-                                            sim_graph)
-            (sw, _, _, qwS_norm) = stale_samples[term_id]
+            # Check if stale samples haven't been generated yet or are exhausted and generate
+            # new ones if that's the case.
+            if term_id not in stale_samples:
+                self.generate_stale_samples(term_id, stale_samples, self.num_topics)
+            elif not stale_samples[term_id][0]:
+                self.generate_stale_samples(term_id, stale_samples, self.num_topics)
+            (sw, qw, qw_norm) = stale_samples[term_id]
 
-            # Remove current topic from counts
+            # Remove current term from counts
             doc_topic_count.decr_count(old_topic)  # use decr_count method for SparseCounter object instead of -=1
             self.term_topic_counts[term_id][old_topic] -= 1
             self.terms_per_topic[old_topic] -= 1
 
-            # Compute sparse component pdw^S and pdw_norm^S
-            (pdwS, pdwS_norm) = self.compute_sparse_comp(term_id, sim_graph, doc_topic_count, num_neighb=5)
+            # Compute sparse component of conditional topic distribution (p_dw in Li et al. 2014)
+            (pdw, pdw_norm) = self.compute_sparse_comp(term_id, doc_topic_count)
 
-            # Draw from proposal distribution q(t, w, d)^S with bucket sampling
-            new_topic = self.bucket_sampling(term_id, pdwS, pdwS_norm, stale_samples, qwS_norm, sim_graph)
+            # Draw from proposal distribution eq.(10) in Li et al. 2014
+            new_topic = self.bucket_sampling(pdw, pdw_norm, sw, qw_norm)
 
-            # Draw a neighbour of term_id as a shortcut to compute qwS_approx (see paper)
-            term_neighbour = sim_graph.sample_neighbour(term_id)
-            (_, qwS_approx, _, _) = stale_samples[term_neighbour]
-
-            # Accept new_topic with prob_ratio according to Metropolis-Hastings
+            # Accept new_topic with prob_ratio
             prob_ratio = (doc_topic_count.get_count(new_topic) + self.alpha[new_topic]) \
                          / (doc_topic_count.get_count(old_topic) + self.alpha[old_topic]) \
                          * (self.term_topic_counts[term_id][new_topic] + self.beta[term_id]) \
                          / (self.term_topic_counts[term_id][old_topic] + self.beta[term_id]) \
                          * (self.terms_per_topic[old_topic] + self.w_beta) \
                          / (self.terms_per_topic[new_topic] + self.w_beta) \
-                         * ((pdwS_norm * pdwS[old_topic]) + (qwS_norm * qwS_approx[old_topic])) \
-                         / ((pdwS_norm * pdwS[new_topic]) + (qwS_norm * qwS_approx[new_topic]))
+                         * ((pdw_norm * pdw[old_topic]) + (qw_norm * qw[old_topic])) \
+                         / ((pdw_norm * pdw[new_topic]) + (qw_norm * qw[new_topic]))
             if prob_ratio >= 1.0:
                 accept = True
             else:
@@ -366,106 +343,7 @@ class LDAModelGrS(ABCTopicModel):
         self.topic_seqs[doc_id] = doc_topic_seq
         self.doc_topic_counts[doc_id] = doc_topic_count
 
-    def compute_sparse_comp(self, term_id, sim_graph, doc_topic_count, num_neighb=5):
-        """
-
-        Args:
-            term_id:
-            sim_graph:
-            doc_topic_count:
-            num_neighb:
-
-        Returns:
-
-        """
-        # TODO comments + logging
-        # sample num_neighb nodes from graph alias sampler O(1)
-        nodes = [0] * num_neighb
-        for n in range(num_neighb):
-            nodes[n] = sim_graph.sample_neighbour(term_id)
-        # compute pdwS and pdwS_norm O(k_d)
-        pdwS = SparseVector(self.num_topics, dtype=self.dtype)
-        pdwS_norm = 0
-        for topic_id in doc_topic_count:
-            pdwS[topic_id] = doc_topic_count.get_count(topic_id) \
-                             / (self.terms_per_topic[topic_id] + self.w_beta)
-            sum = 0
-            for node in nodes:
-                sum += (self.term_topic_counts[node][topic_id] + self.beta[node])
-            pdwS[topic_id] *= sum / num_neighb
-            pdwS_norm += pdwS[topic_id]
-        pdwS /= pdwS_norm
-        return pdwS, pdwS_norm
-
-    def bucket_sampling(self, term_id, pdwS, pdwS_norm, stale_samples, qwS_norm, sim_graph):
-        """
-
-        Args:
-            term_id:
-            pdwS:
-            pdwS_norm:
-            stale_samples:
-            qwS_norm:
-            sim_graph:
-
-        Returns:
-
-        """
-        # TODO comments + logging
-
-        # Determine by coin flip to draw from sparse or dense bucket
-        if random.random() < pdwS_norm / (pdwS_norm + qwS_norm):
-            # TODO check if correct: for topic_id in pdwS returns topic_ids? if not change in mhw as well
-            # If in sparse bucket: Draw from pdw^S in ﻿O(k_d)
-            num_nnztopics = pdwS.get_nnz()
-            topic_indices = []
-            topic_weights = np.empty(num_nnztopics, dtype=self.dtype)
-            for topic_id, weight_id in zip(pdwS, range(num_nnztopics)):
-                topic_indices.append(topic_id)
-                topic_weights[weight_id] = pdwS[topic_id]
-            new_topic_idx = np.random.choice(num_nnztopics, p=topic_weights)
-            return topic_indices[new_topic_idx]
-        else:
-            # If in dense bucket:
-            # Draw neighb from graph_aliassamplers[term_id] in O(1)
-            neighb = sim_graph.sample_neighbour(term_id)
-            # Check if stale samples for neighb are exhausted and generate if needed
-            if not stale_samples[neighb][0]:
-                self.generate_stale_samples(neighb, stale_samples, self.num_topics + round(sim_graph.avdeg) - 1,
-                                            sim_graph)
-            (sneighb, _, _, _) = stale_samples[neighb]
-            # Draw topic from stale_samples[neighb] in O(1)
-            return sneighb.pop()
-
-    def init_stale_sample(self, sim_graph):
-        """
-
-        Args:
-            sim_graph:
-
-        Returns:
-
-        """
-        # TODO comments + logging
-
-        # generate stale samples for all term_ids
-        stale_samples = {}
-        for term_id in range(self.num_terms):
-            self.generate_stale_samples(term_id, stale_samples, self.num_topics + round(sim_graph.avdeg) - 1, sim_graph,
-                                        update_qwSnorm=False)
-        # compute all qwS_norm by sparse dot-product between sim_graph and qw_norm's
-        qw_norm_vec = np.empty(self.num_terms)
-        for term_id in range(self.num_terms):
-            (_, _, qw_norm_vec[term_id], _) = stale_samples[term_id]
-        qwS_norm = sim_graph.dot_vec(qw_norm_vec)
-        # put qwS_norm's in stale_samples
-        for term_id in range(self.num_terms):
-            (sw, qw, qw_norm, _) = stale_samples[term_id]
-            stale_samples[term_id] = (sw, qw, qw_norm, qwS_norm[term_id])
-        del qw_norm_vec, qwS_norm
-        return stale_samples
-
-    def generate_stale_samples(self, term_id, stale_samples, num_samples, sim_graph, update_qwSnorm=True):
+    def generate_stale_samples(self, term_id, stale_samples, num_samples):
         """
         Computes dense component of topic conditional distr for term_id qw as well as it's normalization qw_norm,
         then computes num_samples samples using AliasSampler and stores them in sw.
@@ -474,9 +352,11 @@ class LDAModelGrS(ABCTopicModel):
         Args:
             term_id:
             stale_samples:
+            num_samples:
 
         """
         logger.debug("generate stale samples for term: {0}".format(term_id))
+
         # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
         qw = np.zeros(self.num_topics, self.dtype)
         for topic_id in range(self.num_topics):
@@ -484,28 +364,67 @@ class LDAModelGrS(ABCTopicModel):
                            / (self.terms_per_topic[topic_id] + self.w_beta)
         qw_norm = sum(qw)
         qw = qw / qw_norm
-        logger.debug("is qw normalized properly? answer: sum(qw) = {0}".format(sum(qw)))
+        # TODO ??Just to be sure:
+        qw = qw / sum(qw)
         # Sample num_topics samples from above distribution using the alias method
         alias_sampler = AliasSampler(qw, self.dtype)
         sw = alias_sampler.generate(num_samples)
         del alias_sampler
-        # if asked to do so update qwS_norm
-        if update_qwSnorm:
-            qw_norm_vec = np.empty(self.num_terms)
-            logger.debug("allocating an empty vec is efficient but risky! make sure everything's OK")
-            for neighb in sim_graph.neighbours[term_id]:
-                (_, _, qw_norm_vec[neighb], _) = stale_samples[neighb]
-            qwS_norm = sim_graph.row_dot_vec(qw_norm_vec)
-            logger.debug("qwS_norm[{0}] = {1}".format(term_id, qwS_norm))
-            del qw_norm_vec
-            stale_samples[term_id] = (sw, qw, qw_norm, qwS_norm)
+        stale_samples[term_id] = (sw, qw, qw_norm)
+
+    def compute_sparse_comp(self, term_id, doc_topic_count):
+        """
+
+        Args:
+            term_id:
+            doc_topic_count:
+
+        Returns:
+            Sparse component and its normalization
+        """
+        logger.debug("compute sparse distribution for term: {0}".format(term_id))
+
+        pdw = SparseVector(self.num_topics, dtype=self.dtype)
+        pdw_norm = 0.
+        for topic_id in doc_topic_count:
+            pdw[topic_id] = doc_topic_count.get_count(topic_id) \
+                            * (self.term_topic_counts[term_id][topic_id] + self.beta[term_id]) \
+                            / (self.terms_per_topic[topic_id] + self.w_beta)
+            pdw_norm += pdw[topic_id]
+        pdw.normalize()
+        return pdw, pdw_norm
+
+    def bucket_sampling(self, pdw, pdw_norm, sw, qw_norm):
+        """
+
+        Args:
+            pdw: Dense component
+            pdw_norm: Dense component normalization
+            sw: List of stale samples (qw is not required since we have sw)
+            qw_norm: Sparse component normalization
+
+        Returns:
+            A new topic sample
+        """
+        logger.debug("do bucket sampling")
+
+        # Determine by coin flip to draw from sparse or dense bucket
+        if random.random() < pdw_norm / (pdw_norm + qw_norm):
+            # draw from sparse bucket
+            index_map, weights = pdw.make_weight_vec()
+            num_nnztopics = pdw.get_nnz()
+            new_topic_idx = np.random.choice(num_nnztopics, p=weights)
+            return index_map[new_topic_idx]
         else:
-            stale_samples[term_id] = (sw, qw, qw_norm, None)
+            # draw from dense bucket
+            return sw.pop()
 
     def get_theta_phi(self):
         """
 
         Returns:
+            theta:
+            phi:
 
         """
         logger.info("computing theta and phi")

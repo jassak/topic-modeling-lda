@@ -7,6 +7,8 @@ Created on 19 October 2018
 @author: jason
 """
 
+# TODO cython decorators where needed (also in sparsecounter.pyx)
+
 cimport cython
 from libc.stdlib cimport malloc, free, rand, RAND_MAX
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
@@ -23,7 +25,7 @@ def init_seqs_and_counts(num_topics, num_terms, corpus):
         for term_pair in document:
             term_seq += [term_pair[0]] * int(term_pair[1])
         term_seqs.append(term_seq)
-    # Init randomly topic_seqs[d][t]
+    # Init randomly topic_seqs[d][s]
     topic_seqs = []
     for docid in range(len(term_seqs)):
         topic_seq = np.random.randint(num_topics, size=len(term_seqs[docid])).tolist()
@@ -111,7 +113,7 @@ def train(num_topics, num_passes, corpus):
     cdef double * alpha
     cdef double * beta
     cdef double w_beta
-    cdef list theta, phi
+#    cdef list theta, phi
     cdef double sum
     # get num_terms from corpus
     id2word = corpus.dictionary
@@ -146,12 +148,8 @@ def train(num_topics, num_passes, corpus):
     cTermTopicCounts, cTermsPerTopic, alpha, beta, w_beta, num_passes)
 
     # allocate theta, phi
-    theta = [None] * num_docs
-    for i in range(num_docs):
-        theta[i] = [0.0] * num_topics
-    phi = [None] * num_topics
-    for i in range(num_topics):
-        phi[i] = [0.0] * num_terms
+    theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)
+    phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)
 
     # computer theta, phi
     for i in range(num_docs):
