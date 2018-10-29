@@ -15,7 +15,6 @@ import six
 from gensim import utils, matutils
 
 from abc_topicmodel import ABCTopicModel
-from corpusutils import get_seqs_and_counts
 
 logger = logging.getLogger(__name__)
 
