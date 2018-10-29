@@ -36,7 +36,7 @@ def make_rand_sim_matrix(num_terms, avdeg):
 
 def main():
     from ldamodel_cgs import LDAModelCGS
-    # from ldamodel_mhw import LDAModelMHW
+    from ldamodel_mhw import LDAModelMHW
     # from ldamodel_gs import LDAModelGrS
     from nipscorpus import NipsCorpus
 
@@ -44,12 +44,12 @@ def main():
     # QUICK TESTS: #
     #==============#
     # DO THIS FIRST FOR EVERY NEW MODEL:============================================#
-    # corpus = NipsCorpus()
-    # model = LDAModelCGS(corpus, num_topics=100, num_passes=0, dtype=np.float64)
-    # model.save('models/test_model.pkl')
+    corpus = NipsCorpus()
+    model = LDAModelMHW(corpus, num_topics=20)
+    model.save('models/test_model.pkl')
     # THEN DO THIS:=================================================================#
-    model = LDAModelCGS.load('models/test_model.pkl')
-    model.do_one_pass()
+    # model = LDAModelCGS.load('models/test_model.pkl')
+    # model.do_one_pass()
     # stale_samples = {}
     #===============================================================================#
 

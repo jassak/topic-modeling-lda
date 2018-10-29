@@ -163,7 +163,7 @@ def train(num_topics, num_passes, corpus):
     cdef int * cTermsPerTopic
     cdef int * doc_len
     cdef Priors * priors
-    cdef list theta, phi
+#    cdef list theta, phi
     cdef double sum
 
     # init RNG
@@ -199,12 +199,8 @@ def train(num_topics, num_passes, corpus):
     _train(cdata, priors, num_passes)
 
     # allocate theta, phi
-    theta = [None] * num_docs
-    for d in range(num_docs):
-        theta[d] = [0.0] * num_topics
-    phi = [None] * num_topics
-    for t in range(num_topics):
-        phi[t] = [0.0] * num_terms
+    theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)
+    phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)
 
     # computer theta, phi
     for d in range(num_docs):

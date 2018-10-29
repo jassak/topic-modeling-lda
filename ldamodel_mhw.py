@@ -6,14 +6,14 @@ Created on 28 October 2018
 @author: jason
 """
 
-# TODO use numpy arrays for theta and phi, as in deprecated version, because get_term_topics
-# and get_document_topics are broken (no transpose method for python lists).
-
+import logging
 from abc_topicmodel import ABCTopicModel
 from _ldamhw_train import train
 from gensim import matutils
 
 from profiling_utils import profileit
+
+logger = logging.getLogger(__name__)
 
 
 class LDAModelMHW(ABCTopicModel):
@@ -27,7 +27,7 @@ class LDAModelMHW(ABCTopicModel):
         lda = LDAModelMHW(corpus, num_topics=10)
     """
 
-    def __init__(self, corpus=None, num_topics=100, num_passes=10, minimum_prob=0.01):
+    def __init__(self, corpus=None, num_topics=100, num_passes=100, minimum_prob=0.01):
         """
 
         Args:
@@ -55,7 +55,27 @@ class LDAModelMHW(ABCTopicModel):
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
-            self.theta, self.phi = train(self.num_topics, num_passes, corpus)
+            self.train(corpus, num_passes)
+
+    @profileit
+    def train(self, corpus, num_passes=10):
+        """
+        Trains the model by making num_passes Monte Carlo passes on the corpus.
+
+        Args:
+            corpus:
+            num_passes:
+
+        """
+
+        # Perform num_passes rounds of Gibbs sampling.
+        logger.info(
+                "running Metropolis-Hastings-Walker sampling for LDA training, {0} topics, over "
+                "the supplied corpus for {1} passes"
+                    .format(self.num_topics, num_passes)
+        )
+
+        self.theta, self.phi = train(self.num_topics, num_passes, corpus)
 
     def get_topic_terms(self, topic_id, topn=10, readable=True):
         # TODO move this and similar methods to parent class

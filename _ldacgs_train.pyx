@@ -113,7 +113,7 @@ def train(num_topics, num_passes, corpus):
     cdef double * alpha
     cdef double * beta
     cdef double w_beta
-    cdef list theta, phi
+#    cdef list theta, phi
     cdef double sum
     # get num_terms from corpus
     id2word = corpus.dictionary
@@ -148,12 +148,8 @@ def train(num_topics, num_passes, corpus):
     cTermTopicCounts, cTermsPerTopic, alpha, beta, w_beta, num_passes)
 
     # allocate theta, phi
-    theta = [None] * num_docs
-    for i in range(num_docs):
-        theta[i] = [0.0] * num_topics
-    phi = [None] * num_topics
-    for i in range(num_topics):
-        phi[i] = [0.0] * num_terms
+    theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)
+    phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)
 
     # computer theta, phi
     for i in range(num_docs):

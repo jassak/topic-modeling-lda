@@ -1605,8 +1605,11 @@ static const char __pyx_k_term[] = "term";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_alpha[] = "alpha";
 static const char __pyx_k_docid[] = "docid";
+static const char __pyx_k_dtype[] = "dtype";
+static const char __pyx_k_empty[] = "empty";
 static const char __pyx_k_numpy[] = "numpy";
 static const char __pyx_k_range[] = "range";
+static const char __pyx_k_shape[] = "shape";
 static const char __pyx_k_theta[] = "theta";
 static const char __pyx_k_topic[] = "topic";
 static const char __pyx_k_train[] = "train";
@@ -1616,6 +1619,7 @@ static const char __pyx_k_random[] = "random";
 static const char __pyx_k_tolist[] = "tolist";
 static const char __pyx_k_w_beta[] = "w_beta";
 static const char __pyx_k_doc_len[] = "doc_len";
+static const char __pyx_k_float64[] = "float64";
 static const char __pyx_k_id2word[] = "id2word";
 static const char __pyx_k_randint[] = "randint";
 static const char __pyx_k_document[] = "document";
@@ -1676,6 +1680,9 @@ static PyObject *__pyx_n_s_doc_len;
 static PyObject *__pyx_n_s_doc_topic_counts;
 static PyObject *__pyx_n_s_docid;
 static PyObject *__pyx_n_s_document;
+static PyObject *__pyx_n_s_dtype;
+static PyObject *__pyx_n_s_empty;
+static PyObject *__pyx_n_s_float64;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_id2word;
 static PyObject *__pyx_n_s_import;
@@ -1701,6 +1708,7 @@ static PyObject *__pyx_kp_s_prior_type_must_be_a_for_alpha_o;
 static PyObject *__pyx_n_s_randint;
 static PyObject *__pyx_n_s_random;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_term;
@@ -1724,7 +1732,6 @@ static PyObject *__pyx_pf_13_ldacgs_train_init_seqs_and_counts(CYTHON_UNUSED PyO
 static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_num_topics, PyObject *__pyx_v_num_passes, PyObject *__pyx_v_corpus); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
-static PyObject *__pyx_float_0_0;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_tuple_;
@@ -3298,8 +3305,6 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   double *__pyx_v_alpha;
   double *__pyx_v_beta;
   double __pyx_v_w_beta;
-  PyObject *__pyx_v_theta = 0;
-  PyObject *__pyx_v_phi = 0;
   double __pyx_v_sum;
   PyObject *__pyx_v_id2word = NULL;
   PyObject *__pyx_v_term_seqs = NULL;
@@ -3307,6 +3312,8 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   PyObject *__pyx_v_doc_topic_counts = NULL;
   PyObject *__pyx_v_term_topic_counts = NULL;
   PyObject *__pyx_v_terms_per_topic = NULL;
+  PyObject *__pyx_v_theta = NULL;
+  PyObject *__pyx_v_phi = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3697,108 +3704,84 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   /* "_ldacgs_train.pyx":151
  * 
  *     # allocate theta, phi
- *     theta = [None] * num_docs             # <<<<<<<<<<<<<<
- *     for i in range(num_docs):
- *         theta[i] = [0.0] * num_topics
+ *     theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)             # <<<<<<<<<<<<<<
+ *     phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)
+ * 
  */
-  __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_docs<0) ? 0:__pyx_v_num_docs)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  { Py_ssize_t __pyx_temp;
-    for (__pyx_temp=0; __pyx_temp < __pyx_v_num_docs; __pyx_temp++) {
-      __Pyx_INCREF(Py_None);
-      __Pyx_GIVEREF(Py_None);
-      PyList_SET_ITEM(__pyx_t_1, __pyx_temp, Py_None);
-    }
-  }
-  __pyx_v_theta = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_num_docs); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_5);
+  __Pyx_INCREF(__pyx_v_num_topics);
+  __Pyx_GIVEREF(__pyx_v_num_topics);
+  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_num_topics);
+  __pyx_t_5 = 0;
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_theta = __pyx_t_5;
+  __pyx_t_5 = 0;
 
   /* "_ldacgs_train.pyx":152
  *     # allocate theta, phi
- *     theta = [None] * num_docs
- *     for i in range(num_docs):             # <<<<<<<<<<<<<<
- *         theta[i] = [0.0] * num_topics
- *     phi = [None] * num_topics
- */
-  __pyx_t_11 = __pyx_v_num_docs;
-  __pyx_t_4 = __pyx_t_11;
-  for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_4; __pyx_t_12+=1) {
-    __pyx_v_i = __pyx_t_12;
-
-    /* "_ldacgs_train.pyx":153
- *     theta = [None] * num_docs
- *     for i in range(num_docs):
- *         theta[i] = [0.0] * num_topics             # <<<<<<<<<<<<<<
- *     phi = [None] * num_topics
- *     for i in range(num_topics):
- */
-    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_INCREF(__pyx_float_0_0);
-    __Pyx_GIVEREF(__pyx_float_0_0);
-    PyList_SET_ITEM(__pyx_t_1, 0, __pyx_float_0_0);
-    { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(0, 153, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_temp);
-      __Pyx_DECREF(__pyx_t_1);
-      __pyx_t_1 = __pyx_temp;
-    }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_theta, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 153, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
-
-  /* "_ldacgs_train.pyx":154
- *     for i in range(num_docs):
- *         theta[i] = [0.0] * num_topics
- *     phi = [None] * num_topics             # <<<<<<<<<<<<<<
- *     for i in range(num_topics):
- *         phi[i] = [0.0] * num_terms
- */
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 154, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(Py_None);
-  __Pyx_GIVEREF(Py_None);
-  PyList_SET_ITEM(__pyx_t_1, 0, Py_None);
-  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(0, 154, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_temp);
-    __Pyx_DECREF(__pyx_t_1);
-    __pyx_t_1 = __pyx_temp;
-  }
-  __pyx_v_phi = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "_ldacgs_train.pyx":155
- *         theta[i] = [0.0] * num_topics
- *     phi = [None] * num_topics
- *     for i in range(num_topics):             # <<<<<<<<<<<<<<
- *         phi[i] = [0.0] * num_terms
- * 
- */
-  __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L1_error)
-  __pyx_t_14 = __pyx_t_13;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_14; __pyx_t_11+=1) {
-    __pyx_v_i = __pyx_t_11;
-
-    /* "_ldacgs_train.pyx":156
- *     phi = [None] * num_topics
- *     for i in range(num_topics):
- *         phi[i] = [0.0] * num_terms             # <<<<<<<<<<<<<<
+ *     theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)
+ *     phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)             # <<<<<<<<<<<<<<
  * 
  *     # computer theta, phi
  */
-    __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_terms<0) ? 0:__pyx_v_num_terms)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    { Py_ssize_t __pyx_temp;
-      for (__pyx_temp=0; __pyx_temp < __pyx_v_num_terms; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_float_0_0);
-        __Pyx_GIVEREF(__pyx_float_0_0);
-        PyList_SET_ITEM(__pyx_t_1, __pyx_temp, __pyx_float_0_0);
-      }
-    }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_phi, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 156, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_num_terms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_INCREF(__pyx_v_num_topics);
+  __Pyx_GIVEREF(__pyx_v_num_topics);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_num_topics);
+  __Pyx_GIVEREF(__pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_7);
+  __pyx_t_7 = 0;
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_shape, __pyx_t_3) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_v_phi = __pyx_t_7;
+  __pyx_t_7 = 0;
 
-  /* "_ldacgs_train.pyx":159
+  /* "_ldacgs_train.pyx":155
  * 
  *     # computer theta, phi
  *     for i in range(num_docs):             # <<<<<<<<<<<<<<
@@ -3810,7 +3793,7 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_4; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
 
-    /* "_ldacgs_train.pyx":160
+    /* "_ldacgs_train.pyx":156
  *     # computer theta, phi
  *     for i in range(num_docs):
  *         sum = 0.0             # <<<<<<<<<<<<<<
@@ -3819,105 +3802,105 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
  */
     __pyx_v_sum = 0.0;
 
-    /* "_ldacgs_train.pyx":161
+    /* "_ldacgs_train.pyx":157
  *     for i in range(num_docs):
  *         sum = 0.0
  *         for j in range(num_topics):             # <<<<<<<<<<<<<<
  *             theta[i][j] = cDocTopicCounts[i][j] + alpha[j]
  *             sum += theta[i][j]
  */
-    __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 161, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 157, __pyx_L1_error)
     __pyx_t_14 = __pyx_t_13;
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
       __pyx_v_j = __pyx_t_15;
 
-      /* "_ldacgs_train.pyx":162
+      /* "_ldacgs_train.pyx":158
  *         sum = 0.0
  *         for j in range(num_topics):
  *             theta[i][j] = cDocTopicCounts[i][j] + alpha[j]             # <<<<<<<<<<<<<<
  *             sum += theta[i][j]
  *         for j in range(num_topics):
  */
-      __pyx_t_1 = PyFloat_FromDouble((((__pyx_v_cDocTopicCounts[__pyx_v_i])[__pyx_v_j]) + (__pyx_v_alpha[__pyx_v_j]))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_theta, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 162, __pyx_L1_error)
+      __pyx_t_7 = PyFloat_FromDouble((((__pyx_v_cDocTopicCounts[__pyx_v_i])[__pyx_v_j]) + (__pyx_v_alpha[__pyx_v_j]))); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 158, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 162, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 158, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_5, __pyx_v_j, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 158, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "_ldacgs_train.pyx":163
+      /* "_ldacgs_train.pyx":159
  *         for j in range(num_topics):
  *             theta[i][j] = cDocTopicCounts[i][j] + alpha[j]
  *             sum += theta[i][j]             # <<<<<<<<<<<<<<
  *         for j in range(num_topics):
  *             theta[i][j] /= sum
  */
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_theta, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 163, __pyx_L1_error)
+      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 159, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_7, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 163, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 159, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_5, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 159, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 163, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 159, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_7); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 163, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __pyx_v_sum = __pyx_t_16;
     }
 
-    /* "_ldacgs_train.pyx":164
+    /* "_ldacgs_train.pyx":160
  *             theta[i][j] = cDocTopicCounts[i][j] + alpha[j]
  *             sum += theta[i][j]
  *         for j in range(num_topics):             # <<<<<<<<<<<<<<
  *             theta[i][j] /= sum
  *     for i in range(num_topics):
  */
-    __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 164, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L1_error)
     __pyx_t_14 = __pyx_t_13;
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
       __pyx_v_j = __pyx_t_15;
 
-      /* "_ldacgs_train.pyx":165
+      /* "_ldacgs_train.pyx":161
  *             sum += theta[i][j]
  *         for j in range(num_topics):
  *             theta[i][j] /= sum             # <<<<<<<<<<<<<<
  *     for i in range(num_topics):
  *         sum = 0.0
  */
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_theta, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 165, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_17 = __pyx_v_j;
-      __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_7, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_17 = __pyx_v_j;
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_5, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_3 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_3 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_t_17, __pyx_t_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 165, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_5, __pyx_t_17, __pyx_t_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
   }
 
-  /* "_ldacgs_train.pyx":166
+  /* "_ldacgs_train.pyx":162
  *         for j in range(num_topics):
  *             theta[i][j] /= sum
  *     for i in range(num_topics):             # <<<<<<<<<<<<<<
  *         sum = 0.0
  *         for j in range(num_terms):
  */
-  __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 162, __pyx_L1_error)
   __pyx_t_14 = __pyx_t_13;
   for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_14; __pyx_t_11+=1) {
     __pyx_v_i = __pyx_t_11;
 
-    /* "_ldacgs_train.pyx":167
+    /* "_ldacgs_train.pyx":163
  *             theta[i][j] /= sum
  *     for i in range(num_topics):
  *         sum = 0.0             # <<<<<<<<<<<<<<
@@ -3926,7 +3909,7 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
  */
     __pyx_v_sum = 0.0;
 
-    /* "_ldacgs_train.pyx":168
+    /* "_ldacgs_train.pyx":164
  *     for i in range(num_topics):
  *         sum = 0.0
  *         for j in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3938,45 +3921,45 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_12; __pyx_t_15+=1) {
       __pyx_v_j = __pyx_t_15;
 
-      /* "_ldacgs_train.pyx":169
+      /* "_ldacgs_train.pyx":165
  *         sum = 0.0
  *         for j in range(num_terms):
  *             phi[i][j] = cTermTopicCounts[j][i] + beta[j]             # <<<<<<<<<<<<<<
  *             sum += phi[i][j]
  *         for j in range(num_terms):
  */
-      __pyx_t_7 = PyFloat_FromDouble((((__pyx_v_cTermTopicCounts[__pyx_v_j])[__pyx_v_i]) + (__pyx_v_beta[__pyx_v_j]))); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 169, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_phi, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble((((__pyx_v_cTermTopicCounts[__pyx_v_j])[__pyx_v_i]) + (__pyx_v_beta[__pyx_v_j]))); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_phi, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 165, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_3, __pyx_v_j, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 169, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_3, __pyx_v_j, __pyx_t_5, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 165, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "_ldacgs_train.pyx":170
+      /* "_ldacgs_train.pyx":166
  *         for j in range(num_terms):
  *             phi[i][j] = cTermTopicCounts[j][i] + beta[j]
  *             sum += phi[i][j]             # <<<<<<<<<<<<<<
  *         for j in range(num_terms):
  *             phi[i][j] /= sum
  */
-      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 166, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_phi, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_3, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 166, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_phi, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 166, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_v_sum = __pyx_t_16;
     }
 
-    /* "_ldacgs_train.pyx":171
+    /* "_ldacgs_train.pyx":167
  *             phi[i][j] = cTermTopicCounts[j][i] + beta[j]
  *             sum += phi[i][j]
  *         for j in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3988,31 +3971,31 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_12; __pyx_t_15+=1) {
       __pyx_v_j = __pyx_t_15;
 
-      /* "_ldacgs_train.pyx":172
+      /* "_ldacgs_train.pyx":168
  *             sum += phi[i][j]
  *         for j in range(num_terms):
  *             phi[i][j] /= sum             # <<<<<<<<<<<<<<
  *     return theta, phi
  * 
  */
-      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_phi, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_phi, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __pyx_t_17 = __pyx_v_j;
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_3, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_5 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_1 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_3, __pyx_t_17, __pyx_t_5, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_3, __pyx_t_17, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
   }
 
-  /* "_ldacgs_train.pyx":173
+  /* "_ldacgs_train.pyx":169
  *         for j in range(num_terms):
  *             phi[i][j] /= sum
  *     return theta, phi             # <<<<<<<<<<<<<<
@@ -4020,7 +4003,7 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
  * @cython.boundscheck(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 169, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_v_theta);
   __Pyx_GIVEREF(__pyx_v_theta);
@@ -4052,20 +4035,20 @@ static PyObject *__pyx_pf_13_ldacgs_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   __Pyx_AddTraceback("_ldacgs_train.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_theta);
-  __Pyx_XDECREF(__pyx_v_phi);
   __Pyx_XDECREF(__pyx_v_id2word);
   __Pyx_XDECREF(__pyx_v_term_seqs);
   __Pyx_XDECREF(__pyx_v_topic_seqs);
   __Pyx_XDECREF(__pyx_v_doc_topic_counts);
   __Pyx_XDECREF(__pyx_v_term_topic_counts);
   __Pyx_XDECREF(__pyx_v_terms_per_topic);
+  __Pyx_XDECREF(__pyx_v_theta);
+  __Pyx_XDECREF(__pyx_v_phi);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "_ldacgs_train.pyx":178
+/* "_ldacgs_train.pyx":174
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void _train(int num_topics, int num_docs, int * doc_len,             # <<<<<<<<<<<<<<
@@ -4099,7 +4082,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
   int __pyx_t_13;
   __Pyx_RefNannySetupContext("_train", 0);
 
-  /* "_ldacgs_train.pyx":191
+  /* "_ldacgs_train.pyx":187
  * 
  *     # malloc
  *     topic_weights = <double *>PyMem_Malloc(num_topics * sizeof(double))             # <<<<<<<<<<<<<<
@@ -4108,7 +4091,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
   __pyx_v_topic_weights = ((double *)PyMem_Malloc((__pyx_v_num_topics * (sizeof(double)))));
 
-  /* "_ldacgs_train.pyx":194
+  /* "_ldacgs_train.pyx":190
  * 
  *     # start monte carlo
  *     for p in range(num_passes):             # <<<<<<<<<<<<<<
@@ -4120,7 +4103,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_p = __pyx_t_3;
 
-    /* "_ldacgs_train.pyx":195
+    /* "_ldacgs_train.pyx":191
  *     # start monte carlo
  *     for p in range(num_passes):
  *         printf("pass: %d\n", p)             # <<<<<<<<<<<<<<
@@ -4129,7 +4112,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
     (void)(printf(((char const *)"pass: %d\n"), __pyx_v_p));
 
-    /* "_ldacgs_train.pyx":196
+    /* "_ldacgs_train.pyx":192
  *     for p in range(num_passes):
  *         printf("pass: %d\n", p)
  *         for d in range(num_docs):             # <<<<<<<<<<<<<<
@@ -4141,7 +4124,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_d = __pyx_t_6;
 
-      /* "_ldacgs_train.pyx":197
+      /* "_ldacgs_train.pyx":193
  *         printf("pass: %d\n", p)
  *         for d in range(num_docs):
  *             for s in range(doc_len[d]):             # <<<<<<<<<<<<<<
@@ -4153,7 +4136,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
       for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
         __pyx_v_s = __pyx_t_9;
 
-        /* "_ldacgs_train.pyx":199
+        /* "_ldacgs_train.pyx":195
  *             for s in range(doc_len[d]):
  *                 # Get current term and topic
  *                 cur_w = cTermSeqs[d][s]             # <<<<<<<<<<<<<<
@@ -4162,7 +4145,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
         __pyx_v_cur_w = ((__pyx_v_cTermSeqs[__pyx_v_d])[__pyx_v_s]);
 
-        /* "_ldacgs_train.pyx":200
+        /* "_ldacgs_train.pyx":196
  *                 # Get current term and topic
  *                 cur_w = cTermSeqs[d][s]
  *                 old_t = cTopicSeqs[d][s]             # <<<<<<<<<<<<<<
@@ -4171,7 +4154,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
         __pyx_v_old_t = ((__pyx_v_cTopicSeqs[__pyx_v_d])[__pyx_v_s]);
 
-        /* "_ldacgs_train.pyx":203
+        /* "_ldacgs_train.pyx":199
  * 
  *                 # Remove this topic from all counts
  *                 cDocTopicCounts[d][old_t] -= 1             # <<<<<<<<<<<<<<
@@ -4182,7 +4165,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         __pyx_t_11 = __pyx_v_old_t;
         ((__pyx_v_cDocTopicCounts[__pyx_t_10])[__pyx_t_11]) = (((__pyx_v_cDocTopicCounts[__pyx_t_10])[__pyx_t_11]) - 1);
 
-        /* "_ldacgs_train.pyx":204
+        /* "_ldacgs_train.pyx":200
  *                 # Remove this topic from all counts
  *                 cDocTopicCounts[d][old_t] -= 1
  *                 cTermTopicCounts[cur_w][old_t] -= 1             # <<<<<<<<<<<<<<
@@ -4193,7 +4176,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         __pyx_t_11 = __pyx_v_old_t;
         ((__pyx_v_cTermTopicCounts[__pyx_t_10])[__pyx_t_11]) = (((__pyx_v_cTermTopicCounts[__pyx_t_10])[__pyx_t_11]) - 1);
 
-        /* "_ldacgs_train.pyx":205
+        /* "_ldacgs_train.pyx":201
  *                 cDocTopicCounts[d][old_t] -= 1
  *                 cTermTopicCounts[cur_w][old_t] -= 1
  *                 cTermsPerTopic[old_t] -= 1             # <<<<<<<<<<<<<<
@@ -4203,7 +4186,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         __pyx_t_10 = __pyx_v_old_t;
         (__pyx_v_cTermsPerTopic[__pyx_t_10]) = ((__pyx_v_cTermsPerTopic[__pyx_t_10]) - 1);
 
-        /* "_ldacgs_train.pyx":208
+        /* "_ldacgs_train.pyx":204
  * 
  *                 # Build a distribution over topics for this term
  *                 tw_sum = 0.             # <<<<<<<<<<<<<<
@@ -4212,7 +4195,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
         __pyx_v_tw_sum = 0.;
 
-        /* "_ldacgs_train.pyx":209
+        /* "_ldacgs_train.pyx":205
  *                 # Build a distribution over topics for this term
  *                 tw_sum = 0.
  *                 for t in range(num_topics):             # <<<<<<<<<<<<<<
@@ -4224,7 +4207,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
           __pyx_v_t = __pyx_t_12;
 
-          /* "_ldacgs_train.pyx":210
+          /* "_ldacgs_train.pyx":206
  *                 tw_sum = 0.
  *                 for t in range(num_topics):
  *                     topic_weights[t] = (cTermTopicCounts[cur_w][t] + beta[cur_w]) * (cDocTopicCounts[d][t] + alpha[t]) /(cTermsPerTopic[t] + w_beta)             # <<<<<<<<<<<<<<
@@ -4233,7 +4216,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
           (__pyx_v_topic_weights[__pyx_v_t]) = (((((__pyx_v_cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_t]) + (__pyx_v_beta[__pyx_v_cur_w])) * (((__pyx_v_cDocTopicCounts[__pyx_v_d])[__pyx_v_t]) + (__pyx_v_alpha[__pyx_v_t]))) / ((__pyx_v_cTermsPerTopic[__pyx_v_t]) + __pyx_v_w_beta));
 
-          /* "_ldacgs_train.pyx":211
+          /* "_ldacgs_train.pyx":207
  *                 for t in range(num_topics):
  *                     topic_weights[t] = (cTermTopicCounts[cur_w][t] + beta[cur_w]) * (cDocTopicCounts[d][t] + alpha[t]) /(cTermsPerTopic[t] + w_beta)
  *                     tw_sum += topic_weights[t]             # <<<<<<<<<<<<<<
@@ -4243,7 +4226,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
           __pyx_v_tw_sum = (__pyx_v_tw_sum + (__pyx_v_topic_weights[__pyx_v_t]));
         }
 
-        /* "_ldacgs_train.pyx":213
+        /* "_ldacgs_train.pyx":209
  *                     tw_sum += topic_weights[t]
  *                 # Normalize it
  *                 for t in range(num_topics):             # <<<<<<<<<<<<<<
@@ -4255,7 +4238,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
           __pyx_v_t = __pyx_t_12;
 
-          /* "_ldacgs_train.pyx":214
+          /* "_ldacgs_train.pyx":210
  *                 # Normalize it
  *                 for t in range(num_topics):
  *                     topic_weights[t] /= tw_sum             # <<<<<<<<<<<<<<
@@ -4266,7 +4249,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
           (__pyx_v_topic_weights[__pyx_t_13]) = ((__pyx_v_topic_weights[__pyx_t_13]) / __pyx_v_tw_sum);
         }
 
-        /* "_ldacgs_train.pyx":217
+        /* "_ldacgs_train.pyx":213
  * 
  *                 # TODO test if calling pure C faster, possibly replace with a better rng
  *                 new_t = rand_choice(num_topics, topic_weights)             # <<<<<<<<<<<<<<
@@ -4275,7 +4258,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
         __pyx_v_new_t = __pyx_f_13_ldacgs_train_rand_choice(__pyx_v_num_topics, __pyx_v_topic_weights);
 
-        /* "_ldacgs_train.pyx":220
+        /* "_ldacgs_train.pyx":216
  * 
  *                 # Put that new topic into the counts
  *                 cTopicSeqs[d][s] = new_t             # <<<<<<<<<<<<<<
@@ -4284,7 +4267,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
  */
         ((__pyx_v_cTopicSeqs[__pyx_v_d])[__pyx_v_s]) = __pyx_v_new_t;
 
-        /* "_ldacgs_train.pyx":221
+        /* "_ldacgs_train.pyx":217
  *                 # Put that new topic into the counts
  *                 cTopicSeqs[d][s] = new_t
  *                 cDocTopicCounts[d][new_t] += 1             # <<<<<<<<<<<<<<
@@ -4295,7 +4278,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         __pyx_t_11 = __pyx_v_new_t;
         ((__pyx_v_cDocTopicCounts[__pyx_t_10])[__pyx_t_11]) = (((__pyx_v_cDocTopicCounts[__pyx_t_10])[__pyx_t_11]) + 1);
 
-        /* "_ldacgs_train.pyx":222
+        /* "_ldacgs_train.pyx":218
  *                 cTopicSeqs[d][s] = new_t
  *                 cDocTopicCounts[d][new_t] += 1
  *                 cTermTopicCounts[cur_w][new_t] += 1             # <<<<<<<<<<<<<<
@@ -4306,7 +4289,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
         __pyx_t_11 = __pyx_v_new_t;
         ((__pyx_v_cTermTopicCounts[__pyx_t_10])[__pyx_t_11]) = (((__pyx_v_cTermTopicCounts[__pyx_t_10])[__pyx_t_11]) + 1);
 
-        /* "_ldacgs_train.pyx":223
+        /* "_ldacgs_train.pyx":219
  *                 cDocTopicCounts[d][new_t] += 1
  *                 cTermTopicCounts[cur_w][new_t] += 1
  *                 cTermsPerTopic[new_t] += 1             # <<<<<<<<<<<<<<
@@ -4319,7 +4302,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
     }
   }
 
-  /* "_ldacgs_train.pyx":178
+  /* "_ldacgs_train.pyx":174
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void _train(int num_topics, int num_docs, int * doc_len,             # <<<<<<<<<<<<<<
@@ -4331,7 +4314,7 @@ static void __pyx_f_13_ldacgs_train__train(int __pyx_v_num_topics, int __pyx_v_n
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldacgs_train.pyx":228
+/* "_ldacgs_train.pyx":224
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef int rand_choice(int n, double * prob) nogil:             # <<<<<<<<<<<<<<
@@ -4349,7 +4332,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "_ldacgs_train.pyx":232
+  /* "_ldacgs_train.pyx":228
  *     cdef double r
  *     cdef double cuml
  *     r = <double> rand() / RAND_MAX             # <<<<<<<<<<<<<<
@@ -4358,7 +4341,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
  */
   __pyx_v_r = (((double)rand()) / RAND_MAX);
 
-  /* "_ldacgs_train.pyx":233
+  /* "_ldacgs_train.pyx":229
  *     cdef double cuml
  *     r = <double> rand() / RAND_MAX
  *     cuml = 0.0             # <<<<<<<<<<<<<<
@@ -4367,7 +4350,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
  */
   __pyx_v_cuml = 0.0;
 
-  /* "_ldacgs_train.pyx":234
+  /* "_ldacgs_train.pyx":230
  *     r = <double> rand() / RAND_MAX
  *     cuml = 0.0
  *     for i in range(n):             # <<<<<<<<<<<<<<
@@ -4379,7 +4362,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldacgs_train.pyx":235
+    /* "_ldacgs_train.pyx":231
  *     cuml = 0.0
  *     for i in range(n):
  *         cuml = cuml + prob[i]             # <<<<<<<<<<<<<<
@@ -4388,7 +4371,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
  */
     __pyx_v_cuml = (__pyx_v_cuml + (__pyx_v_prob[__pyx_v_i]));
 
-    /* "_ldacgs_train.pyx":236
+    /* "_ldacgs_train.pyx":232
  *     for i in range(n):
  *         cuml = cuml + prob[i]
  *         if (r <= cuml):             # <<<<<<<<<<<<<<
@@ -4397,7 +4380,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
     __pyx_t_4 = ((__pyx_v_r <= __pyx_v_cuml) != 0);
     if (__pyx_t_4) {
 
-      /* "_ldacgs_train.pyx":237
+      /* "_ldacgs_train.pyx":233
  *         cuml = cuml + prob[i]
  *         if (r <= cuml):
  *             return i             # <<<<<<<<<<<<<<
@@ -4405,7 +4388,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "_ldacgs_train.pyx":236
+      /* "_ldacgs_train.pyx":232
  *     for i in range(n):
  *         cuml = cuml + prob[i]
  *         if (r <= cuml):             # <<<<<<<<<<<<<<
@@ -4414,7 +4397,7 @@ static int __pyx_f_13_ldacgs_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
     }
   }
 
-  /* "_ldacgs_train.pyx":228
+  /* "_ldacgs_train.pyx":224
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef int rand_choice(int n, double * prob) nogil:             # <<<<<<<<<<<<<<
@@ -6948,6 +6931,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_doc_topic_counts, __pyx_k_doc_topic_counts, sizeof(__pyx_k_doc_topic_counts), 0, 0, 1, 1},
   {&__pyx_n_s_docid, __pyx_k_docid, sizeof(__pyx_k_docid), 0, 0, 1, 1},
   {&__pyx_n_s_document, __pyx_k_document, sizeof(__pyx_k_document), 0, 0, 1, 1},
+  {&__pyx_n_s_dtype, __pyx_k_dtype, sizeof(__pyx_k_dtype), 0, 0, 1, 1},
+  {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
+  {&__pyx_n_s_float64, __pyx_k_float64, sizeof(__pyx_k_float64), 0, 0, 1, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_id2word, __pyx_k_id2word, sizeof(__pyx_k_id2word), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -6973,6 +6959,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_randint, __pyx_k_randint, sizeof(__pyx_k_randint), 0, 0, 1, 1},
   {&__pyx_n_s_random, __pyx_k_random, sizeof(__pyx_k_random), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_term, __pyx_k_term, sizeof(__pyx_k_term), 0, 0, 1, 1},
@@ -7137,7 +7124,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     cdef int i, j
  *     cdef int num_docs
  */
-  __pyx_tuple__13 = PyTuple_Pack(25, __pyx_n_s_num_topics, __pyx_n_s_num_passes, __pyx_n_s_corpus, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_num_docs, __pyx_n_s_num_terms, __pyx_n_s_cTermSeqs, __pyx_n_s_cTopicSeqs, __pyx_n_s_cDocTopicCounts, __pyx_n_s_cTermTopicCounts, __pyx_n_s_cTermsPerTopic, __pyx_n_s_doc_len, __pyx_n_s_alpha, __pyx_n_s_beta, __pyx_n_s_w_beta, __pyx_n_s_theta, __pyx_n_s_phi, __pyx_n_s_sum, __pyx_n_s_id2word, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_doc_topic_counts, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_tuple__13 = PyTuple_Pack(25, __pyx_n_s_num_topics, __pyx_n_s_num_passes, __pyx_n_s_corpus, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_num_docs, __pyx_n_s_num_terms, __pyx_n_s_cTermSeqs, __pyx_n_s_cTopicSeqs, __pyx_n_s_cDocTopicCounts, __pyx_n_s_cTermTopicCounts, __pyx_n_s_cTermsPerTopic, __pyx_n_s_doc_len, __pyx_n_s_alpha, __pyx_n_s_beta, __pyx_n_s_w_beta, __pyx_n_s_sum, __pyx_n_s_id2word, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_doc_topic_counts, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic, __pyx_n_s_theta, __pyx_n_s_phi); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
   __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(3, 0, 25, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_ldacgs_train_pyx, __pyx_n_s_train, 103, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 103, __pyx_L1_error)
@@ -7150,7 +7137,6 @@ static int __Pyx_InitCachedConstants(void) {
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_float_0_0 = PyFloat_FromDouble(0.0); if (unlikely(!__pyx_float_0_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;

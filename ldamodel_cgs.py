@@ -1,25 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Created on 21 May 2018
+Created on 20 October 2018
 
 @author: jason
 """
 
 import logging
-import _ldacgs_train
-import numpy as np
-
-from gensim import utils, matutils
 from abc_topicmodel import ABCTopicModel
+from _ldacgs_train import train
+from gensim import matutils
+
+from profiling_utils import profileit
 
 logger = logging.getLogger(__name__)
-
-DTYPE_TO_EPS = {
-    np.float16: 1e-5,
-    np.float32: 1e-35,
-    np.float64: 1e-100,
-}
 
 
 class LDAModelCGS(ABCTopicModel):
@@ -32,9 +26,7 @@ class LDAModelCGS(ABCTopicModel):
         lda = LDAModelCGS(corpus, num_topics=10)
     """
 
-    def __init__(self, corpus=None, num_topics=100, alpha='symmetric', beta=None, num_passes=10,
-                 minimum_prob=0.01, random_state=None, dtype=np.float32):
-        # TODO FIX: doesn't work when instantiated without a corpus and then trained later
+    def __init__(self, corpus=None, num_topics=100, num_passes=100, minimum_prob=0.01):
         """
 
         Args:
@@ -44,29 +36,14 @@ class LDAModelCGS(ABCTopicModel):
             num_topics: The number of requested latent topics to be extracted from
                 the training corpus.
 
-            alpha: Hyperparameter of the Dirichlet prior over the topics in a document.
-
-            beta: Hyperparameter of the Dirichlet prior over the terms in a topic.
-
             num_passes: The number of passes of the MCMC procedure. One pass is one step per term
                 in each document of the whole corpus.
 
             minimum_prob: Minimum probability required for an object (term, topic) to be displayed (TODO should
             remove this)
-
-            random_state: TODO findout what is this
-
-            dtype: Data-type to use during calculations inside model. All inputs are also converted to this dtype.
-                Available types: `numpy.float16`, `numpy.float32`, `numpy.float64`.
         """
 
-        if dtype not in DTYPE_TO_EPS:
-            raise ValueError(
-                    "Incorrect 'dtype', please choose one of {}".format(
-                            ", ".join("numpy.{}".format(tp.__name__) for tp in sorted(DTYPE_TO_EPS))))
-        self.dtype = dtype
-
-        logger.info("creating a new lda collapsed gibbs sampling model with {0} topics".format(num_topics))
+        logger.info("creating a new lda collapsed Gibbs sampling model with {0} topics".format(num_topics))
         # store user-supplied parameters
         if corpus is not None:
             self.id2word = corpus.dictionary
@@ -77,25 +54,12 @@ class LDAModelCGS(ABCTopicModel):
 
         self.num_topics = int(num_topics)
         self.minimum_probability = minimum_prob
-        self.random_state = utils.get_random_state(random_state)
-
-        # self.alpha, self.optimize_alpha = init_dir_prior(self.num_topics, self.num_terms, self.dtype, alpha, 'alpha')
-        # assert self.alpha.shape == (self.num_topics,), \
-        #     "Invalid alpha shape. Got shape %s, but expected (%d, )" % (str(self.alpha.shape), self.num_topics)
-        # if isinstance(beta, six.string_types):
-        #     if beta == 'asymmetric':
-        #         raise ValueError("The 'asymmetric' option cannot be used for beta")
-        # self.beta, self.optimize_beta = init_dir_prior(self.num_topics, self.num_terms, self.dtype, beta, 'beta')
-        # assert self.beta.shape == (self.num_terms,) or self.beta.shape == (self.num_topics, self.num_terms), (
-        #     "Invalid beta shape. Got shape %s, but expected (%d, 1) or (%d, %d)" %
-        #     (str(self.beta.shape), self.num_terms, self.num_topics, self.num_terms))
-        # self.w_beta = sum(self.beta)
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
-            self.train(corpus, num_passes=num_passes)
+            self.train(corpus, num_passes)
 
-    # @profileit
+    @profileit
     def train(self, corpus, num_passes=10):
         """
         Trains the model by making num_passes Monte Carlo passes on the corpus.
@@ -105,25 +69,15 @@ class LDAModelCGS(ABCTopicModel):
             num_passes:
 
         """
-        try:
-            lencorpus = len(corpus)
-        except Exception:
-            logger.warning("input corpus stream has no len(); counting documents")
-            lencorpus = sum(1 for _ in corpus)
-        if lencorpus == 0:
-            logger.warning("LdaModelCGS.train() called with an empty corpus")
-            return
-
-        # init sequences and counts
-        # self.init_seqs_and_counts(corpus=corpus)
 
         # Perform num_passes rounds of Gibbs sampling.
         logger.info(
                 "running collapsed Gibbs sampling for LDA training, {0} topics, over "
-                "the supplied corpus of {1} documents for {2} passes over the whole corpus"
-                    .format(self.num_topics, lencorpus, num_passes)
+                "the supplied corpus for {1} passes"
+                    .format(self.num_topics, num_passes)
         )
-        self.theta, self.phi = _ldacgs_train.train(self.num_topics, num_passes, corpus)
+
+        self.theta, self.phi = train(self.num_topics, num_passes, corpus)
 
     def get_topic_terms(self, topic_id, topn=10, readable=True):
         # TODO move this and similar methods to parent class

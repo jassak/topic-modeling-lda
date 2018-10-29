@@ -1113,7 +1113,7 @@ struct __pyx_t_13_ldamhw_train_Priors {
   double w_beta;
 };
 
-/* "_ldamhw_train.pyx":391
+/* "_ldamhw_train.pyx":387
  * 
  * # ======================= SparseVector ========================= #
  * ctypedef struct SVNode:             # <<<<<<<<<<<<<<
@@ -1127,7 +1127,7 @@ struct __pyx_t_13_ldamhw_train_SVNode {
   __pyx_t_13_ldamhw_train_SVNode *next;
 };
 
-/* "_ldamhw_train.pyx":397
+/* "_ldamhw_train.pyx":393
  *     SVNode * next
  * 
  * ctypedef struct SparseVector:             # <<<<<<<<<<<<<<
@@ -1142,7 +1142,7 @@ struct __pyx_t_13_ldamhw_train_SparseVector {
   __pyx_t_13_ldamhw_train_SVNode *head;
 };
 
-/* "_ldamhw_train.pyx":493
+/* "_ldamhw_train.pyx":489
  * 
  * # ======================= SparseCounter ======================== #
  * ctypedef struct CounterNode:             # <<<<<<<<<<<<<<
@@ -1156,7 +1156,7 @@ struct __pyx_t_13_ldamhw_train_CounterNode {
   __pyx_t_13_ldamhw_train_CounterNode *next;
 };
 
-/* "_ldamhw_train.pyx":499
+/* "_ldamhw_train.pyx":495
  *     CounterNode * next
  * 
  * ctypedef struct Counter:             # <<<<<<<<<<<<<<
@@ -1171,7 +1171,7 @@ struct __pyx_t_13_ldamhw_train_Counter {
   __pyx_t_13_ldamhw_train_CounterNode *tail;
 };
 
-/* "_ldamhw_train.pyx":697
+/* "_ldamhw_train.pyx":693
  * 
  * # ================================ Stack =========================== #
  * ctypedef struct StackNode:             # <<<<<<<<<<<<<<
@@ -1183,7 +1183,7 @@ struct __pyx_t_13_ldamhw_train_StackNode {
   __pyx_t_13_ldamhw_train_StackNode *next;
 };
 
-/* "_ldamhw_train.pyx":701
+/* "_ldamhw_train.pyx":697
  *     StackNode * next
  * 
  * ctypedef struct Stack:             # <<<<<<<<<<<<<<
@@ -1769,8 +1769,11 @@ static const char __pyx_k_size[] = "size";
 static const char __pyx_k_term[] = "term";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_cdata[] = "cdata";
+static const char __pyx_k_dtype[] = "dtype";
+static const char __pyx_k_empty[] = "empty";
 static const char __pyx_k_numpy[] = "numpy";
 static const char __pyx_k_range[] = "range";
+static const char __pyx_k_shape[] = "shape";
 static const char __pyx_k_theta[] = "theta";
 static const char __pyx_k_topic[] = "topic";
 static const char __pyx_k_train[] = "train";
@@ -1780,6 +1783,7 @@ static const char __pyx_k_priors[] = "priors";
 static const char __pyx_k_random[] = "random";
 static const char __pyx_k_tolist[] = "tolist";
 static const char __pyx_k_doc_len[] = "doc_len";
+static const char __pyx_k_float64[] = "float64";
 static const char __pyx_k_id2word[] = "id2word";
 static const char __pyx_k_randint[] = "randint";
 static const char __pyx_k_document[] = "document";
@@ -1835,6 +1839,9 @@ static PyObject *__pyx_n_s_di;
 static PyObject *__pyx_n_s_dictionary;
 static PyObject *__pyx_n_s_doc_len;
 static PyObject *__pyx_n_s_document;
+static PyObject *__pyx_n_s_dtype;
+static PyObject *__pyx_n_s_empty;
+static PyObject *__pyx_n_s_float64;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_id2word;
 static PyObject *__pyx_n_s_import;
@@ -1859,6 +1866,7 @@ static PyObject *__pyx_n_s_priors;
 static PyObject *__pyx_n_s_randint;
 static PyObject *__pyx_n_s_random;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_t;
@@ -1882,7 +1890,6 @@ static PyObject *__pyx_pf_13_ldamhw_train_init_seqs_and_counts(CYTHON_UNUSED PyO
 static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_num_topics, PyObject *__pyx_v_num_passes, PyObject *__pyx_v_corpus); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
-static PyObject *__pyx_float_0_0;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_tuple_;
@@ -3337,8 +3344,6 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   int *__pyx_v_cTermsPerTopic;
   int *__pyx_v_doc_len;
   __pyx_t_13_ldamhw_train_Priors *__pyx_v_priors;
-  PyObject *__pyx_v_theta = 0;
-  PyObject *__pyx_v_phi = 0;
   double __pyx_v_sum;
   PyObject *__pyx_v_id2word = NULL;
   PyObject *__pyx_v_term_seqs = NULL;
@@ -3346,6 +3351,8 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   PyObject *__pyx_v_term_topic_counts = NULL;
   PyObject *__pyx_v_terms_per_topic = NULL;
   int __pyx_v_i;
+  PyObject *__pyx_v_theta = NULL;
+  PyObject *__pyx_v_phi = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3681,108 +3688,84 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   /* "_ldamhw_train.pyx":202
  * 
  *     # allocate theta, phi
- *     theta = [None] * num_docs             # <<<<<<<<<<<<<<
- *     for d in range(num_docs):
- *         theta[d] = [0.0] * num_topics
+ *     theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)             # <<<<<<<<<<<<<<
+ *     phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)
+ * 
  */
-  __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_docs<0) ? 0:__pyx_v_num_docs)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  { Py_ssize_t __pyx_temp;
-    for (__pyx_temp=0; __pyx_temp < __pyx_v_num_docs; __pyx_temp++) {
-      __Pyx_INCREF(Py_None);
-      __Pyx_GIVEREF(Py_None);
-      PyList_SET_ITEM(__pyx_t_1, __pyx_temp, Py_None);
-    }
-  }
-  __pyx_v_theta = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_num_docs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_3);
+  __Pyx_INCREF(__pyx_v_num_topics);
+  __Pyx_GIVEREF(__pyx_v_num_topics);
+  PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_v_num_topics);
+  __pyx_t_3 = 0;
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_6) < 0) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float64); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_3) < 0) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_theta = __pyx_t_3;
+  __pyx_t_3 = 0;
 
   /* "_ldamhw_train.pyx":203
  *     # allocate theta, phi
- *     theta = [None] * num_docs
- *     for d in range(num_docs):             # <<<<<<<<<<<<<<
- *         theta[d] = [0.0] * num_topics
- *     phi = [None] * num_topics
- */
-  __pyx_t_4 = __pyx_v_num_docs;
-  __pyx_t_10 = __pyx_t_4;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
-    __pyx_v_d = __pyx_t_11;
-
-    /* "_ldamhw_train.pyx":204
- *     theta = [None] * num_docs
- *     for d in range(num_docs):
- *         theta[d] = [0.0] * num_topics             # <<<<<<<<<<<<<<
- *     phi = [None] * num_topics
- *     for t in range(num_topics):
- */
-    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 204, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_INCREF(__pyx_float_0_0);
-    __Pyx_GIVEREF(__pyx_float_0_0);
-    PyList_SET_ITEM(__pyx_t_1, 0, __pyx_float_0_0);
-    { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(0, 204, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_temp);
-      __Pyx_DECREF(__pyx_t_1);
-      __pyx_t_1 = __pyx_temp;
-    }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_theta, __pyx_v_d, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 204, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
-
-  /* "_ldamhw_train.pyx":205
- *     for d in range(num_docs):
- *         theta[d] = [0.0] * num_topics
- *     phi = [None] * num_topics             # <<<<<<<<<<<<<<
- *     for t in range(num_topics):
- *         phi[t] = [0.0] * num_terms
- */
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(Py_None);
-  __Pyx_GIVEREF(Py_None);
-  PyList_SET_ITEM(__pyx_t_1, 0, Py_None);
-  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(0, 205, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_temp);
-    __Pyx_DECREF(__pyx_t_1);
-    __pyx_t_1 = __pyx_temp;
-  }
-  __pyx_v_phi = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "_ldamhw_train.pyx":206
- *         theta[d] = [0.0] * num_topics
- *     phi = [None] * num_topics
- *     for t in range(num_topics):             # <<<<<<<<<<<<<<
- *         phi[t] = [0.0] * num_terms
- * 
- */
-  __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 206, __pyx_L1_error)
-  __pyx_t_13 = __pyx_t_12;
-  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_13; __pyx_t_4+=1) {
-    __pyx_v_t = __pyx_t_4;
-
-    /* "_ldamhw_train.pyx":207
- *     phi = [None] * num_topics
- *     for t in range(num_topics):
- *         phi[t] = [0.0] * num_terms             # <<<<<<<<<<<<<<
+ *     theta = np.empty(shape=(num_docs, num_topics), dtype=np.float64)
+ *     phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)             # <<<<<<<<<<<<<<
  * 
  *     # computer theta, phi
  */
-    __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_terms<0) ? 0:__pyx_v_num_terms)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 207, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    { Py_ssize_t __pyx_temp;
-      for (__pyx_temp=0; __pyx_temp < __pyx_v_num_terms; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_float_0_0);
-        __Pyx_GIVEREF(__pyx_float_0_0);
-        PyList_SET_ITEM(__pyx_t_1, __pyx_temp, __pyx_float_0_0);
-      }
-    }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_phi, __pyx_v_t, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 207, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_num_terms); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_INCREF(__pyx_v_num_topics);
+  __Pyx_GIVEREF(__pyx_v_num_topics);
+  PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_num_topics);
+  __Pyx_GIVEREF(__pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5);
+  __pyx_t_5 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_shape, __pyx_t_6) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_phi = __pyx_t_5;
+  __pyx_t_5 = 0;
 
-  /* "_ldamhw_train.pyx":210
+  /* "_ldamhw_train.pyx":206
  * 
  *     # computer theta, phi
  *     for d in range(num_docs):             # <<<<<<<<<<<<<<
@@ -3794,7 +3777,7 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
     __pyx_v_d = __pyx_t_11;
 
-    /* "_ldamhw_train.pyx":211
+    /* "_ldamhw_train.pyx":207
  *     # computer theta, phi
  *     for d in range(num_docs):
  *         sum = 0.0             # <<<<<<<<<<<<<<
@@ -3803,105 +3786,105 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
  */
     __pyx_v_sum = 0.0;
 
-    /* "_ldamhw_train.pyx":212
+    /* "_ldamhw_train.pyx":208
  *     for d in range(num_docs):
  *         sum = 0.0
  *         for t in range(num_topics):             # <<<<<<<<<<<<<<
  *             theta[d][t] = getCount(t, cdata.cDocTopicCounts[d]) + priors.alpha[t]
  *             sum += theta[d][t]
  */
-    __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 208, __pyx_L1_error)
     __pyx_t_13 = __pyx_t_12;
     for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
       __pyx_v_t = __pyx_t_14;
 
-      /* "_ldamhw_train.pyx":213
+      /* "_ldamhw_train.pyx":209
  *         sum = 0.0
  *         for t in range(num_topics):
  *             theta[d][t] = getCount(t, cdata.cDocTopicCounts[d]) + priors.alpha[t]             # <<<<<<<<<<<<<<
  *             sum += theta[d][t]
  *         for t in range(num_topics):
  */
-      __pyx_t_1 = PyFloat_FromDouble((__pyx_f_13_ldamhw_train_getCount(__pyx_v_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d])) + (__pyx_v_priors->alpha[__pyx_v_t]))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 213, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble((__pyx_f_13_ldamhw_train_getCount(__pyx_v_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d])) + (__pyx_v_priors->alpha[__pyx_v_t]))); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_5, __pyx_v_t, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 213, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_3, __pyx_v_t, __pyx_t_5, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 209, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "_ldamhw_train.pyx":214
+      /* "_ldamhw_train.pyx":210
  *         for t in range(num_topics):
  *             theta[d][t] = getCount(t, cdata.cDocTopicCounts[d]) + priors.alpha[t]
  *             sum += theta[d][t]             # <<<<<<<<<<<<<<
  *         for t in range(num_topics):
  *             theta[d][t] /= sum
  */
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 214, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 214, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 210, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_5, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 214, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 210, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 210, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 214, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_15 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_15 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 210, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_15 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_15 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 214, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_v_sum = __pyx_t_15;
     }
 
-    /* "_ldamhw_train.pyx":215
+    /* "_ldamhw_train.pyx":211
  *             theta[d][t] = getCount(t, cdata.cDocTopicCounts[d]) + priors.alpha[t]
  *             sum += theta[d][t]
  *         for t in range(num_topics):             # <<<<<<<<<<<<<<
  *             theta[d][t] /= sum
  *     for t in range(num_topics):
  */
-    __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 215, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 211, __pyx_L1_error)
     __pyx_t_13 = __pyx_t_12;
     for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
       __pyx_v_t = __pyx_t_14;
 
-      /* "_ldamhw_train.pyx":216
+      /* "_ldamhw_train.pyx":212
  *             sum += theta[d][t]
  *         for t in range(num_topics):
  *             theta[d][t] /= sum             # <<<<<<<<<<<<<<
  *     for t in range(num_topics):
  *         sum = 0.0
  */
-      __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 216, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_16 = __pyx_v_t;
-      __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_5, __pyx_t_16, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 216, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 216, __pyx_L1_error)
+      __pyx_t_16 = __pyx_v_t;
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, __pyx_t_16, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_6 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 216, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 212, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_6 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_5, __pyx_t_16, __pyx_t_6, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 216, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_3, __pyx_t_16, __pyx_t_6, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 212, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
   }
 
-  /* "_ldamhw_train.pyx":217
+  /* "_ldamhw_train.pyx":213
  *         for t in range(num_topics):
  *             theta[d][t] /= sum
  *     for t in range(num_topics):             # <<<<<<<<<<<<<<
  *         sum = 0.0
  *         for w in range(num_terms):
  */
-  __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_t_12 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_12 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 213, __pyx_L1_error)
   __pyx_t_13 = __pyx_t_12;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_13; __pyx_t_4+=1) {
     __pyx_v_t = __pyx_t_4;
 
-    /* "_ldamhw_train.pyx":218
+    /* "_ldamhw_train.pyx":214
  *             theta[d][t] /= sum
  *     for t in range(num_topics):
  *         sum = 0.0             # <<<<<<<<<<<<<<
@@ -3910,7 +3893,7 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
  */
     __pyx_v_sum = 0.0;
 
-    /* "_ldamhw_train.pyx":219
+    /* "_ldamhw_train.pyx":215
  *     for t in range(num_topics):
  *         sum = 0.0
  *         for w in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3922,45 +3905,45 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
     for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_11; __pyx_t_14+=1) {
       __pyx_v_w = __pyx_t_14;
 
-      /* "_ldamhw_train.pyx":220
+      /* "_ldamhw_train.pyx":216
  *         sum = 0.0
  *         for w in range(num_terms):
  *             phi[t][w] = cdata.cTermTopicCounts[w][t] + priors.beta[w]             # <<<<<<<<<<<<<<
  *             sum += phi[t][w]
  *         for w in range(num_terms):
  */
-      __pyx_t_5 = PyFloat_FromDouble((((__pyx_v_cdata->cTermTopicCounts[__pyx_v_w])[__pyx_v_t]) + (__pyx_v_priors->beta[__pyx_v_w]))); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 220, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_GetItemInt_List(__pyx_v_phi, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble((((__pyx_v_cdata->cTermTopicCounts[__pyx_v_w])[__pyx_v_t]) + (__pyx_v_priors->beta[__pyx_v_w]))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 216, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_phi, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 216, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_6, __pyx_v_w, __pyx_t_5, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 220, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_6, __pyx_v_w, __pyx_t_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 216, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "_ldamhw_train.pyx":221
+      /* "_ldamhw_train.pyx":217
  *         for w in range(num_terms):
  *             phi[t][w] = cdata.cTermTopicCounts[w][t] + priors.beta[w]
  *             sum += phi[t][w]             # <<<<<<<<<<<<<<
  *         for w in range(num_terms):
  *             phi[t][w] /= sum
  */
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_phi, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 217, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_6, __pyx_v_w, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_GetItemInt_List(__pyx_v_phi, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 221, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_6, __pyx_v_w, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_15 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_15 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_15 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_15 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_v_sum = __pyx_t_15;
     }
 
-    /* "_ldamhw_train.pyx":222
+    /* "_ldamhw_train.pyx":218
  *             phi[t][w] = cdata.cTermTopicCounts[w][t] + priors.beta[w]
  *             sum += phi[t][w]
  *         for w in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3972,31 +3955,31 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
     for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_11; __pyx_t_14+=1) {
       __pyx_v_w = __pyx_t_14;
 
-      /* "_ldamhw_train.pyx":223
+      /* "_ldamhw_train.pyx":219
  *             sum += phi[t][w]
  *         for w in range(num_terms):
  *             phi[t][w] /= sum             # <<<<<<<<<<<<<<
  *     return theta, phi
  * 
  */
-      __pyx_t_6 = __Pyx_GetItemInt_List(__pyx_v_phi, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_phi, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 219, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_16 = __pyx_v_w;
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_6, __pyx_t_16, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_6, __pyx_t_16, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 219, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_3 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_1 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_6, __pyx_t_16, __pyx_t_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 223, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_6, __pyx_t_16, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 219, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
   }
 
-  /* "_ldamhw_train.pyx":224
+  /* "_ldamhw_train.pyx":220
  *         for w in range(num_terms):
  *             phi[t][w] /= sum
  *     return theta, phi             # <<<<<<<<<<<<<<
@@ -4004,7 +3987,7 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
  * @cython.boundscheck(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_INCREF(__pyx_v_theta);
   __Pyx_GIVEREF(__pyx_v_theta);
@@ -4035,19 +4018,19 @@ static PyObject *__pyx_pf_13_ldamhw_train_2train(CYTHON_UNUSED PyObject *__pyx_s
   __Pyx_AddTraceback("_ldamhw_train.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_theta);
-  __Pyx_XDECREF(__pyx_v_phi);
   __Pyx_XDECREF(__pyx_v_id2word);
   __Pyx_XDECREF(__pyx_v_term_seqs);
   __Pyx_XDECREF(__pyx_v_topic_seqs);
   __Pyx_XDECREF(__pyx_v_term_topic_counts);
   __Pyx_XDECREF(__pyx_v_terms_per_topic);
+  __Pyx_XDECREF(__pyx_v_theta);
+  __Pyx_XDECREF(__pyx_v_phi);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":229
+/* "_ldamhw_train.pyx":225
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void _train(CorpusData * cdata, Priors * priors, int num_passes):             # <<<<<<<<<<<<<<
@@ -4093,7 +4076,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   int __pyx_t_13;
   __Pyx_RefNannySetupContext("_train", 0);
 
-  /* "_ldamhw_train.pyx":252
+  /* "_ldamhw_train.pyx":248
  * 
  *     # unpacking (Maybe passing cdata to subsequent methods is faster, test it)
  *     num_terms = cdata.num_terms             # <<<<<<<<<<<<<<
@@ -4103,7 +4086,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   __pyx_t_1 = __pyx_v_cdata->num_terms;
   __pyx_v_num_terms = __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":253
+  /* "_ldamhw_train.pyx":249
  *     # unpacking (Maybe passing cdata to subsequent methods is faster, test it)
  *     num_terms = cdata.num_terms
  *     num_topics = cdata.num_topics             # <<<<<<<<<<<<<<
@@ -4113,7 +4096,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   __pyx_t_1 = __pyx_v_cdata->num_topics;
   __pyx_v_num_topics = __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":254
+  /* "_ldamhw_train.pyx":250
  *     num_terms = cdata.num_terms
  *     num_topics = cdata.num_topics
  *     num_docs = cdata.num_docs             # <<<<<<<<<<<<<<
@@ -4123,7 +4106,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   __pyx_t_1 = __pyx_v_cdata->num_docs;
   __pyx_v_num_docs = __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":255
+  /* "_ldamhw_train.pyx":251
  *     num_topics = cdata.num_topics
  *     num_docs = cdata.num_docs
  *     doc_len = cdata.doc_len             # <<<<<<<<<<<<<<
@@ -4133,7 +4116,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   __pyx_t_2 = __pyx_v_cdata->doc_len;
   __pyx_v_doc_len = __pyx_t_2;
 
-  /* "_ldamhw_train.pyx":258
+  /* "_ldamhw_train.pyx":254
  * 
  *     # malloc
  *     stale_samples = <Stack **> PyMem_Malloc(num_terms * sizeof(Stack *))             # <<<<<<<<<<<<<<
@@ -4142,7 +4125,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
   __pyx_v_stale_samples = ((__pyx_t_13_ldamhw_train_Stack **)PyMem_Malloc((__pyx_v_num_terms * (sizeof(__pyx_t_13_ldamhw_train_Stack *)))));
 
-  /* "_ldamhw_train.pyx":259
+  /* "_ldamhw_train.pyx":255
  *     # malloc
  *     stale_samples = <Stack **> PyMem_Malloc(num_terms * sizeof(Stack *))
  *     for w in range(num_terms):             # <<<<<<<<<<<<<<
@@ -4154,7 +4137,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_w = __pyx_t_4;
 
-    /* "_ldamhw_train.pyx":260
+    /* "_ldamhw_train.pyx":256
  *     stale_samples = <Stack **> PyMem_Malloc(num_terms * sizeof(Stack *))
  *     for w in range(num_terms):
  *         stale_samples[w] = newStack()             # <<<<<<<<<<<<<<
@@ -4164,7 +4147,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
     (__pyx_v_stale_samples[__pyx_v_w]) = __pyx_f_13_ldamhw_train_newStack();
   }
 
-  /* "_ldamhw_train.pyx":261
+  /* "_ldamhw_train.pyx":257
  *     for w in range(num_terms):
  *         stale_samples[w] = newStack()
  *     qq = <double **> PyMem_Malloc(num_terms * sizeof(double *))             # <<<<<<<<<<<<<<
@@ -4173,7 +4156,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
   __pyx_v_qq = ((double **)PyMem_Malloc((__pyx_v_num_terms * (sizeof(double *)))));
 
-  /* "_ldamhw_train.pyx":262
+  /* "_ldamhw_train.pyx":258
  *         stale_samples[w] = newStack()
  *     qq = <double **> PyMem_Malloc(num_terms * sizeof(double *))
  *     for w in range(num_terms):             # <<<<<<<<<<<<<<
@@ -4185,7 +4168,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_w = __pyx_t_4;
 
-    /* "_ldamhw_train.pyx":263
+    /* "_ldamhw_train.pyx":259
  *     qq = <double **> PyMem_Malloc(num_terms * sizeof(double *))
  *     for w in range(num_terms):
  *         qq[w] = <double *> PyMem_Malloc(num_topics * sizeof(double))             # <<<<<<<<<<<<<<
@@ -4195,7 +4178,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
     (__pyx_v_qq[__pyx_v_w]) = ((double *)PyMem_Malloc((__pyx_v_num_topics * (sizeof(double)))));
   }
 
-  /* "_ldamhw_train.pyx":264
+  /* "_ldamhw_train.pyx":260
  *     for w in range(num_terms):
  *         qq[w] = <double *> PyMem_Malloc(num_topics * sizeof(double))
  *     qq_norm = <double *> PyMem_Malloc(num_terms * sizeof(double))             # <<<<<<<<<<<<<<
@@ -4204,7 +4187,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
   __pyx_v_qq_norm = ((double *)PyMem_Malloc((__pyx_v_num_terms * (sizeof(double)))));
 
-  /* "_ldamhw_train.pyx":267
+  /* "_ldamhw_train.pyx":263
  * 
  *     # start monte carlo
  *     for p in range(num_passes):             # <<<<<<<<<<<<<<
@@ -4216,7 +4199,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_p = __pyx_t_4;
 
-    /* "_ldamhw_train.pyx":268
+    /* "_ldamhw_train.pyx":264
  *     # start monte carlo
  *     for p in range(num_passes):
  *         printf("pass: %d\n", p)             # <<<<<<<<<<<<<<
@@ -4225,7 +4208,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
     (void)(printf(((char const *)"pass: %d\n"), __pyx_v_p));
 
-    /* "_ldamhw_train.pyx":269
+    /* "_ldamhw_train.pyx":265
  *     for p in range(num_passes):
  *         printf("pass: %d\n", p)
  *         for d in range(num_docs):             # <<<<<<<<<<<<<<
@@ -4237,7 +4220,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_d = __pyx_t_7;
 
-      /* "_ldamhw_train.pyx":270
+      /* "_ldamhw_train.pyx":266
  *         printf("pass: %d\n", p)
  *         for d in range(num_docs):
  *             for s in range(doc_len[d]):             # <<<<<<<<<<<<<<
@@ -4249,7 +4232,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
       for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
         __pyx_v_s = __pyx_t_10;
 
-        /* "_ldamhw_train.pyx":272
+        /* "_ldamhw_train.pyx":268
  *             for s in range(doc_len[d]):
  *                 # Get current term and topic
  *                 cur_w = cdata.cTermSeqs[d][s]             # <<<<<<<<<<<<<<
@@ -4258,7 +4241,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_cur_w = ((__pyx_v_cdata->cTermSeqs[__pyx_v_d])[__pyx_v_s]);
 
-        /* "_ldamhw_train.pyx":273
+        /* "_ldamhw_train.pyx":269
  *                 # Get current term and topic
  *                 cur_w = cdata.cTermSeqs[d][s]
  *                 old_t = cdata.cTopicSeqs[d][s]             # <<<<<<<<<<<<<<
@@ -4267,7 +4250,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_old_t = ((__pyx_v_cdata->cTopicSeqs[__pyx_v_d])[__pyx_v_s]);
 
-        /* "_ldamhw_train.pyx":277
+        /* "_ldamhw_train.pyx":273
  *                 # Check if stale samples haven't been generated yet or are exhausted and generate
  *                 # new ones if that's the case.
  *                 if isEmpty(stale_samples[cur_w]):             # <<<<<<<<<<<<<<
@@ -4277,7 +4260,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         __pyx_t_11 = (__pyx_f_13_ldamhw_train_isEmpty((__pyx_v_stale_samples[__pyx_v_cur_w])) != 0);
         if (__pyx_t_11) {
 
-          /* "_ldamhw_train.pyx":278
+          /* "_ldamhw_train.pyx":274
  *                 # new ones if that's the case.
  *                 if isEmpty(stale_samples[cur_w]):
  *                     generate_stale_samples(cur_w, cdata, priors, stale_samples, qq, qq_norm)             # <<<<<<<<<<<<<<
@@ -4286,7 +4269,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
           __pyx_f_13_ldamhw_train_generate_stale_samples(__pyx_v_cur_w, __pyx_v_cdata, __pyx_v_priors, __pyx_v_stale_samples, __pyx_v_qq, __pyx_v_qq_norm);
 
-          /* "_ldamhw_train.pyx":277
+          /* "_ldamhw_train.pyx":273
  *                 # Check if stale samples haven't been generated yet or are exhausted and generate
  *                 # new ones if that's the case.
  *                 if isEmpty(stale_samples[cur_w]):             # <<<<<<<<<<<<<<
@@ -4295,7 +4278,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         }
 
-        /* "_ldamhw_train.pyx":281
+        /* "_ldamhw_train.pyx":277
  * 
  *                 # Remove current term from counts
  *                 decrementCounter(old_t, cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4304,7 +4287,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         (void)(__pyx_f_13_ldamhw_train_decrementCounter(__pyx_v_old_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d])));
 
-        /* "_ldamhw_train.pyx":282
+        /* "_ldamhw_train.pyx":278
  *                 # Remove current term from counts
  *                 decrementCounter(old_t, cdata.cDocTopicCounts[d])
  *                 cdata.cTermTopicCounts[cur_w][old_t] -= 1             # <<<<<<<<<<<<<<
@@ -4315,7 +4298,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         __pyx_t_13 = __pyx_v_old_t;
         ((__pyx_v_cdata->cTermTopicCounts[__pyx_t_12])[__pyx_t_13]) = (((__pyx_v_cdata->cTermTopicCounts[__pyx_t_12])[__pyx_t_13]) - 1);
 
-        /* "_ldamhw_train.pyx":283
+        /* "_ldamhw_train.pyx":279
  *                 decrementCounter(old_t, cdata.cDocTopicCounts[d])
  *                 cdata.cTermTopicCounts[cur_w][old_t] -= 1
  *                 cdata.cTermsPerTopic[old_t] -= 1             # <<<<<<<<<<<<<<
@@ -4325,7 +4308,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         __pyx_t_12 = __pyx_v_old_t;
         (__pyx_v_cdata->cTermsPerTopic[__pyx_t_12]) = ((__pyx_v_cdata->cTermsPerTopic[__pyx_t_12]) - 1);
 
-        /* "_ldamhw_train.pyx":286
+        /* "_ldamhw_train.pyx":282
  * 
  *                 # Compute sparse component of conditional topic distribution (p_dw in Li et al. 2014)
  *                 ppdw = compute_sparse_comp(d, cur_w, cdata, priors)             # <<<<<<<<<<<<<<
@@ -4334,7 +4317,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_ppdw = __pyx_f_13_ldamhw_train_compute_sparse_comp(__pyx_v_d, __pyx_v_cur_w, __pyx_v_cdata, __pyx_v_priors);
 
-        /* "_ldamhw_train.pyx":289
+        /* "_ldamhw_train.pyx":285
  * 
  *                 # Draw from proposal distribution eq.(10) in Li et al. 2014
  *                 new_t = bucket_sampling(ppdw, stale_samples[cur_w], qq_norm[cur_w])             # <<<<<<<<<<<<<<
@@ -4343,7 +4326,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_new_t = __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_v_ppdw, (__pyx_v_stale_samples[__pyx_v_cur_w]), (__pyx_v_qq_norm[__pyx_v_cur_w]));
 
-        /* "_ldamhw_train.pyx":292
+        /* "_ldamhw_train.pyx":288
  * 
  *                 # Accept new_topic with prob_ratio (M-H step)
  *                 old_dtc = getCount(old_t, cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4352,7 +4335,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_old_dtc = __pyx_f_13_ldamhw_train_getCount(__pyx_v_old_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d]));
 
-        /* "_ldamhw_train.pyx":293
+        /* "_ldamhw_train.pyx":289
  *                 # Accept new_topic with prob_ratio (M-H step)
  *                 old_dtc = getCount(old_t, cdata.cDocTopicCounts[d])
  *                 new_dtc = getCount(new_t, cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4361,7 +4344,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_new_dtc = __pyx_f_13_ldamhw_train_getCount(__pyx_v_new_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d]));
 
-        /* "_ldamhw_train.pyx":298
+        /* "_ldamhw_train.pyx":294
  *                             * (cdata.cTermTopicCounts[cur_w][new_t] + priors.beta[cur_w]) \
  *                             * (cdata.cTermsPerTopic[old_t] + priors.w_beta) \
  *                             * ((ppdw.norm * getSVVal(old_t, ppdw)) + (qq_norm[cur_w] * qq[cur_w][old_t]))             # <<<<<<<<<<<<<<
@@ -4370,7 +4353,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_prob_num = ((((__pyx_v_new_dtc + (__pyx_v_priors->alpha[__pyx_v_new_t])) * (((__pyx_v_cdata->cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_new_t]) + (__pyx_v_priors->beta[__pyx_v_cur_w]))) * ((__pyx_v_cdata->cTermsPerTopic[__pyx_v_old_t]) + __pyx_v_priors->w_beta)) * ((__pyx_v_ppdw->norm * __pyx_f_13_ldamhw_train_getSVVal(__pyx_v_old_t, __pyx_v_ppdw)) + ((__pyx_v_qq_norm[__pyx_v_cur_w]) * ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_old_t]))));
 
-        /* "_ldamhw_train.pyx":303
+        /* "_ldamhw_train.pyx":299
  *                             * (cdata.cTermTopicCounts[cur_w][old_t] + priors.beta[cur_w]) \
  *                             * (cdata.cTermsPerTopic[new_t] + priors.w_beta) \
  *                             * ((ppdw.norm * getSVVal(new_t, ppdw)) + (qq_norm[cur_w] * qq[cur_w][new_t]))             # <<<<<<<<<<<<<<
@@ -4379,7 +4362,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_prob_den = ((((__pyx_v_old_dtc + (__pyx_v_priors->alpha[__pyx_v_old_t])) * (((__pyx_v_cdata->cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_old_t]) + (__pyx_v_priors->beta[__pyx_v_cur_w]))) * ((__pyx_v_cdata->cTermsPerTopic[__pyx_v_new_t]) + __pyx_v_priors->w_beta)) * ((__pyx_v_ppdw->norm * __pyx_f_13_ldamhw_train_getSVVal(__pyx_v_new_t, __pyx_v_ppdw)) + ((__pyx_v_qq_norm[__pyx_v_cur_w]) * ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_new_t]))));
 
-        /* "_ldamhw_train.pyx":305
+        /* "_ldamhw_train.pyx":301
  *                             * ((ppdw.norm * getSVVal(new_t, ppdw)) + (qq_norm[cur_w] * qq[cur_w][new_t]))
  *                 # prob ratio
  *                 prob_ratio = prob_num / prob_den             # <<<<<<<<<<<<<<
@@ -4388,7 +4371,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
         __pyx_v_prob_ratio = (__pyx_v_prob_num / __pyx_v_prob_den);
 
-        /* "_ldamhw_train.pyx":306
+        /* "_ldamhw_train.pyx":302
  *                 # prob ratio
  *                 prob_ratio = prob_num / prob_den
  *                 if prob_ratio >= 1.0:             # <<<<<<<<<<<<<<
@@ -4398,7 +4381,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         __pyx_t_11 = ((__pyx_v_prob_ratio >= 1.0) != 0);
         if (__pyx_t_11) {
 
-          /* "_ldamhw_train.pyx":307
+          /* "_ldamhw_train.pyx":303
  *                 prob_ratio = prob_num / prob_den
  *                 if prob_ratio >= 1.0:
  *                     accept = 1             # <<<<<<<<<<<<<<
@@ -4407,7 +4390,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
           __pyx_v_accept = 1;
 
-          /* "_ldamhw_train.pyx":306
+          /* "_ldamhw_train.pyx":302
  *                 # prob ratio
  *                 prob_ratio = prob_num / prob_den
  *                 if prob_ratio >= 1.0:             # <<<<<<<<<<<<<<
@@ -4417,7 +4400,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
           goto __pyx_L14;
         }
 
-        /* "_ldamhw_train.pyx":309
+        /* "_ldamhw_train.pyx":305
  *                     accept = 1
  *                 else:
  *                     accept = randUniform() < prob_ratio             # <<<<<<<<<<<<<<
@@ -4429,7 +4412,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         }
         __pyx_L14:;
 
-        /* "_ldamhw_train.pyx":312
+        /* "_ldamhw_train.pyx":308
  * 
  *                 # If move is accepted put new topic into seqs and counts
  *                 if accept:             # <<<<<<<<<<<<<<
@@ -4439,7 +4422,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         __pyx_t_11 = (__pyx_v_accept != 0);
         if (__pyx_t_11) {
 
-          /* "_ldamhw_train.pyx":313
+          /* "_ldamhw_train.pyx":309
  *                 # If move is accepted put new topic into seqs and counts
  *                 if accept:
  *                     cdata.cTopicSeqs[d][s] = new_t             # <<<<<<<<<<<<<<
@@ -4448,7 +4431,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
           ((__pyx_v_cdata->cTopicSeqs[__pyx_v_d])[__pyx_v_s]) = __pyx_v_new_t;
 
-          /* "_ldamhw_train.pyx":314
+          /* "_ldamhw_train.pyx":310
  *                 if accept:
  *                     cdata.cTopicSeqs[d][s] = new_t
  *                     incrementCounter(new_t, cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4457,7 +4440,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
           (void)(__pyx_f_13_ldamhw_train_incrementCounter(__pyx_v_new_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d])));
 
-          /* "_ldamhw_train.pyx":315
+          /* "_ldamhw_train.pyx":311
  *                     cdata.cTopicSeqs[d][s] = new_t
  *                     incrementCounter(new_t, cdata.cDocTopicCounts[d])
  *                     cdata.cTermTopicCounts[cur_w][new_t] += 1             # <<<<<<<<<<<<<<
@@ -4468,7 +4451,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
           __pyx_t_13 = __pyx_v_new_t;
           ((__pyx_v_cdata->cTermTopicCounts[__pyx_t_12])[__pyx_t_13]) = (((__pyx_v_cdata->cTermTopicCounts[__pyx_t_12])[__pyx_t_13]) + 1);
 
-          /* "_ldamhw_train.pyx":316
+          /* "_ldamhw_train.pyx":312
  *                     incrementCounter(new_t, cdata.cDocTopicCounts[d])
  *                     cdata.cTermTopicCounts[cur_w][new_t] += 1
  *                     cdata.cTermsPerTopic[new_t] += 1             # <<<<<<<<<<<<<<
@@ -4478,7 +4461,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
           __pyx_t_12 = __pyx_v_new_t;
           (__pyx_v_cdata->cTermsPerTopic[__pyx_t_12]) = ((__pyx_v_cdata->cTermsPerTopic[__pyx_t_12]) + 1);
 
-          /* "_ldamhw_train.pyx":312
+          /* "_ldamhw_train.pyx":308
  * 
  *                 # If move is accepted put new topic into seqs and counts
  *                 if accept:             # <<<<<<<<<<<<<<
@@ -4488,7 +4471,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
           goto __pyx_L15;
         }
 
-        /* "_ldamhw_train.pyx":319
+        /* "_ldamhw_train.pyx":315
  *                 # Else put back old topic
  *                 else:
  *                     cdata.cTopicSeqs[d][s] = old_t             # <<<<<<<<<<<<<<
@@ -4498,7 +4481,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         /*else*/ {
           ((__pyx_v_cdata->cTopicSeqs[__pyx_v_d])[__pyx_v_s]) = __pyx_v_old_t;
 
-          /* "_ldamhw_train.pyx":320
+          /* "_ldamhw_train.pyx":316
  *                 else:
  *                     cdata.cTopicSeqs[d][s] = old_t
  *                     incrementCounter(old_t, cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4507,7 +4490,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
  */
           (void)(__pyx_f_13_ldamhw_train_incrementCounter(__pyx_v_old_t, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d])));
 
-          /* "_ldamhw_train.pyx":321
+          /* "_ldamhw_train.pyx":317
  *                     cdata.cTopicSeqs[d][s] = old_t
  *                     incrementCounter(old_t, cdata.cDocTopicCounts[d])
  *                     cdata.cTermTopicCounts[cur_w][old_t] += 1             # <<<<<<<<<<<<<<
@@ -4518,7 +4501,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
           __pyx_t_13 = __pyx_v_old_t;
           ((__pyx_v_cdata->cTermTopicCounts[__pyx_t_12])[__pyx_t_13]) = (((__pyx_v_cdata->cTermTopicCounts[__pyx_t_12])[__pyx_t_13]) + 1);
 
-          /* "_ldamhw_train.pyx":322
+          /* "_ldamhw_train.pyx":318
  *                     incrementCounter(old_t, cdata.cDocTopicCounts[d])
  *                     cdata.cTermTopicCounts[cur_w][old_t] += 1
  *                     cdata.cTermsPerTopic[old_t] += 1             # <<<<<<<<<<<<<<
@@ -4530,7 +4513,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
         }
         __pyx_L15:;
 
-        /* "_ldamhw_train.pyx":325
+        /* "_ldamhw_train.pyx":321
  * 
  *                 # dealloc
  *                 freeSparseVector(ppdw)             # <<<<<<<<<<<<<<
@@ -4542,7 +4525,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
     }
   }
 
-  /* "_ldamhw_train.pyx":229
+  /* "_ldamhw_train.pyx":225
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void _train(CorpusData * cdata, Priors * priors, int num_passes):             # <<<<<<<<<<<<<<
@@ -4554,7 +4537,7 @@ static void __pyx_f_13_ldamhw_train__train(__pyx_t_13_ldamhw_train_CorpusData *_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":332
+/* "_ldamhw_train.pyx":328
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void generate_stale_samples(int cur_w, CorpusData * cdata, Priors * priors, Stack ** stale_samples, double ** qq, double * qq_norm):             # <<<<<<<<<<<<<<
@@ -4572,7 +4555,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("generate_stale_samples", 0);
 
-  /* "_ldamhw_train.pyx":336
+  /* "_ldamhw_train.pyx":332
  *         int t
  *     # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
  *     qq_norm[cur_w] = 0.0             # <<<<<<<<<<<<<<
@@ -4581,7 +4564,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
  */
   (__pyx_v_qq_norm[__pyx_v_cur_w]) = 0.0;
 
-  /* "_ldamhw_train.pyx":337
+  /* "_ldamhw_train.pyx":333
  *     # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
  *     qq_norm[cur_w] = 0.0
  *     for t in range(cdata.num_topics):             # <<<<<<<<<<<<<<
@@ -4593,7 +4576,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_t = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":338
+    /* "_ldamhw_train.pyx":334
  *     qq_norm[cur_w] = 0.0
  *     for t in range(cdata.num_topics):
  *         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \             # <<<<<<<<<<<<<<
@@ -4602,7 +4585,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
  */
     ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_t]) = (((__pyx_v_priors->alpha[__pyx_v_t]) * (((__pyx_v_cdata->cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_t]) + (__pyx_v_priors->beta[__pyx_v_cur_w]))) / ((__pyx_v_cdata->cTermsPerTopic[__pyx_v_t]) + __pyx_v_priors->w_beta));
 
-    /* "_ldamhw_train.pyx":340
+    /* "_ldamhw_train.pyx":336
  *         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \
  *                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
  *         qq_norm[cur_w] += qq[cur_w][t]             # <<<<<<<<<<<<<<
@@ -4613,7 +4596,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
     (__pyx_v_qq_norm[__pyx_t_4]) = ((__pyx_v_qq_norm[__pyx_t_4]) + ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_t]));
   }
 
-  /* "_ldamhw_train.pyx":341
+  /* "_ldamhw_train.pyx":337
  *                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
  *         qq_norm[cur_w] += qq[cur_w][t]
  *     for t in range(cdata.num_topics):             # <<<<<<<<<<<<<<
@@ -4625,7 +4608,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_t = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":342
+    /* "_ldamhw_train.pyx":338
  *         qq_norm[cur_w] += qq[cur_w][t]
  *     for t in range(cdata.num_topics):
  *         qq[cur_w][t] /= qq_norm[cur_w]             # <<<<<<<<<<<<<<
@@ -4637,7 +4620,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
     ((__pyx_v_qq[__pyx_t_4])[__pyx_t_5]) = (((__pyx_v_qq[__pyx_t_4])[__pyx_t_5]) / (__pyx_v_qq_norm[__pyx_v_cur_w]));
   }
 
-  /* "_ldamhw_train.pyx":344
+  /* "_ldamhw_train.pyx":340
  *         qq[cur_w][t] /= qq_norm[cur_w]
  *     # Sample num_topics samples from above distribution using the alias method
  *     genSamplesAlias(cdata.num_topics, cdata.num_topics, qq[cur_w], stale_samples[cur_w])             # <<<<<<<<<<<<<<
@@ -4646,7 +4629,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
  */
   __pyx_f_13_ldamhw_train_genSamplesAlias(__pyx_v_cdata->num_topics, __pyx_v_cdata->num_topics, (__pyx_v_qq[__pyx_v_cur_w]), (__pyx_v_stale_samples[__pyx_v_cur_w]));
 
-  /* "_ldamhw_train.pyx":332
+  /* "_ldamhw_train.pyx":328
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void generate_stale_samples(int cur_w, CorpusData * cdata, Priors * priors, Stack ** stale_samples, double ** qq, double * qq_norm):             # <<<<<<<<<<<<<<
@@ -4658,7 +4641,7 @@ static void __pyx_f_13_ldamhw_train_generate_stale_samples(int __pyx_v_cur_w, __
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":349
+/* "_ldamhw_train.pyx":345
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef SparseVector * compute_sparse_comp(int d, int cur_w, CorpusData * cdata, Priors * priors):             # <<<<<<<<<<<<<<
@@ -4681,7 +4664,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("compute_sparse_comp", 0);
 
-  /* "_ldamhw_train.pyx":354
+  /* "_ldamhw_train.pyx":350
  *         int nztopic
  *         int dtc
  *         int nnz = 0             # <<<<<<<<<<<<<<
@@ -4690,7 +4673,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
   __pyx_v_nnz = 0;
 
-  /* "_ldamhw_train.pyx":358
+  /* "_ldamhw_train.pyx":354
  *         SparseVector * ppdw
  *         int * nzlist
  *     ppdw = newSparseVector(cdata.num_topics)             # <<<<<<<<<<<<<<
@@ -4699,7 +4682,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
   __pyx_v_ppdw = __pyx_f_13_ldamhw_train_newSparseVector(__pyx_v_cdata->num_topics);
 
-  /* "_ldamhw_train.pyx":359
+  /* "_ldamhw_train.pyx":355
  *         int * nzlist
  *     ppdw = newSparseVector(cdata.num_topics)
  *     nzlist = getNZList(cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4708,7 +4691,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
   __pyx_v_nzlist = __pyx_f_13_ldamhw_train_getNZList((__pyx_v_cdata->cDocTopicCounts[__pyx_v_d]));
 
-  /* "_ldamhw_train.pyx":360
+  /* "_ldamhw_train.pyx":356
  *     ppdw = newSparseVector(cdata.num_topics)
  *     nzlist = getNZList(cdata.cDocTopicCounts[d])
  *     nnz = cdata.cDocTopicCounts[d].nnz             # <<<<<<<<<<<<<<
@@ -4718,7 +4701,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
   __pyx_t_1 = (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d])->nnz;
   __pyx_v_nnz = __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":361
+  /* "_ldamhw_train.pyx":357
  *     nzlist = getNZList(cdata.cDocTopicCounts[d])
  *     nnz = cdata.cDocTopicCounts[d].nnz
  *     for k in range(nnz):             # <<<<<<<<<<<<<<
@@ -4730,7 +4713,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":362
+    /* "_ldamhw_train.pyx":358
  *     nnz = cdata.cDocTopicCounts[d].nnz
  *     for k in range(nnz):
  *         nztopic = nzlist[k]             # <<<<<<<<<<<<<<
@@ -4739,7 +4722,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
     __pyx_v_nztopic = (__pyx_v_nzlist[__pyx_v_k]);
 
-    /* "_ldamhw_train.pyx":363
+    /* "_ldamhw_train.pyx":359
  *     for k in range(nnz):
  *         nztopic = nzlist[k]
  *         dtc = getCount(nztopic, cdata.cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -4748,7 +4731,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
     __pyx_v_dtc = __pyx_f_13_ldamhw_train_getCount(__pyx_v_nztopic, (__pyx_v_cdata->cDocTopicCounts[__pyx_v_d]));
 
-    /* "_ldamhw_train.pyx":365
+    /* "_ldamhw_train.pyx":361
  *         dtc = getCount(nztopic, cdata.cDocTopicCounts[d])
  *         val = dtc * (cdata.cTermTopicCounts[cur_w][nztopic] + priors.beta[cur_w]) \
  *                     / (cdata.cTermsPerTopic[nztopic] + priors.w_beta)             # <<<<<<<<<<<<<<
@@ -4757,7 +4740,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
     __pyx_v_val = ((__pyx_v_dtc * (((__pyx_v_cdata->cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_nztopic]) + (__pyx_v_priors->beta[__pyx_v_cur_w]))) / ((__pyx_v_cdata->cTermsPerTopic[__pyx_v_nztopic]) + __pyx_v_priors->w_beta));
 
-    /* "_ldamhw_train.pyx":366
+    /* "_ldamhw_train.pyx":362
  *         val = dtc * (cdata.cTermTopicCounts[cur_w][nztopic] + priors.beta[cur_w]) \
  *                     / (cdata.cTermsPerTopic[nztopic] + priors.w_beta)
  *         setSVVal(nztopic, val, ppdw)             # <<<<<<<<<<<<<<
@@ -4767,7 +4750,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
     __pyx_f_13_ldamhw_train_setSVVal(__pyx_v_nztopic, __pyx_v_val, __pyx_v_ppdw);
   }
 
-  /* "_ldamhw_train.pyx":367
+  /* "_ldamhw_train.pyx":363
  *                     / (cdata.cTermsPerTopic[nztopic] + priors.w_beta)
  *         setSVVal(nztopic, val, ppdw)
  *     normalizeSV(ppdw)             # <<<<<<<<<<<<<<
@@ -4776,7 +4759,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
   __pyx_f_13_ldamhw_train_normalizeSV(__pyx_v_ppdw);
 
-  /* "_ldamhw_train.pyx":368
+  /* "_ldamhw_train.pyx":364
  *         setSVVal(nztopic, val, ppdw)
  *     normalizeSV(ppdw)
  *     PyMem_Free(nzlist)             # <<<<<<<<<<<<<<
@@ -4785,7 +4768,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
  */
   PyMem_Free(__pyx_v_nzlist);
 
-  /* "_ldamhw_train.pyx":369
+  /* "_ldamhw_train.pyx":365
  *     normalizeSV(ppdw)
  *     PyMem_Free(nzlist)
  *     return ppdw             # <<<<<<<<<<<<<<
@@ -4795,7 +4778,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
   __pyx_r = __pyx_v_ppdw;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":349
+  /* "_ldamhw_train.pyx":345
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef SparseVector * compute_sparse_comp(int d, int cur_w, CorpusData * cdata, Priors * priors):             # <<<<<<<<<<<<<<
@@ -4809,7 +4792,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_compute_spa
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":372
+/* "_ldamhw_train.pyx":368
  * 
  * @cython.cdivision(True)
  * cdef int bucket_sampling(SparseVector * ppdw, Stack * ssw, double qq_normw):             # <<<<<<<<<<<<<<
@@ -4827,7 +4810,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("bucket_sampling", 0);
 
-  /* "_ldamhw_train.pyx":377
+  /* "_ldamhw_train.pyx":373
  *         int * nzkeys
  *         double * nzvals
  *     if randUniform() < ppdw.norm / (ppdw.norm + qq_normw):             # <<<<<<<<<<<<<<
@@ -4837,7 +4820,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
   __pyx_t_1 = ((__pyx_f_13_ldamhw_train_randUniform() < (__pyx_v_ppdw->norm / (__pyx_v_ppdw->norm + __pyx_v_qq_normw))) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":378
+    /* "_ldamhw_train.pyx":374
  *         double * nzvals
  *     if randUniform() < ppdw.norm / (ppdw.norm + qq_normw):
  *         nzkeys = getSVnzKeyList(ppdw)             # <<<<<<<<<<<<<<
@@ -4846,7 +4829,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
     __pyx_v_nzkeys = __pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_v_ppdw);
 
-    /* "_ldamhw_train.pyx":379
+    /* "_ldamhw_train.pyx":375
  *     if randUniform() < ppdw.norm / (ppdw.norm + qq_normw):
  *         nzkeys = getSVnzKeyList(ppdw)
  *         nzvals = getSVnzValList(nzkeys, ppdw)             # <<<<<<<<<<<<<<
@@ -4855,7 +4838,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
     __pyx_v_nzvals = __pyx_f_13_ldamhw_train_getSVnzValList(__pyx_v_nzkeys, __pyx_v_ppdw);
 
-    /* "_ldamhw_train.pyx":380
+    /* "_ldamhw_train.pyx":376
  *         nzkeys = getSVnzKeyList(ppdw)
  *         nzvals = getSVnzValList(nzkeys, ppdw)
  *         new_t_id = rand_choice(ppdw.nnz, nzvals)             # <<<<<<<<<<<<<<
@@ -4864,7 +4847,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
     __pyx_v_new_t_id = __pyx_f_13_ldamhw_train_rand_choice(__pyx_v_ppdw->nnz, __pyx_v_nzvals);
 
-    /* "_ldamhw_train.pyx":381
+    /* "_ldamhw_train.pyx":377
  *         nzvals = getSVnzValList(nzkeys, ppdw)
  *         new_t_id = rand_choice(ppdw.nnz, nzvals)
  *         new_t = nzkeys[new_t_id]             # <<<<<<<<<<<<<<
@@ -4873,7 +4856,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
     __pyx_v_new_t = (__pyx_v_nzkeys[__pyx_v_new_t_id]);
 
-    /* "_ldamhw_train.pyx":382
+    /* "_ldamhw_train.pyx":378
  *         new_t_id = rand_choice(ppdw.nnz, nzvals)
  *         new_t = nzkeys[new_t_id]
  *         PyMem_Free(nzkeys)             # <<<<<<<<<<<<<<
@@ -4882,7 +4865,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
     PyMem_Free(__pyx_v_nzkeys);
 
-    /* "_ldamhw_train.pyx":383
+    /* "_ldamhw_train.pyx":379
  *         new_t = nzkeys[new_t_id]
  *         PyMem_Free(nzkeys)
  *         PyMem_Free(nzvals)             # <<<<<<<<<<<<<<
@@ -4891,7 +4874,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
     PyMem_Free(__pyx_v_nzvals);
 
-    /* "_ldamhw_train.pyx":384
+    /* "_ldamhw_train.pyx":380
  *         PyMem_Free(nzkeys)
  *         PyMem_Free(nzvals)
  *         return new_t             # <<<<<<<<<<<<<<
@@ -4901,7 +4884,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
     __pyx_r = __pyx_v_new_t;
     goto __pyx_L0;
 
-    /* "_ldamhw_train.pyx":377
+    /* "_ldamhw_train.pyx":373
  *         int * nzkeys
  *         double * nzvals
  *     if randUniform() < ppdw.norm / (ppdw.norm + qq_normw):             # <<<<<<<<<<<<<<
@@ -4910,7 +4893,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
  */
   }
 
-  /* "_ldamhw_train.pyx":386
+  /* "_ldamhw_train.pyx":382
  *         return new_t
  *     else:
  *         return pop(ssw)             # <<<<<<<<<<<<<<
@@ -4922,7 +4905,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
     goto __pyx_L0;
   }
 
-  /* "_ldamhw_train.pyx":372
+  /* "_ldamhw_train.pyx":368
  * 
  * @cython.cdivision(True)
  * cdef int bucket_sampling(SparseVector * ppdw, Stack * ssw, double qq_normw):             # <<<<<<<<<<<<<<
@@ -4936,7 +4919,7 @@ static int __pyx_f_13_ldamhw_train_bucket_sampling(__pyx_t_13_ldamhw_train_Spars
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":406
+/* "_ldamhw_train.pyx":402
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef SparseVector * newSparseVector(int nElem):             # <<<<<<<<<<<<<<
@@ -4954,7 +4937,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("newSparseVector", 0);
 
-  /* "_ldamhw_train.pyx":410
+  /* "_ldamhw_train.pyx":406
  *         int key
  *         SparseVector * sv
  *     sv = <SparseVector *> PyMem_Malloc(sizeof(SparseVector))             # <<<<<<<<<<<<<<
@@ -4963,7 +4946,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
  */
   __pyx_v_sv = ((__pyx_t_13_ldamhw_train_SparseVector *)PyMem_Malloc((sizeof(__pyx_t_13_ldamhw_train_SparseVector))));
 
-  /* "_ldamhw_train.pyx":411
+  /* "_ldamhw_train.pyx":407
  *         SparseVector * sv
  *     sv = <SparseVector *> PyMem_Malloc(sizeof(SparseVector))
  *     sv.nElem = nElem             # <<<<<<<<<<<<<<
@@ -4972,7 +4955,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
  */
   __pyx_v_sv->nElem = __pyx_v_nElem;
 
-  /* "_ldamhw_train.pyx":412
+  /* "_ldamhw_train.pyx":408
  *     sv = <SparseVector *> PyMem_Malloc(sizeof(SparseVector))
  *     sv.nElem = nElem
  *     sv.nnz = 0             # <<<<<<<<<<<<<<
@@ -4981,7 +4964,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
  */
   __pyx_v_sv->nnz = 0;
 
-  /* "_ldamhw_train.pyx":413
+  /* "_ldamhw_train.pyx":409
  *     sv.nElem = nElem
  *     sv.nnz = 0
  *     sv.entry = <SVNode *> PyMem_Malloc(nElem * sizeof(SVNode))             # <<<<<<<<<<<<<<
@@ -4990,7 +4973,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
  */
   __pyx_v_sv->entry = ((__pyx_t_13_ldamhw_train_SVNode *)PyMem_Malloc((__pyx_v_nElem * (sizeof(__pyx_t_13_ldamhw_train_SVNode)))));
 
-  /* "_ldamhw_train.pyx":414
+  /* "_ldamhw_train.pyx":410
  *     sv.nnz = 0
  *     sv.entry = <SVNode *> PyMem_Malloc(nElem * sizeof(SVNode))
  *     sv.head = NULL             # <<<<<<<<<<<<<<
@@ -4999,7 +4982,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
  */
   __pyx_v_sv->head = NULL;
 
-  /* "_ldamhw_train.pyx":415
+  /* "_ldamhw_train.pyx":411
  *     sv.entry = <SVNode *> PyMem_Malloc(nElem * sizeof(SVNode))
  *     sv.head = NULL
  *     for key in range(nElem):             # <<<<<<<<<<<<<<
@@ -5011,7 +4994,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_key = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":416
+    /* "_ldamhw_train.pyx":412
  *     sv.head = NULL
  *     for key in range(nElem):
  *         initSVNode(key, &sv.entry[key])             # <<<<<<<<<<<<<<
@@ -5021,7 +5004,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
     __pyx_f_13_ldamhw_train_initSVNode(__pyx_v_key, (&(__pyx_v_sv->entry[__pyx_v_key])));
   }
 
-  /* "_ldamhw_train.pyx":417
+  /* "_ldamhw_train.pyx":413
  *     for key in range(nElem):
  *         initSVNode(key, &sv.entry[key])
  *     return sv             # <<<<<<<<<<<<<<
@@ -5031,7 +5014,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
   __pyx_r = __pyx_v_sv;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":406
+  /* "_ldamhw_train.pyx":402
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef SparseVector * newSparseVector(int nElem):             # <<<<<<<<<<<<<<
@@ -5045,7 +5028,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":419
+/* "_ldamhw_train.pyx":415
  *     return sv
  * 
  * cdef void initSVNode(int key, SVNode * svn) nogil:             # <<<<<<<<<<<<<<
@@ -5055,7 +5038,7 @@ static __pyx_t_13_ldamhw_train_SparseVector *__pyx_f_13_ldamhw_train_newSparseVe
 
 static void __pyx_f_13_ldamhw_train_initSVNode(int __pyx_v_key, __pyx_t_13_ldamhw_train_SVNode *__pyx_v_svn) {
 
-  /* "_ldamhw_train.pyx":420
+  /* "_ldamhw_train.pyx":416
  * 
  * cdef void initSVNode(int key, SVNode * svn) nogil:
  *     svn.key = key             # <<<<<<<<<<<<<<
@@ -5064,7 +5047,7 @@ static void __pyx_f_13_ldamhw_train_initSVNode(int __pyx_v_key, __pyx_t_13_ldamh
  */
   __pyx_v_svn->key = __pyx_v_key;
 
-  /* "_ldamhw_train.pyx":421
+  /* "_ldamhw_train.pyx":417
  * cdef void initSVNode(int key, SVNode * svn) nogil:
  *     svn.key = key
  *     svn.isZero = 1             # <<<<<<<<<<<<<<
@@ -5073,7 +5056,7 @@ static void __pyx_f_13_ldamhw_train_initSVNode(int __pyx_v_key, __pyx_t_13_ldamh
  */
   __pyx_v_svn->isZero = 1;
 
-  /* "_ldamhw_train.pyx":422
+  /* "_ldamhw_train.pyx":418
  *     svn.key = key
  *     svn.isZero = 1
  *     svn.val = 0.0             # <<<<<<<<<<<<<<
@@ -5082,7 +5065,7 @@ static void __pyx_f_13_ldamhw_train_initSVNode(int __pyx_v_key, __pyx_t_13_ldamh
  */
   __pyx_v_svn->val = 0.0;
 
-  /* "_ldamhw_train.pyx":419
+  /* "_ldamhw_train.pyx":415
  *     return sv
  * 
  * cdef void initSVNode(int key, SVNode * svn) nogil:             # <<<<<<<<<<<<<<
@@ -5093,7 +5076,7 @@ static void __pyx_f_13_ldamhw_train_initSVNode(int __pyx_v_key, __pyx_t_13_ldamh
   /* function exit code */
 }
 
-/* "_ldamhw_train.pyx":424
+/* "_ldamhw_train.pyx":420
  *     svn.val = 0.0
  * 
  * cdef void setSVVal(int key, double val, SparseVector * sv) nogil:             # <<<<<<<<<<<<<<
@@ -5105,7 +5088,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
   int __pyx_t_1;
   __pyx_t_13_ldamhw_train_SVNode *__pyx_t_2;
 
-  /* "_ldamhw_train.pyx":425
+  /* "_ldamhw_train.pyx":421
  * 
  * cdef void setSVVal(int key, double val, SparseVector * sv) nogil:
  *     if sv.entry[key].isZero:             # <<<<<<<<<<<<<<
@@ -5115,7 +5098,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
   __pyx_t_1 = ((__pyx_v_sv->entry[__pyx_v_key]).isZero != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":426
+    /* "_ldamhw_train.pyx":422
  * cdef void setSVVal(int key, double val, SparseVector * sv) nogil:
  *     if sv.entry[key].isZero:
  *         sv.entry[key].val = val             # <<<<<<<<<<<<<<
@@ -5124,7 +5107,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
  */
     (__pyx_v_sv->entry[__pyx_v_key]).val = __pyx_v_val;
 
-    /* "_ldamhw_train.pyx":427
+    /* "_ldamhw_train.pyx":423
  *     if sv.entry[key].isZero:
  *         sv.entry[key].val = val
  *         sv.entry[key].isZero = 0             # <<<<<<<<<<<<<<
@@ -5133,7 +5116,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
  */
     (__pyx_v_sv->entry[__pyx_v_key]).isZero = 0;
 
-    /* "_ldamhw_train.pyx":428
+    /* "_ldamhw_train.pyx":424
  *         sv.entry[key].val = val
  *         sv.entry[key].isZero = 0
  *         sv.nnz += 1             # <<<<<<<<<<<<<<
@@ -5142,7 +5125,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
  */
     __pyx_v_sv->nnz = (__pyx_v_sv->nnz + 1);
 
-    /* "_ldamhw_train.pyx":429
+    /* "_ldamhw_train.pyx":425
  *         sv.entry[key].isZero = 0
  *         sv.nnz += 1
  *         sv.entry[key].next = sv.head             # <<<<<<<<<<<<<<
@@ -5152,7 +5135,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
     __pyx_t_2 = __pyx_v_sv->head;
     (__pyx_v_sv->entry[__pyx_v_key]).next = __pyx_t_2;
 
-    /* "_ldamhw_train.pyx":430
+    /* "_ldamhw_train.pyx":426
  *         sv.nnz += 1
  *         sv.entry[key].next = sv.head
  *         sv.head = &sv.entry[key]             # <<<<<<<<<<<<<<
@@ -5161,7 +5144,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
  */
     __pyx_v_sv->head = (&(__pyx_v_sv->entry[__pyx_v_key]));
 
-    /* "_ldamhw_train.pyx":425
+    /* "_ldamhw_train.pyx":421
  * 
  * cdef void setSVVal(int key, double val, SparseVector * sv) nogil:
  *     if sv.entry[key].isZero:             # <<<<<<<<<<<<<<
@@ -5171,7 +5154,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
     goto __pyx_L3;
   }
 
-  /* "_ldamhw_train.pyx":432
+  /* "_ldamhw_train.pyx":428
  *         sv.head = &sv.entry[key]
  *     else:
  *         sv.entry[key].val = val             # <<<<<<<<<<<<<<
@@ -5183,7 +5166,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
   }
   __pyx_L3:;
 
-  /* "_ldamhw_train.pyx":424
+  /* "_ldamhw_train.pyx":420
  *     svn.val = 0.0
  * 
  * cdef void setSVVal(int key, double val, SparseVector * sv) nogil:             # <<<<<<<<<<<<<<
@@ -5194,7 +5177,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
   /* function exit code */
 }
 
-/* "_ldamhw_train.pyx":434
+/* "_ldamhw_train.pyx":430
  *         sv.entry[key].val = val
  * 
  * cdef double getSVVal(int key, SparseVector * sv) nogil:             # <<<<<<<<<<<<<<
@@ -5205,7 +5188,7 @@ static void __pyx_f_13_ldamhw_train_setSVVal(int __pyx_v_key, double __pyx_v_val
 static double __pyx_f_13_ldamhw_train_getSVVal(int __pyx_v_key, __pyx_t_13_ldamhw_train_SparseVector *__pyx_v_sv) {
   double __pyx_r;
 
-  /* "_ldamhw_train.pyx":435
+  /* "_ldamhw_train.pyx":431
  * 
  * cdef double getSVVal(int key, SparseVector * sv) nogil:
  *     return sv.entry[key].val             # <<<<<<<<<<<<<<
@@ -5215,7 +5198,7 @@ static double __pyx_f_13_ldamhw_train_getSVVal(int __pyx_v_key, __pyx_t_13_ldamh
   __pyx_r = (__pyx_v_sv->entry[__pyx_v_key]).val;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":434
+  /* "_ldamhw_train.pyx":430
  *         sv.entry[key].val = val
  * 
  * cdef double getSVVal(int key, SparseVector * sv) nogil:             # <<<<<<<<<<<<<<
@@ -5228,7 +5211,7 @@ static double __pyx_f_13_ldamhw_train_getSVVal(int __pyx_v_key, __pyx_t_13_ldamh
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":440
+/* "_ldamhw_train.pyx":436
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void normalizeSV(SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5248,7 +5231,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("normalizeSV", 0);
 
-  /* "_ldamhw_train.pyx":444
+  /* "_ldamhw_train.pyx":440
  *         int k
  *         int keynz
  *         double norm = 0.0             # <<<<<<<<<<<<<<
@@ -5257,7 +5240,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
  */
   __pyx_v_norm = 0.0;
 
-  /* "_ldamhw_train.pyx":446
+  /* "_ldamhw_train.pyx":442
  *         double norm = 0.0
  *         int * nzkeys
  *     nzkeys = getSVnzKeyList(sv)             # <<<<<<<<<<<<<<
@@ -5266,7 +5249,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
  */
   __pyx_v_nzkeys = __pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_v_sv);
 
-  /* "_ldamhw_train.pyx":447
+  /* "_ldamhw_train.pyx":443
  *         int * nzkeys
  *     nzkeys = getSVnzKeyList(sv)
  *     for k in range(sv.nnz):             # <<<<<<<<<<<<<<
@@ -5278,7 +5261,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":448
+    /* "_ldamhw_train.pyx":444
  *     nzkeys = getSVnzKeyList(sv)
  *     for k in range(sv.nnz):
  *         keynz = nzkeys[k]             # <<<<<<<<<<<<<<
@@ -5287,7 +5270,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
  */
     __pyx_v_keynz = (__pyx_v_nzkeys[__pyx_v_k]);
 
-    /* "_ldamhw_train.pyx":449
+    /* "_ldamhw_train.pyx":445
  *     for k in range(sv.nnz):
  *         keynz = nzkeys[k]
  *         norm += sv.entry[keynz].val             # <<<<<<<<<<<<<<
@@ -5297,7 +5280,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
     __pyx_v_norm = (__pyx_v_norm + (__pyx_v_sv->entry[__pyx_v_keynz]).val);
   }
 
-  /* "_ldamhw_train.pyx":450
+  /* "_ldamhw_train.pyx":446
  *         keynz = nzkeys[k]
  *         norm += sv.entry[keynz].val
  *     sv.norm = norm             # <<<<<<<<<<<<<<
@@ -5306,7 +5289,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
  */
   __pyx_v_sv->norm = __pyx_v_norm;
 
-  /* "_ldamhw_train.pyx":451
+  /* "_ldamhw_train.pyx":447
  *         norm += sv.entry[keynz].val
  *     sv.norm = norm
  *     for k in range(sv.nnz):             # <<<<<<<<<<<<<<
@@ -5318,7 +5301,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":452
+    /* "_ldamhw_train.pyx":448
  *     sv.norm = norm
  *     for k in range(sv.nnz):
  *         keynz = nzkeys[k]             # <<<<<<<<<<<<<<
@@ -5327,7 +5310,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
  */
     __pyx_v_keynz = (__pyx_v_nzkeys[__pyx_v_k]);
 
-    /* "_ldamhw_train.pyx":453
+    /* "_ldamhw_train.pyx":449
  *     for k in range(sv.nnz):
  *         keynz = nzkeys[k]
  *         sv.entry[keynz].val /= norm             # <<<<<<<<<<<<<<
@@ -5338,7 +5321,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
     (__pyx_v_sv->entry[__pyx_t_4]).val = ((__pyx_v_sv->entry[__pyx_t_4]).val / __pyx_v_norm);
   }
 
-  /* "_ldamhw_train.pyx":454
+  /* "_ldamhw_train.pyx":450
  *         keynz = nzkeys[k]
  *         sv.entry[keynz].val /= norm
  *     PyMem_Free(nzkeys)             # <<<<<<<<<<<<<<
@@ -5347,7 +5330,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
  */
   PyMem_Free(__pyx_v_nzkeys);
 
-  /* "_ldamhw_train.pyx":440
+  /* "_ldamhw_train.pyx":436
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void normalizeSV(SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5359,7 +5342,7 @@ static void __pyx_f_13_ldamhw_train_normalizeSV(__pyx_t_13_ldamhw_train_SparseVe
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":458
+/* "_ldamhw_train.pyx":454
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int * getSVnzKeyList(SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5380,7 +5363,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("getSVnzKeyList", 0);
 
-  /* "_ldamhw_train.pyx":463
+  /* "_ldamhw_train.pyx":459
  *         int keynz
  *         int * nzkeys
  *     if sv.head != NULL:             # <<<<<<<<<<<<<<
@@ -5390,7 +5373,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
   __pyx_t_1 = ((__pyx_v_sv->head != NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":464
+    /* "_ldamhw_train.pyx":460
  *         int * nzkeys
  *     if sv.head != NULL:
  *         keynz = sv.head.key             # <<<<<<<<<<<<<<
@@ -5400,7 +5383,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
     __pyx_t_2 = __pyx_v_sv->head->key;
     __pyx_v_keynz = __pyx_t_2;
 
-    /* "_ldamhw_train.pyx":463
+    /* "_ldamhw_train.pyx":459
  *         int keynz
  *         int * nzkeys
  *     if sv.head != NULL:             # <<<<<<<<<<<<<<
@@ -5410,7 +5393,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
     goto __pyx_L3;
   }
 
-  /* "_ldamhw_train.pyx":466
+  /* "_ldamhw_train.pyx":462
  *         keynz = sv.head.key
  *     else:
  *         printf("getSVnzKeyList Error: sparse vector is empty!\n")             # <<<<<<<<<<<<<<
@@ -5422,7 +5405,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
   }
   __pyx_L3:;
 
-  /* "_ldamhw_train.pyx":467
+  /* "_ldamhw_train.pyx":463
  *     else:
  *         printf("getSVnzKeyList Error: sparse vector is empty!\n")
  *     nzkeys = <int *> PyMem_Malloc(sv.nnz * sizeof(int))             # <<<<<<<<<<<<<<
@@ -5431,7 +5414,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
  */
   __pyx_v_nzkeys = ((int *)PyMem_Malloc((__pyx_v_sv->nnz * (sizeof(int)))));
 
-  /* "_ldamhw_train.pyx":468
+  /* "_ldamhw_train.pyx":464
  *         printf("getSVnzKeyList Error: sparse vector is empty!\n")
  *     nzkeys = <int *> PyMem_Malloc(sv.nnz * sizeof(int))
  *     for k in range(sv.nnz):             # <<<<<<<<<<<<<<
@@ -5443,7 +5426,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_k = __pyx_t_4;
 
-    /* "_ldamhw_train.pyx":469
+    /* "_ldamhw_train.pyx":465
  *     nzkeys = <int *> PyMem_Malloc(sv.nnz * sizeof(int))
  *     for k in range(sv.nnz):
  *         nzkeys[k] = keynz             # <<<<<<<<<<<<<<
@@ -5452,7 +5435,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
  */
     (__pyx_v_nzkeys[__pyx_v_k]) = __pyx_v_keynz;
 
-    /* "_ldamhw_train.pyx":470
+    /* "_ldamhw_train.pyx":466
  *     for k in range(sv.nnz):
  *         nzkeys[k] = keynz
  *         if sv.entry[keynz].next != NULL:             # <<<<<<<<<<<<<<
@@ -5462,7 +5445,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
     __pyx_t_1 = (((__pyx_v_sv->entry[__pyx_v_keynz]).next != NULL) != 0);
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":471
+      /* "_ldamhw_train.pyx":467
  *         nzkeys[k] = keynz
  *         if sv.entry[keynz].next != NULL:
  *             keynz = sv.entry[keynz].next.key             # <<<<<<<<<<<<<<
@@ -5472,7 +5455,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
       __pyx_t_5 = (__pyx_v_sv->entry[__pyx_v_keynz]).next->key;
       __pyx_v_keynz = __pyx_t_5;
 
-      /* "_ldamhw_train.pyx":470
+      /* "_ldamhw_train.pyx":466
  *     for k in range(sv.nnz):
  *         nzkeys[k] = keynz
  *         if sv.entry[keynz].next != NULL:             # <<<<<<<<<<<<<<
@@ -5482,7 +5465,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
     }
   }
 
-  /* "_ldamhw_train.pyx":472
+  /* "_ldamhw_train.pyx":468
  *         if sv.entry[keynz].next != NULL:
  *             keynz = sv.entry[keynz].next.key
  *     return nzkeys             # <<<<<<<<<<<<<<
@@ -5492,7 +5475,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
   __pyx_r = __pyx_v_nzkeys;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":458
+  /* "_ldamhw_train.pyx":454
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int * getSVnzKeyList(SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5506,7 +5489,7 @@ static int *__pyx_f_13_ldamhw_train_getSVnzKeyList(__pyx_t_13_ldamhw_train_Spars
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":476
+/* "_ldamhw_train.pyx":472
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef double * getSVnzValList(int * nzkeys, SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5526,7 +5509,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
   double __pyx_t_4;
   __Pyx_RefNannySetupContext("getSVnzValList", 0);
 
-  /* "_ldamhw_train.pyx":481
+  /* "_ldamhw_train.pyx":477
  *         int keynz
  *         double * nzvals
  *     nzvals = <double *> PyMem_Malloc(sv.nnz * sizeof(double))             # <<<<<<<<<<<<<<
@@ -5535,7 +5518,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
  */
   __pyx_v_nzvals = ((double *)PyMem_Malloc((__pyx_v_sv->nnz * (sizeof(double)))));
 
-  /* "_ldamhw_train.pyx":482
+  /* "_ldamhw_train.pyx":478
  *         double * nzvals
  *     nzvals = <double *> PyMem_Malloc(sv.nnz * sizeof(double))
  *     for k in range(sv.nnz):             # <<<<<<<<<<<<<<
@@ -5547,7 +5530,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":483
+    /* "_ldamhw_train.pyx":479
  *     nzvals = <double *> PyMem_Malloc(sv.nnz * sizeof(double))
  *     for k in range(sv.nnz):
  *         keynz = nzkeys[k]             # <<<<<<<<<<<<<<
@@ -5556,7 +5539,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
  */
     __pyx_v_keynz = (__pyx_v_nzkeys[__pyx_v_k]);
 
-    /* "_ldamhw_train.pyx":484
+    /* "_ldamhw_train.pyx":480
  *     for k in range(sv.nnz):
  *         keynz = nzkeys[k]
  *         nzvals[k] = sv.entry[keynz].val             # <<<<<<<<<<<<<<
@@ -5567,7 +5550,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
     (__pyx_v_nzvals[__pyx_v_k]) = __pyx_t_4;
   }
 
-  /* "_ldamhw_train.pyx":485
+  /* "_ldamhw_train.pyx":481
  *         keynz = nzkeys[k]
  *         nzvals[k] = sv.entry[keynz].val
  *     return nzvals             # <<<<<<<<<<<<<<
@@ -5577,7 +5560,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
   __pyx_r = __pyx_v_nzvals;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":476
+  /* "_ldamhw_train.pyx":472
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef double * getSVnzValList(int * nzkeys, SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5591,7 +5574,7 @@ static double *__pyx_f_13_ldamhw_train_getSVnzValList(int *__pyx_v_nzkeys, __pyx
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":487
+/* "_ldamhw_train.pyx":483
  *     return nzvals
  * 
  * cdef void freeSparseVector(SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5603,7 +5586,7 @@ static void __pyx_f_13_ldamhw_train_freeSparseVector(__pyx_t_13_ldamhw_train_Spa
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("freeSparseVector", 0);
 
-  /* "_ldamhw_train.pyx":488
+  /* "_ldamhw_train.pyx":484
  * 
  * cdef void freeSparseVector(SparseVector * sv):
  *     PyMem_Free(sv.entry)             # <<<<<<<<<<<<<<
@@ -5612,7 +5595,7 @@ static void __pyx_f_13_ldamhw_train_freeSparseVector(__pyx_t_13_ldamhw_train_Spa
  */
   PyMem_Free(__pyx_v_sv->entry);
 
-  /* "_ldamhw_train.pyx":489
+  /* "_ldamhw_train.pyx":485
  * cdef void freeSparseVector(SparseVector * sv):
  *     PyMem_Free(sv.entry)
  *     PyMem_Free(sv)             # <<<<<<<<<<<<<<
@@ -5621,7 +5604,7 @@ static void __pyx_f_13_ldamhw_train_freeSparseVector(__pyx_t_13_ldamhw_train_Spa
  */
   PyMem_Free(__pyx_v_sv);
 
-  /* "_ldamhw_train.pyx":487
+  /* "_ldamhw_train.pyx":483
  *     return nzvals
  * 
  * cdef void freeSparseVector(SparseVector * sv):             # <<<<<<<<<<<<<<
@@ -5633,7 +5616,7 @@ static void __pyx_f_13_ldamhw_train_freeSparseVector(__pyx_t_13_ldamhw_train_Spa
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":508
+/* "_ldamhw_train.pyx":504
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef Counter * newCounter(int nElem):             # <<<<<<<<<<<<<<
@@ -5651,7 +5634,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("newCounter", 0);
 
-  /* "_ldamhw_train.pyx":511
+  /* "_ldamhw_train.pyx":507
  *     cdef int k
  *     cdef Counter * counter
  *     counter = <Counter *> PyMem_Malloc(sizeof(Counter))             # <<<<<<<<<<<<<<
@@ -5660,7 +5643,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
  */
   __pyx_v_counter = ((__pyx_t_13_ldamhw_train_Counter *)PyMem_Malloc((sizeof(__pyx_t_13_ldamhw_train_Counter))));
 
-  /* "_ldamhw_train.pyx":512
+  /* "_ldamhw_train.pyx":508
  *     cdef Counter * counter
  *     counter = <Counter *> PyMem_Malloc(sizeof(Counter))
  *     counter.entry = <CounterNode *> PyMem_Malloc(nElem * sizeof(CounterNode))             # <<<<<<<<<<<<<<
@@ -5669,7 +5652,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
  */
   __pyx_v_counter->entry = ((__pyx_t_13_ldamhw_train_CounterNode *)PyMem_Malloc((__pyx_v_nElem * (sizeof(__pyx_t_13_ldamhw_train_CounterNode)))));
 
-  /* "_ldamhw_train.pyx":513
+  /* "_ldamhw_train.pyx":509
  *     counter = <Counter *> PyMem_Malloc(sizeof(Counter))
  *     counter.entry = <CounterNode *> PyMem_Malloc(nElem * sizeof(CounterNode))
  *     counter.nnz = 0             # <<<<<<<<<<<<<<
@@ -5678,7 +5661,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
  */
   __pyx_v_counter->nnz = 0;
 
-  /* "_ldamhw_train.pyx":514
+  /* "_ldamhw_train.pyx":510
  *     counter.entry = <CounterNode *> PyMem_Malloc(nElem * sizeof(CounterNode))
  *     counter.nnz = 0
  *     counter.nElem = nElem             # <<<<<<<<<<<<<<
@@ -5687,7 +5670,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
  */
   __pyx_v_counter->nElem = __pyx_v_nElem;
 
-  /* "_ldamhw_train.pyx":515
+  /* "_ldamhw_train.pyx":511
  *     counter.nnz = 0
  *     counter.nElem = nElem
  *     counter.head = NULL             # <<<<<<<<<<<<<<
@@ -5696,7 +5679,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
  */
   __pyx_v_counter->head = NULL;
 
-  /* "_ldamhw_train.pyx":516
+  /* "_ldamhw_train.pyx":512
  *     counter.nElem = nElem
  *     counter.head = NULL
  *     counter.tail = NULL             # <<<<<<<<<<<<<<
@@ -5705,7 +5688,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
  */
   __pyx_v_counter->tail = NULL;
 
-  /* "_ldamhw_train.pyx":517
+  /* "_ldamhw_train.pyx":513
  *     counter.head = NULL
  *     counter.tail = NULL
  *     for k in range(nElem):             # <<<<<<<<<<<<<<
@@ -5717,7 +5700,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":518
+    /* "_ldamhw_train.pyx":514
  *     counter.tail = NULL
  *     for k in range(nElem):
  *         initCounterNode(k, &counter.entry[k])             # <<<<<<<<<<<<<<
@@ -5727,7 +5710,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
     __pyx_f_13_ldamhw_train_initCounterNode(__pyx_v_k, (&(__pyx_v_counter->entry[__pyx_v_k])));
   }
 
-  /* "_ldamhw_train.pyx":519
+  /* "_ldamhw_train.pyx":515
  *     for k in range(nElem):
  *         initCounterNode(k, &counter.entry[k])
  *     return counter             # <<<<<<<<<<<<<<
@@ -5737,7 +5720,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
   __pyx_r = __pyx_v_counter;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":508
+  /* "_ldamhw_train.pyx":504
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef Counter * newCounter(int nElem):             # <<<<<<<<<<<<<<
@@ -5751,7 +5734,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":521
+/* "_ldamhw_train.pyx":517
  *     return counter
  * 
  * cdef void initCounterNode(int k, CounterNode * countnode) nogil:             # <<<<<<<<<<<<<<
@@ -5761,7 +5744,7 @@ static __pyx_t_13_ldamhw_train_Counter *__pyx_f_13_ldamhw_train_newCounter(int _
 
 static void __pyx_f_13_ldamhw_train_initCounterNode(int __pyx_v_k, __pyx_t_13_ldamhw_train_CounterNode *__pyx_v_countnode) {
 
-  /* "_ldamhw_train.pyx":522
+  /* "_ldamhw_train.pyx":518
  * 
  * cdef void initCounterNode(int k, CounterNode * countnode) nogil:
  *     countnode.label = k             # <<<<<<<<<<<<<<
@@ -5770,7 +5753,7 @@ static void __pyx_f_13_ldamhw_train_initCounterNode(int __pyx_v_k, __pyx_t_13_ld
  */
   __pyx_v_countnode->label = __pyx_v_k;
 
-  /* "_ldamhw_train.pyx":523
+  /* "_ldamhw_train.pyx":519
  * cdef void initCounterNode(int k, CounterNode * countnode) nogil:
  *     countnode.label = k
  *     countnode.count = 0             # <<<<<<<<<<<<<<
@@ -5779,7 +5762,7 @@ static void __pyx_f_13_ldamhw_train_initCounterNode(int __pyx_v_k, __pyx_t_13_ld
  */
   __pyx_v_countnode->count = 0;
 
-  /* "_ldamhw_train.pyx":524
+  /* "_ldamhw_train.pyx":520
  *     countnode.label = k
  *     countnode.count = 0
  *     countnode.prev = NULL             # <<<<<<<<<<<<<<
@@ -5788,7 +5771,7 @@ static void __pyx_f_13_ldamhw_train_initCounterNode(int __pyx_v_k, __pyx_t_13_ld
  */
   __pyx_v_countnode->prev = NULL;
 
-  /* "_ldamhw_train.pyx":525
+  /* "_ldamhw_train.pyx":521
  *     countnode.count = 0
  *     countnode.prev = NULL
  *     countnode.next = NULL             # <<<<<<<<<<<<<<
@@ -5797,7 +5780,7 @@ static void __pyx_f_13_ldamhw_train_initCounterNode(int __pyx_v_k, __pyx_t_13_ld
  */
   __pyx_v_countnode->next = NULL;
 
-  /* "_ldamhw_train.pyx":521
+  /* "_ldamhw_train.pyx":517
  *     return counter
  * 
  * cdef void initCounterNode(int k, CounterNode * countnode) nogil:             # <<<<<<<<<<<<<<
@@ -5808,7 +5791,7 @@ static void __pyx_f_13_ldamhw_train_initCounterNode(int __pyx_v_k, __pyx_t_13_ld
   /* function exit code */
 }
 
-/* "_ldamhw_train.pyx":527
+/* "_ldamhw_train.pyx":523
  *     countnode.next = NULL
  * 
  * cdef int incrementCounter(int key, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -5823,7 +5806,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   int __pyx_t_3;
   __pyx_t_13_ldamhw_train_CounterNode *__pyx_t_4;
 
-  /* "_ldamhw_train.pyx":528
+  /* "_ldamhw_train.pyx":524
  * 
  * cdef int incrementCounter(int key, Counter * counter) nogil:
  *     if key >= counter.nElem or key < 0:             # <<<<<<<<<<<<<<
@@ -5841,7 +5824,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":529
+    /* "_ldamhw_train.pyx":525
  * cdef int incrementCounter(int key, Counter * counter) nogil:
  *     if key >= counter.nElem or key < 0:
  *         return 1                                                          # ValueError             # <<<<<<<<<<<<<<
@@ -5851,7 +5834,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_r = 1;
     goto __pyx_L0;
 
-    /* "_ldamhw_train.pyx":528
+    /* "_ldamhw_train.pyx":524
  * 
  * cdef int incrementCounter(int key, Counter * counter) nogil:
  *     if key >= counter.nElem or key < 0:             # <<<<<<<<<<<<<<
@@ -5860,7 +5843,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
  */
   }
 
-  /* "_ldamhw_train.pyx":530
+  /* "_ldamhw_train.pyx":526
  *     if key >= counter.nElem or key < 0:
  *         return 1                                                          # ValueError
  *     if counter.entry[key].count > 0:                                    # case 1: count > 1             # <<<<<<<<<<<<<<
@@ -5870,7 +5853,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_t_1 = (((__pyx_v_counter->entry[__pyx_v_key]).count > 0) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":531
+    /* "_ldamhw_train.pyx":527
  *         return 1                                                          # ValueError
  *     if counter.entry[key].count > 0:                                    # case 1: count > 1
  *         counter.entry[key].count += 1             # <<<<<<<<<<<<<<
@@ -5880,7 +5863,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_t_3 = __pyx_v_key;
     (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count + 1);
 
-    /* "_ldamhw_train.pyx":530
+    /* "_ldamhw_train.pyx":526
  *     if key >= counter.nElem or key < 0:
  *         return 1                                                          # ValueError
  *     if counter.entry[key].count > 0:                                    # case 1: count > 1             # <<<<<<<<<<<<<<
@@ -5890,7 +5873,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     goto __pyx_L6;
   }
 
-  /* "_ldamhw_train.pyx":532
+  /* "_ldamhw_train.pyx":528
  *     if counter.entry[key].count > 0:                                    # case 1: count > 1
  *         counter.entry[key].count += 1
  *     elif counter.entry[key].count == 0:             # <<<<<<<<<<<<<<
@@ -5900,7 +5883,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_t_1 = (((__pyx_v_counter->entry[__pyx_v_key]).count == 0) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":533
+    /* "_ldamhw_train.pyx":529
  *         counter.entry[key].count += 1
  *     elif counter.entry[key].count == 0:
  *         counter.entry[key].count += 1             # <<<<<<<<<<<<<<
@@ -5910,7 +5893,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_t_3 = __pyx_v_key;
     (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count + 1);
 
-    /* "_ldamhw_train.pyx":534
+    /* "_ldamhw_train.pyx":530
  *     elif counter.entry[key].count == 0:
  *         counter.entry[key].count += 1
  *         if counter.head == NULL:                                        # case 2: count == 0 and first node in queue             # <<<<<<<<<<<<<<
@@ -5920,7 +5903,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_t_1 = ((__pyx_v_counter->head == NULL) != 0);
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":535
+      /* "_ldamhw_train.pyx":531
  *         counter.entry[key].count += 1
  *         if counter.head == NULL:                                        # case 2: count == 0 and first node in queue
  *             counter.head = &counter.entry[key]             # <<<<<<<<<<<<<<
@@ -5929,7 +5912,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       __pyx_v_counter->head = (&(__pyx_v_counter->entry[__pyx_v_key]));
 
-      /* "_ldamhw_train.pyx":536
+      /* "_ldamhw_train.pyx":532
  *         if counter.head == NULL:                                        # case 2: count == 0 and first node in queue
  *             counter.head = &counter.entry[key]
  *             counter.tail = &counter.entry[key]             # <<<<<<<<<<<<<<
@@ -5938,7 +5921,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       __pyx_v_counter->tail = (&(__pyx_v_counter->entry[__pyx_v_key]));
 
-      /* "_ldamhw_train.pyx":534
+      /* "_ldamhw_train.pyx":530
  *     elif counter.entry[key].count == 0:
  *         counter.entry[key].count += 1
  *         if counter.head == NULL:                                        # case 2: count == 0 and first node in queue             # <<<<<<<<<<<<<<
@@ -5948,7 +5931,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
       goto __pyx_L7;
     }
 
-    /* "_ldamhw_train.pyx":538
+    /* "_ldamhw_train.pyx":534
  *             counter.tail = &counter.entry[key]
  *         else:                                                             # case 3: count==0 but not first node in queue
  *             counter.tail.next = &counter.entry[key]             # <<<<<<<<<<<<<<
@@ -5958,7 +5941,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     /*else*/ {
       __pyx_v_counter->tail->next = (&(__pyx_v_counter->entry[__pyx_v_key]));
 
-      /* "_ldamhw_train.pyx":539
+      /* "_ldamhw_train.pyx":535
  *         else:                                                             # case 3: count==0 but not first node in queue
  *             counter.tail.next = &counter.entry[key]
  *             counter.entry[key].prev = counter.tail             # <<<<<<<<<<<<<<
@@ -5968,7 +5951,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_4 = __pyx_v_counter->tail;
       (__pyx_v_counter->entry[__pyx_v_key]).prev = __pyx_t_4;
 
-      /* "_ldamhw_train.pyx":540
+      /* "_ldamhw_train.pyx":536
  *             counter.tail.next = &counter.entry[key]
  *             counter.entry[key].prev = counter.tail
  *             counter.tail = &counter.entry[key]             # <<<<<<<<<<<<<<
@@ -5979,7 +5962,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     }
     __pyx_L7:;
 
-    /* "_ldamhw_train.pyx":541
+    /* "_ldamhw_train.pyx":537
  *             counter.entry[key].prev = counter.tail
  *             counter.tail = &counter.entry[key]
  *         counter.nnz += 1             # <<<<<<<<<<<<<<
@@ -5988,7 +5971,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
  */
     __pyx_v_counter->nnz = (__pyx_v_counter->nnz + 1);
 
-    /* "_ldamhw_train.pyx":532
+    /* "_ldamhw_train.pyx":528
  *     if counter.entry[key].count > 0:                                    # case 1: count > 1
  *         counter.entry[key].count += 1
  *     elif counter.entry[key].count == 0:             # <<<<<<<<<<<<<<
@@ -5998,7 +5981,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
     goto __pyx_L6;
   }
 
-  /* "_ldamhw_train.pyx":543
+  /* "_ldamhw_train.pyx":539
  *         counter.nnz += 1
  *     else:                                                                 # case 4: count<0 ValueError
  *         return 2             # <<<<<<<<<<<<<<
@@ -6011,7 +5994,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   }
   __pyx_L6:;
 
-  /* "_ldamhw_train.pyx":544
+  /* "_ldamhw_train.pyx":540
  *     else:                                                                 # case 4: count<0 ValueError
  *         return 2
  *     return 0             # <<<<<<<<<<<<<<
@@ -6021,7 +6004,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":527
+  /* "_ldamhw_train.pyx":523
  *     countnode.next = NULL
  * 
  * cdef int incrementCounter(int key, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6034,7 +6017,7 @@ static int __pyx_f_13_ldamhw_train_incrementCounter(int __pyx_v_key, __pyx_t_13_
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":546
+/* "_ldamhw_train.pyx":542
  *     return 0
  * 
  * cdef int decrementCounter(int key, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6049,7 +6032,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   int __pyx_t_3;
   __pyx_t_13_ldamhw_train_CounterNode *__pyx_t_4;
 
-  /* "_ldamhw_train.pyx":547
+  /* "_ldamhw_train.pyx":543
  * 
  * cdef int decrementCounter(int key, Counter * counter) nogil:
  *     if key >= counter.nElem or key < 0:             # <<<<<<<<<<<<<<
@@ -6067,7 +6050,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":548
+    /* "_ldamhw_train.pyx":544
  * cdef int decrementCounter(int key, Counter * counter) nogil:
  *     if key >= counter.nElem or key < 0:
  *         return 1                                                               # ValueError             # <<<<<<<<<<<<<<
@@ -6077,7 +6060,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_r = 1;
     goto __pyx_L0;
 
-    /* "_ldamhw_train.pyx":547
+    /* "_ldamhw_train.pyx":543
  * 
  * cdef int decrementCounter(int key, Counter * counter) nogil:
  *     if key >= counter.nElem or key < 0:             # <<<<<<<<<<<<<<
@@ -6086,7 +6069,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
   }
 
-  /* "_ldamhw_train.pyx":549
+  /* "_ldamhw_train.pyx":545
  *     if key >= counter.nElem or key < 0:
  *         return 1                                                               # ValueError
  *     if counter.entry[key].count > 1:                                           # case 1: count > 1             # <<<<<<<<<<<<<<
@@ -6096,7 +6079,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_t_1 = (((__pyx_v_counter->entry[__pyx_v_key]).count > 1) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":550
+    /* "_ldamhw_train.pyx":546
  *         return 1                                                               # ValueError
  *     if counter.entry[key].count > 1:                                           # case 1: count > 1
  *         counter.entry[key].count -= 1             # <<<<<<<<<<<<<<
@@ -6106,7 +6089,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_t_3 = __pyx_v_key;
     (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count - 1);
 
-    /* "_ldamhw_train.pyx":549
+    /* "_ldamhw_train.pyx":545
  *     if key >= counter.nElem or key < 0:
  *         return 1                                                               # ValueError
  *     if counter.entry[key].count > 1:                                           # case 1: count > 1             # <<<<<<<<<<<<<<
@@ -6116,7 +6099,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     goto __pyx_L6;
   }
 
-  /* "_ldamhw_train.pyx":551
+  /* "_ldamhw_train.pyx":547
  *     if counter.entry[key].count > 1:                                           # case 1: count > 1
  *         counter.entry[key].count -= 1
  *     elif counter.entry[key].count == 1:             # <<<<<<<<<<<<<<
@@ -6126,7 +6109,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_t_1 = (((__pyx_v_counter->entry[__pyx_v_key]).count == 1) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":552
+    /* "_ldamhw_train.pyx":548
  *         counter.entry[key].count -= 1
  *     elif counter.entry[key].count == 1:
  *         if counter.head != &counter.entry[key] and counter.tail != &counter.entry[key]:             # <<<<<<<<<<<<<<
@@ -6144,7 +6127,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_L8_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":553
+      /* "_ldamhw_train.pyx":549
  *     elif counter.entry[key].count == 1:
  *         if counter.head != &counter.entry[key] and counter.tail != &counter.entry[key]:
  *             counter.entry[key].count -=1                                       # case2: count == 1 and not head or tail             # <<<<<<<<<<<<<<
@@ -6154,7 +6137,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_3 = __pyx_v_key;
       (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count - 1);
 
-      /* "_ldamhw_train.pyx":554
+      /* "_ldamhw_train.pyx":550
  *         if counter.head != &counter.entry[key] and counter.tail != &counter.entry[key]:
  *             counter.entry[key].count -=1                                       # case2: count == 1 and not head or tail
  *             counter.entry[key].prev.next = counter.entry[key].next             # <<<<<<<<<<<<<<
@@ -6164,7 +6147,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_4 = (__pyx_v_counter->entry[__pyx_v_key]).next;
       (__pyx_v_counter->entry[__pyx_v_key]).prev->next = __pyx_t_4;
 
-      /* "_ldamhw_train.pyx":555
+      /* "_ldamhw_train.pyx":551
  *             counter.entry[key].count -=1                                       # case2: count == 1 and not head or tail
  *             counter.entry[key].prev.next = counter.entry[key].next
  *             counter.entry[key].next.prev = counter.entry[key].prev             # <<<<<<<<<<<<<<
@@ -6174,7 +6157,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_4 = (__pyx_v_counter->entry[__pyx_v_key]).prev;
       (__pyx_v_counter->entry[__pyx_v_key]).next->prev = __pyx_t_4;
 
-      /* "_ldamhw_train.pyx":556
+      /* "_ldamhw_train.pyx":552
  *             counter.entry[key].prev.next = counter.entry[key].next
  *             counter.entry[key].next.prev = counter.entry[key].prev
  *             counter.entry[key].prev = NULL             # <<<<<<<<<<<<<<
@@ -6183,7 +6166,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       (__pyx_v_counter->entry[__pyx_v_key]).prev = NULL;
 
-      /* "_ldamhw_train.pyx":557
+      /* "_ldamhw_train.pyx":553
  *             counter.entry[key].next.prev = counter.entry[key].prev
  *             counter.entry[key].prev = NULL
  *             counter.entry[key].next = NULL             # <<<<<<<<<<<<<<
@@ -6192,7 +6175,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       (__pyx_v_counter->entry[__pyx_v_key]).next = NULL;
 
-      /* "_ldamhw_train.pyx":552
+      /* "_ldamhw_train.pyx":548
  *         counter.entry[key].count -= 1
  *     elif counter.entry[key].count == 1:
  *         if counter.head != &counter.entry[key] and counter.tail != &counter.entry[key]:             # <<<<<<<<<<<<<<
@@ -6202,7 +6185,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       goto __pyx_L7;
     }
 
-    /* "_ldamhw_train.pyx":558
+    /* "_ldamhw_train.pyx":554
  *             counter.entry[key].prev = NULL
  *             counter.entry[key].next = NULL
  *         elif counter.head == &counter.entry[key] and counter.tail != counter.head: # case 3: count == 1 and head             # <<<<<<<<<<<<<<
@@ -6220,7 +6203,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_L10_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":559
+      /* "_ldamhw_train.pyx":555
  *             counter.entry[key].next = NULL
  *         elif counter.head == &counter.entry[key] and counter.tail != counter.head: # case 3: count == 1 and head
  *             counter.entry[key].count -= 1             # <<<<<<<<<<<<<<
@@ -6230,7 +6213,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_3 = __pyx_v_key;
       (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count - 1);
 
-      /* "_ldamhw_train.pyx":560
+      /* "_ldamhw_train.pyx":556
  *         elif counter.head == &counter.entry[key] and counter.tail != counter.head: # case 3: count == 1 and head
  *             counter.entry[key].count -= 1
  *             counter.head = counter.entry[key].next             # <<<<<<<<<<<<<<
@@ -6240,7 +6223,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_4 = (__pyx_v_counter->entry[__pyx_v_key]).next;
       __pyx_v_counter->head = __pyx_t_4;
 
-      /* "_ldamhw_train.pyx":561
+      /* "_ldamhw_train.pyx":557
  *             counter.entry[key].count -= 1
  *             counter.head = counter.entry[key].next
  *             counter.entry[key].next = NULL             # <<<<<<<<<<<<<<
@@ -6249,7 +6232,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       (__pyx_v_counter->entry[__pyx_v_key]).next = NULL;
 
-      /* "_ldamhw_train.pyx":562
+      /* "_ldamhw_train.pyx":558
  *             counter.head = counter.entry[key].next
  *             counter.entry[key].next = NULL
  *             counter.head.prev = NULL             # <<<<<<<<<<<<<<
@@ -6258,7 +6241,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       __pyx_v_counter->head->prev = NULL;
 
-      /* "_ldamhw_train.pyx":558
+      /* "_ldamhw_train.pyx":554
  *             counter.entry[key].prev = NULL
  *             counter.entry[key].next = NULL
  *         elif counter.head == &counter.entry[key] and counter.tail != counter.head: # case 3: count == 1 and head             # <<<<<<<<<<<<<<
@@ -6268,7 +6251,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       goto __pyx_L7;
     }
 
-    /* "_ldamhw_train.pyx":563
+    /* "_ldamhw_train.pyx":559
  *             counter.entry[key].next = NULL
  *             counter.head.prev = NULL
  *         elif counter.tail == &counter.entry[key] and counter.tail != counter.head: # case 4: count == 1 and tail             # <<<<<<<<<<<<<<
@@ -6286,7 +6269,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_L12_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":564
+      /* "_ldamhw_train.pyx":560
  *             counter.head.prev = NULL
  *         elif counter.tail == &counter.entry[key] and counter.tail != counter.head: # case 4: count == 1 and tail
  *             counter.entry[key].count -= 1             # <<<<<<<<<<<<<<
@@ -6296,7 +6279,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_3 = __pyx_v_key;
       (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count - 1);
 
-      /* "_ldamhw_train.pyx":565
+      /* "_ldamhw_train.pyx":561
  *         elif counter.tail == &counter.entry[key] and counter.tail != counter.head: # case 4: count == 1 and tail
  *             counter.entry[key].count -= 1
  *             counter.tail = counter.entry[key].prev             # <<<<<<<<<<<<<<
@@ -6306,7 +6289,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_4 = (__pyx_v_counter->entry[__pyx_v_key]).prev;
       __pyx_v_counter->tail = __pyx_t_4;
 
-      /* "_ldamhw_train.pyx":566
+      /* "_ldamhw_train.pyx":562
  *             counter.entry[key].count -= 1
  *             counter.tail = counter.entry[key].prev
  *             counter.entry[key].prev = NULL             # <<<<<<<<<<<<<<
@@ -6315,7 +6298,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       (__pyx_v_counter->entry[__pyx_v_key]).prev = NULL;
 
-      /* "_ldamhw_train.pyx":567
+      /* "_ldamhw_train.pyx":563
  *             counter.tail = counter.entry[key].prev
  *             counter.entry[key].prev = NULL
  *             counter.tail.next = NULL             # <<<<<<<<<<<<<<
@@ -6324,7 +6307,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       __pyx_v_counter->tail->next = NULL;
 
-      /* "_ldamhw_train.pyx":563
+      /* "_ldamhw_train.pyx":559
  *             counter.entry[key].next = NULL
  *             counter.head.prev = NULL
  *         elif counter.tail == &counter.entry[key] and counter.tail != counter.head: # case 4: count == 1 and tail             # <<<<<<<<<<<<<<
@@ -6334,7 +6317,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       goto __pyx_L7;
     }
 
-    /* "_ldamhw_train.pyx":568
+    /* "_ldamhw_train.pyx":564
  *             counter.entry[key].prev = NULL
  *             counter.tail.next = NULL
  *         elif counter.head == counter.tail:             # <<<<<<<<<<<<<<
@@ -6344,7 +6327,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     __pyx_t_1 = ((__pyx_v_counter->head == __pyx_v_counter->tail) != 0);
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":569
+      /* "_ldamhw_train.pyx":565
  *             counter.tail.next = NULL
  *         elif counter.head == counter.tail:
  *             counter.entry[key].count -= 1             # <<<<<<<<<<<<<<
@@ -6354,7 +6337,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
       __pyx_t_3 = __pyx_v_key;
       (__pyx_v_counter->entry[__pyx_t_3]).count = ((__pyx_v_counter->entry[__pyx_t_3]).count - 1);
 
-      /* "_ldamhw_train.pyx":570
+      /* "_ldamhw_train.pyx":566
  *         elif counter.head == counter.tail:
  *             counter.entry[key].count -= 1
  *             counter.head = NULL             # <<<<<<<<<<<<<<
@@ -6363,7 +6346,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       __pyx_v_counter->head = NULL;
 
-      /* "_ldamhw_train.pyx":571
+      /* "_ldamhw_train.pyx":567
  *             counter.entry[key].count -= 1
  *             counter.head = NULL
  *             counter.tail = NULL             # <<<<<<<<<<<<<<
@@ -6372,7 +6355,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
       __pyx_v_counter->tail = NULL;
 
-      /* "_ldamhw_train.pyx":568
+      /* "_ldamhw_train.pyx":564
  *             counter.entry[key].prev = NULL
  *             counter.tail.next = NULL
  *         elif counter.head == counter.tail:             # <<<<<<<<<<<<<<
@@ -6382,7 +6365,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     }
     __pyx_L7:;
 
-    /* "_ldamhw_train.pyx":572
+    /* "_ldamhw_train.pyx":568
  *             counter.head = NULL
  *             counter.tail = NULL
  *         counter.nnz -= 1             # <<<<<<<<<<<<<<
@@ -6391,7 +6374,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
  */
     __pyx_v_counter->nnz = (__pyx_v_counter->nnz - 1);
 
-    /* "_ldamhw_train.pyx":551
+    /* "_ldamhw_train.pyx":547
  *     if counter.entry[key].count > 1:                                           # case 1: count > 1
  *         counter.entry[key].count -= 1
  *     elif counter.entry[key].count == 1:             # <<<<<<<<<<<<<<
@@ -6401,7 +6384,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
     goto __pyx_L6;
   }
 
-  /* "_ldamhw_train.pyx":574
+  /* "_ldamhw_train.pyx":570
  *         counter.nnz -= 1
  *     else:                                                                      # case 5: count < 1 ValueError
  *         printf("decrementCounter ValueError: count < 1 already\n");             # <<<<<<<<<<<<<<
@@ -6411,7 +6394,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   /*else*/ {
     (void)(printf(((char const *)"decrementCounter ValueError: count < 1 already\n")));
 
-    /* "_ldamhw_train.pyx":575
+    /* "_ldamhw_train.pyx":571
  *     else:                                                                      # case 5: count < 1 ValueError
  *         printf("decrementCounter ValueError: count < 1 already\n");
  *         return 2             # <<<<<<<<<<<<<<
@@ -6423,7 +6406,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   }
   __pyx_L6:;
 
-  /* "_ldamhw_train.pyx":576
+  /* "_ldamhw_train.pyx":572
  *         printf("decrementCounter ValueError: count < 1 already\n");
  *         return 2
  *     return 0             # <<<<<<<<<<<<<<
@@ -6433,7 +6416,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":546
+  /* "_ldamhw_train.pyx":542
  *     return 0
  * 
  * cdef int decrementCounter(int key, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6446,7 +6429,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":578
+/* "_ldamhw_train.pyx":574
  *     return 0
  * 
  * cdef int getCount(int key, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6457,7 +6440,7 @@ static int __pyx_f_13_ldamhw_train_decrementCounter(int __pyx_v_key, __pyx_t_13_
 static int __pyx_f_13_ldamhw_train_getCount(int __pyx_v_key, __pyx_t_13_ldamhw_train_Counter *__pyx_v_counter) {
   int __pyx_r;
 
-  /* "_ldamhw_train.pyx":579
+  /* "_ldamhw_train.pyx":575
  * 
  * cdef int getCount(int key, Counter * counter) nogil:
  *     return counter.entry[key].count             # <<<<<<<<<<<<<<
@@ -6467,7 +6450,7 @@ static int __pyx_f_13_ldamhw_train_getCount(int __pyx_v_key, __pyx_t_13_ldamhw_t
   __pyx_r = (__pyx_v_counter->entry[__pyx_v_key]).count;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":578
+  /* "_ldamhw_train.pyx":574
  *     return 0
  * 
  * cdef int getCount(int key, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6480,7 +6463,7 @@ static int __pyx_f_13_ldamhw_train_getCount(int __pyx_v_key, __pyx_t_13_ldamhw_t
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":583
+/* "_ldamhw_train.pyx":579
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void countSequence(int nseq, int nElem, int * seq, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6494,7 +6477,7 @@ static void __pyx_f_13_ldamhw_train_countSequence(int __pyx_v_nseq, CYTHON_UNUSE
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ldamhw_train.pyx":585
+  /* "_ldamhw_train.pyx":581
  * cdef void countSequence(int nseq, int nElem, int * seq, Counter * counter) nogil:
  *     cdef int i
  *     for i in range(nseq):             # <<<<<<<<<<<<<<
@@ -6506,7 +6489,7 @@ static void __pyx_f_13_ldamhw_train_countSequence(int __pyx_v_nseq, CYTHON_UNUSE
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":586
+    /* "_ldamhw_train.pyx":582
  *     cdef int i
  *     for i in range(nseq):
  *         incrementCounter(seq[i], counter)             # <<<<<<<<<<<<<<
@@ -6516,7 +6499,7 @@ static void __pyx_f_13_ldamhw_train_countSequence(int __pyx_v_nseq, CYTHON_UNUSE
     (void)(__pyx_f_13_ldamhw_train_incrementCounter((__pyx_v_seq[__pyx_v_i]), __pyx_v_counter));
   }
 
-  /* "_ldamhw_train.pyx":583
+  /* "_ldamhw_train.pyx":579
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void countSequence(int nseq, int nElem, int * seq, Counter * counter) nogil:             # <<<<<<<<<<<<<<
@@ -6527,7 +6510,7 @@ static void __pyx_f_13_ldamhw_train_countSequence(int __pyx_v_nseq, CYTHON_UNUSE
   /* function exit code */
 }
 
-/* "_ldamhw_train.pyx":590
+/* "_ldamhw_train.pyx":586
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int * getNZList(Counter * counter):             # <<<<<<<<<<<<<<
@@ -6548,7 +6531,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("getNZList", 0);
 
-  /* "_ldamhw_train.pyx":593
+  /* "_ldamhw_train.pyx":589
  *     cdef int i, inz
  *     cdef int * nzlist
  *     nzlist = <int *> PyMem_Malloc(counter.nnz * sizeof(int))             # <<<<<<<<<<<<<<
@@ -6557,7 +6540,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
  */
   __pyx_v_nzlist = ((int *)PyMem_Malloc((__pyx_v_counter->nnz * (sizeof(int)))));
 
-  /* "_ldamhw_train.pyx":594
+  /* "_ldamhw_train.pyx":590
  *     cdef int * nzlist
  *     nzlist = <int *> PyMem_Malloc(counter.nnz * sizeof(int))
  *     inz = counter.head.label             # <<<<<<<<<<<<<<
@@ -6567,7 +6550,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
   __pyx_t_1 = __pyx_v_counter->head->label;
   __pyx_v_inz = __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":595
+  /* "_ldamhw_train.pyx":591
  *     nzlist = <int *> PyMem_Malloc(counter.nnz * sizeof(int))
  *     inz = counter.head.label
  *     for i in range(counter.nnz):             # <<<<<<<<<<<<<<
@@ -6579,7 +6562,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":596
+    /* "_ldamhw_train.pyx":592
  *     inz = counter.head.label
  *     for i in range(counter.nnz):
  *         nzlist[i] = inz             # <<<<<<<<<<<<<<
@@ -6588,7 +6571,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
  */
     (__pyx_v_nzlist[__pyx_v_i]) = __pyx_v_inz;
 
-    /* "_ldamhw_train.pyx":597
+    /* "_ldamhw_train.pyx":593
  *     for i in range(counter.nnz):
  *         nzlist[i] = inz
  *         if counter.entry[inz].next != NULL:             # <<<<<<<<<<<<<<
@@ -6598,7 +6581,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
     __pyx_t_4 = (((__pyx_v_counter->entry[__pyx_v_inz]).next != NULL) != 0);
     if (__pyx_t_4) {
 
-      /* "_ldamhw_train.pyx":598
+      /* "_ldamhw_train.pyx":594
  *         nzlist[i] = inz
  *         if counter.entry[inz].next != NULL:
  *             inz = counter.entry[inz].next.label             # <<<<<<<<<<<<<<
@@ -6608,7 +6591,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
       __pyx_t_5 = (__pyx_v_counter->entry[__pyx_v_inz]).next->label;
       __pyx_v_inz = __pyx_t_5;
 
-      /* "_ldamhw_train.pyx":597
+      /* "_ldamhw_train.pyx":593
  *     for i in range(counter.nnz):
  *         nzlist[i] = inz
  *         if counter.entry[inz].next != NULL:             # <<<<<<<<<<<<<<
@@ -6618,7 +6601,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
     }
   }
 
-  /* "_ldamhw_train.pyx":599
+  /* "_ldamhw_train.pyx":595
  *         if counter.entry[inz].next != NULL:
  *             inz = counter.entry[inz].next.label
  *     return nzlist             # <<<<<<<<<<<<<<
@@ -6628,7 +6611,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
   __pyx_r = __pyx_v_nzlist;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":590
+  /* "_ldamhw_train.pyx":586
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int * getNZList(Counter * counter):             # <<<<<<<<<<<<<<
@@ -6642,7 +6625,7 @@ static int *__pyx_f_13_ldamhw_train_getNZList(__pyx_t_13_ldamhw_train_Counter *_
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":611
+/* "_ldamhw_train.pyx":607
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void initializeAliasTables(int k, double * weights, double * probTable, int * aliasTable):             # <<<<<<<<<<<<<<
@@ -6665,7 +6648,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("initializeAliasTables", 0);
 
-  /* "_ldamhw_train.pyx":618
+  /* "_ldamhw_train.pyx":614
  *         double * probScaled
  *     # malloc
  *     probScaled = <double *> PyMem_Malloc(k * sizeof(double))             # <<<<<<<<<<<<<<
@@ -6674,7 +6657,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
   __pyx_v_probScaled = ((double *)PyMem_Malloc((__pyx_v_k * (sizeof(double)))));
 
-  /* "_ldamhw_train.pyx":619
+  /* "_ldamhw_train.pyx":615
  *     # malloc
  *     probScaled = <double *> PyMem_Malloc(k * sizeof(double))
  *     small = newStack()             # <<<<<<<<<<<<<<
@@ -6683,7 +6666,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
   __pyx_v_small = __pyx_f_13_ldamhw_train_newStack();
 
-  /* "_ldamhw_train.pyx":620
+  /* "_ldamhw_train.pyx":616
  *     probScaled = <double *> PyMem_Malloc(k * sizeof(double))
  *     small = newStack()
  *     large = newStack()             # <<<<<<<<<<<<<<
@@ -6692,7 +6675,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
   __pyx_v_large = __pyx_f_13_ldamhw_train_newStack();
 
-  /* "_ldamhw_train.pyx":622
+  /* "_ldamhw_train.pyx":618
  *     large = newStack()
  *     # rescale probabilities
  *     for i in range(k):             # <<<<<<<<<<<<<<
@@ -6704,7 +6687,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":623
+    /* "_ldamhw_train.pyx":619
  *     # rescale probabilities
  *     for i in range(k):
  *         probScaled[i] = <double> k * weights[i]             # <<<<<<<<<<<<<<
@@ -6714,7 +6697,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     (__pyx_v_probScaled[__pyx_v_i]) = (((double)__pyx_v_k) * (__pyx_v_weights[__pyx_v_i]));
   }
 
-  /* "_ldamhw_train.pyx":625
+  /* "_ldamhw_train.pyx":621
  *         probScaled[i] = <double> k * weights[i]
  *     # divide scaled probs to small and large
  *     for i in range(k):             # <<<<<<<<<<<<<<
@@ -6726,7 +6709,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":626
+    /* "_ldamhw_train.pyx":622
  *     # divide scaled probs to small and large
  *     for i in range(k):
  *         if 1.0 - probScaled[i] > 1e-10:             # <<<<<<<<<<<<<<
@@ -6736,7 +6719,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_t_4 = (((1.0 - (__pyx_v_probScaled[__pyx_v_i])) > 1e-10) != 0);
     if (__pyx_t_4) {
 
-      /* "_ldamhw_train.pyx":627
+      /* "_ldamhw_train.pyx":623
  *     for i in range(k):
  *         if 1.0 - probScaled[i] > 1e-10:
  *             push(small, i)             # <<<<<<<<<<<<<<
@@ -6745,7 +6728,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
       __pyx_f_13_ldamhw_train_push(__pyx_v_small, __pyx_v_i);
 
-      /* "_ldamhw_train.pyx":626
+      /* "_ldamhw_train.pyx":622
  *     # divide scaled probs to small and large
  *     for i in range(k):
  *         if 1.0 - probScaled[i] > 1e-10:             # <<<<<<<<<<<<<<
@@ -6755,7 +6738,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
       goto __pyx_L7;
     }
 
-    /* "_ldamhw_train.pyx":629
+    /* "_ldamhw_train.pyx":625
  *             push(small, i)
  *         else:
  *             push(large, i)             # <<<<<<<<<<<<<<
@@ -6768,7 +6751,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_L7:;
   }
 
-  /* "_ldamhw_train.pyx":631
+  /* "_ldamhw_train.pyx":627
  *             push(large, i)
  *     # prob reallocation
  *     while not isEmpty(small) and not isEmpty(large):             # <<<<<<<<<<<<<<
@@ -6787,7 +6770,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_L10_bool_binop_done:;
     if (!__pyx_t_4) break;
 
-    /* "_ldamhw_train.pyx":632
+    /* "_ldamhw_train.pyx":628
  *     # prob reallocation
  *     while not isEmpty(small) and not isEmpty(large):
  *         s = pop(small)             # <<<<<<<<<<<<<<
@@ -6796,7 +6779,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     __pyx_v_s = __pyx_f_13_ldamhw_train_pop(__pyx_v_small);
 
-    /* "_ldamhw_train.pyx":633
+    /* "_ldamhw_train.pyx":629
  *     while not isEmpty(small) and not isEmpty(large):
  *         s = pop(small)
  *         l = pop(large)             # <<<<<<<<<<<<<<
@@ -6805,7 +6788,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     __pyx_v_l = __pyx_f_13_ldamhw_train_pop(__pyx_v_large);
 
-    /* "_ldamhw_train.pyx":634
+    /* "_ldamhw_train.pyx":630
  *         s = pop(small)
  *         l = pop(large)
  *         probTable[s] = probScaled[s]             # <<<<<<<<<<<<<<
@@ -6814,7 +6797,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     (__pyx_v_probTable[__pyx_v_s]) = (__pyx_v_probScaled[__pyx_v_s]);
 
-    /* "_ldamhw_train.pyx":635
+    /* "_ldamhw_train.pyx":631
  *         l = pop(large)
  *         probTable[s] = probScaled[s]
  *         aliasTable[s] = l             # <<<<<<<<<<<<<<
@@ -6823,7 +6806,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     (__pyx_v_aliasTable[__pyx_v_s]) = __pyx_v_l;
 
-    /* "_ldamhw_train.pyx":636
+    /* "_ldamhw_train.pyx":632
  *         probTable[s] = probScaled[s]
  *         aliasTable[s] = l
  *         probScaled[l] = probScaled[s] + probScaled[l] - 1.0             # <<<<<<<<<<<<<<
@@ -6832,7 +6815,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     (__pyx_v_probScaled[__pyx_v_l]) = (((__pyx_v_probScaled[__pyx_v_s]) + (__pyx_v_probScaled[__pyx_v_l])) - 1.0);
 
-    /* "_ldamhw_train.pyx":637
+    /* "_ldamhw_train.pyx":633
  *         aliasTable[s] = l
  *         probScaled[l] = probScaled[s] + probScaled[l] - 1.0
  *         if 1.0 - probScaled[l] > 1e-10:             # <<<<<<<<<<<<<<
@@ -6842,7 +6825,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_t_4 = (((1.0 - (__pyx_v_probScaled[__pyx_v_l])) > 1e-10) != 0);
     if (__pyx_t_4) {
 
-      /* "_ldamhw_train.pyx":638
+      /* "_ldamhw_train.pyx":634
  *         probScaled[l] = probScaled[s] + probScaled[l] - 1.0
  *         if 1.0 - probScaled[l] > 1e-10:
  *             push(small, l)             # <<<<<<<<<<<<<<
@@ -6851,7 +6834,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
       __pyx_f_13_ldamhw_train_push(__pyx_v_small, __pyx_v_l);
 
-      /* "_ldamhw_train.pyx":637
+      /* "_ldamhw_train.pyx":633
  *         aliasTable[s] = l
  *         probScaled[l] = probScaled[s] + probScaled[l] - 1.0
  *         if 1.0 - probScaled[l] > 1e-10:             # <<<<<<<<<<<<<<
@@ -6861,7 +6844,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
       goto __pyx_L12;
     }
 
-    /* "_ldamhw_train.pyx":640
+    /* "_ldamhw_train.pyx":636
  *             push(small, l)
  *         else:
  *             push(large, l)             # <<<<<<<<<<<<<<
@@ -6874,7 +6857,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_L12:;
   }
 
-  /* "_ldamhw_train.pyx":642
+  /* "_ldamhw_train.pyx":638
  *             push(large, l)
  *     # finally, empty small and large
  *     while not isEmpty(small):             # <<<<<<<<<<<<<<
@@ -6885,7 +6868,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_t_4 = ((!(__pyx_f_13_ldamhw_train_isEmpty(__pyx_v_small) != 0)) != 0);
     if (!__pyx_t_4) break;
 
-    /* "_ldamhw_train.pyx":643
+    /* "_ldamhw_train.pyx":639
  *     # finally, empty small and large
  *     while not isEmpty(small):
  *         s = pop(small)             # <<<<<<<<<<<<<<
@@ -6894,7 +6877,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     __pyx_v_s = __pyx_f_13_ldamhw_train_pop(__pyx_v_small);
 
-    /* "_ldamhw_train.pyx":644
+    /* "_ldamhw_train.pyx":640
  *     while not isEmpty(small):
  *         s = pop(small)
  *         probTable[s] = 1.0             # <<<<<<<<<<<<<<
@@ -6904,7 +6887,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     (__pyx_v_probTable[__pyx_v_s]) = 1.0;
   }
 
-  /* "_ldamhw_train.pyx":645
+  /* "_ldamhw_train.pyx":641
  *         s = pop(small)
  *         probTable[s] = 1.0
  *     while not isEmpty(large):             # <<<<<<<<<<<<<<
@@ -6915,7 +6898,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     __pyx_t_4 = ((!(__pyx_f_13_ldamhw_train_isEmpty(__pyx_v_large) != 0)) != 0);
     if (!__pyx_t_4) break;
 
-    /* "_ldamhw_train.pyx":646
+    /* "_ldamhw_train.pyx":642
  *         probTable[s] = 1.0
  *     while not isEmpty(large):
  *         l = pop(large)             # <<<<<<<<<<<<<<
@@ -6924,7 +6907,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
     __pyx_v_l = __pyx_f_13_ldamhw_train_pop(__pyx_v_large);
 
-    /* "_ldamhw_train.pyx":647
+    /* "_ldamhw_train.pyx":643
  *     while not isEmpty(large):
  *         l = pop(large)
  *         probTable[l] = 1.0             # <<<<<<<<<<<<<<
@@ -6934,7 +6917,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
     (__pyx_v_probTable[__pyx_v_l]) = 1.0;
   }
 
-  /* "_ldamhw_train.pyx":649
+  /* "_ldamhw_train.pyx":645
  *         probTable[l] = 1.0
  *     # dealloc
  *     PyMem_Free(probScaled)             # <<<<<<<<<<<<<<
@@ -6943,7 +6926,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
   PyMem_Free(__pyx_v_probScaled);
 
-  /* "_ldamhw_train.pyx":650
+  /* "_ldamhw_train.pyx":646
  *     # dealloc
  *     PyMem_Free(probScaled)
  *     PyMem_Free(small)             # <<<<<<<<<<<<<<
@@ -6952,7 +6935,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
   PyMem_Free(__pyx_v_small);
 
-  /* "_ldamhw_train.pyx":651
+  /* "_ldamhw_train.pyx":647
  *     PyMem_Free(probScaled)
  *     PyMem_Free(small)
  *     PyMem_Free(large)             # <<<<<<<<<<<<<<
@@ -6961,7 +6944,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
  */
   PyMem_Free(__pyx_v_large);
 
-  /* "_ldamhw_train.pyx":611
+  /* "_ldamhw_train.pyx":607
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void initializeAliasTables(int k, double * weights, double * probTable, int * aliasTable):             # <<<<<<<<<<<<<<
@@ -6973,7 +6956,7 @@ static void __pyx_f_13_ldamhw_train_initializeAliasTables(int __pyx_v_k, double 
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":653
+/* "_ldamhw_train.pyx":649
  *     PyMem_Free(large)
  * 
  * cdef int generateOne(int k, double * probTable, int * aliasTable) nogil:             # <<<<<<<<<<<<<<
@@ -6987,7 +6970,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
   int __pyx_r;
   int __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":657
+  /* "_ldamhw_train.pyx":653
  *         int ri
  *         double rr
  *     ri = randInt(0, k)             # <<<<<<<<<<<<<<
@@ -6996,7 +6979,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
  */
   __pyx_v_ri = __pyx_f_13_ldamhw_train_randInt(0, __pyx_v_k);
 
-  /* "_ldamhw_train.pyx":658
+  /* "_ldamhw_train.pyx":654
  *         double rr
  *     ri = randInt(0, k)
  *     if fabs( probTable[ri] - 1.0 ) < 1e-10:             # <<<<<<<<<<<<<<
@@ -7006,7 +6989,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
   __pyx_t_1 = ((fabs(((__pyx_v_probTable[__pyx_v_ri]) - 1.0)) < 1e-10) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":659
+    /* "_ldamhw_train.pyx":655
  *     ri = randInt(0, k)
  *     if fabs( probTable[ri] - 1.0 ) < 1e-10:
  *         return ri             # <<<<<<<<<<<<<<
@@ -7016,7 +6999,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
     __pyx_r = __pyx_v_ri;
     goto __pyx_L0;
 
-    /* "_ldamhw_train.pyx":658
+    /* "_ldamhw_train.pyx":654
  *         double rr
  *     ri = randInt(0, k)
  *     if fabs( probTable[ri] - 1.0 ) < 1e-10:             # <<<<<<<<<<<<<<
@@ -7025,7 +7008,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
  */
   }
 
-  /* "_ldamhw_train.pyx":661
+  /* "_ldamhw_train.pyx":657
  *         return ri
  *     else:
  *         rr = randUniform()             # <<<<<<<<<<<<<<
@@ -7035,7 +7018,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
   /*else*/ {
     __pyx_v_rr = __pyx_f_13_ldamhw_train_randUniform();
 
-    /* "_ldamhw_train.pyx":662
+    /* "_ldamhw_train.pyx":658
  *     else:
  *         rr = randUniform()
  *         if rr <= probTable[ri]:             # <<<<<<<<<<<<<<
@@ -7045,7 +7028,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
     __pyx_t_1 = ((__pyx_v_rr <= (__pyx_v_probTable[__pyx_v_ri])) != 0);
     if (__pyx_t_1) {
 
-      /* "_ldamhw_train.pyx":663
+      /* "_ldamhw_train.pyx":659
  *         rr = randUniform()
  *         if rr <= probTable[ri]:
  *             return ri             # <<<<<<<<<<<<<<
@@ -7055,7 +7038,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
       __pyx_r = __pyx_v_ri;
       goto __pyx_L0;
 
-      /* "_ldamhw_train.pyx":662
+      /* "_ldamhw_train.pyx":658
  *     else:
  *         rr = randUniform()
  *         if rr <= probTable[ri]:             # <<<<<<<<<<<<<<
@@ -7064,7 +7047,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
  */
     }
 
-    /* "_ldamhw_train.pyx":665
+    /* "_ldamhw_train.pyx":661
  *             return ri
  *         else:
  *             return aliasTable[ri]             # <<<<<<<<<<<<<<
@@ -7077,7 +7060,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
     }
   }
 
-  /* "_ldamhw_train.pyx":653
+  /* "_ldamhw_train.pyx":649
  *     PyMem_Free(large)
  * 
  * cdef int generateOne(int k, double * probTable, int * aliasTable) nogil:             # <<<<<<<<<<<<<<
@@ -7090,7 +7073,7 @@ static int __pyx_f_13_ldamhw_train_generateOne(int __pyx_v_k, double *__pyx_v_pr
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":669
+/* "_ldamhw_train.pyx":665
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void generateMany(int n, int k, double * probTable, int * aliasTable, Stack * samples):             # <<<<<<<<<<<<<<
@@ -7107,7 +7090,7 @@ static void __pyx_f_13_ldamhw_train_generateMany(int __pyx_v_n, int __pyx_v_k, d
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("generateMany", 0);
 
-  /* "_ldamhw_train.pyx":671
+  /* "_ldamhw_train.pyx":667
  * cdef void generateMany(int n, int k, double * probTable, int * aliasTable, Stack * samples):
  *     cdef int i, s
  *     for i in range(n):             # <<<<<<<<<<<<<<
@@ -7119,7 +7102,7 @@ static void __pyx_f_13_ldamhw_train_generateMany(int __pyx_v_n, int __pyx_v_k, d
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":672
+    /* "_ldamhw_train.pyx":668
  *     cdef int i, s
  *     for i in range(n):
  *         s = generateOne(k, probTable, aliasTable)             # <<<<<<<<<<<<<<
@@ -7128,7 +7111,7 @@ static void __pyx_f_13_ldamhw_train_generateMany(int __pyx_v_n, int __pyx_v_k, d
  */
     __pyx_v_s = __pyx_f_13_ldamhw_train_generateOne(__pyx_v_k, __pyx_v_probTable, __pyx_v_aliasTable);
 
-    /* "_ldamhw_train.pyx":673
+    /* "_ldamhw_train.pyx":669
  *     for i in range(n):
  *         s = generateOne(k, probTable, aliasTable)
  *         push(samples, s)             # <<<<<<<<<<<<<<
@@ -7138,7 +7121,7 @@ static void __pyx_f_13_ldamhw_train_generateMany(int __pyx_v_n, int __pyx_v_k, d
     __pyx_f_13_ldamhw_train_push(__pyx_v_samples, __pyx_v_s);
   }
 
-  /* "_ldamhw_train.pyx":669
+  /* "_ldamhw_train.pyx":665
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void generateMany(int n, int k, double * probTable, int * aliasTable, Stack * samples):             # <<<<<<<<<<<<<<
@@ -7150,7 +7133,7 @@ static void __pyx_f_13_ldamhw_train_generateMany(int __pyx_v_n, int __pyx_v_k, d
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":678
+/* "_ldamhw_train.pyx":674
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void genSamplesAlias(int n, int k, double * weights, Stack * samples):             # <<<<<<<<<<<<<<
@@ -7164,7 +7147,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("genSamplesAlias", 0);
 
-  /* "_ldamhw_train.pyx":684
+  /* "_ldamhw_train.pyx":680
  *         double * probTable
  *     # malloc
  *     aliasTable = <int *> PyMem_Malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -7173,7 +7156,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
  */
   __pyx_v_aliasTable = ((int *)PyMem_Malloc((__pyx_v_k * (sizeof(int)))));
 
-  /* "_ldamhw_train.pyx":685
+  /* "_ldamhw_train.pyx":681
  *     # malloc
  *     aliasTable = <int *> PyMem_Malloc(k * sizeof(int))
  *     probTable = <double *> PyMem_Malloc(k * sizeof(double))             # <<<<<<<<<<<<<<
@@ -7182,7 +7165,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
  */
   __pyx_v_probTable = ((double *)PyMem_Malloc((__pyx_v_k * (sizeof(double)))));
 
-  /* "_ldamhw_train.pyx":687
+  /* "_ldamhw_train.pyx":683
  *     probTable = <double *> PyMem_Malloc(k * sizeof(double))
  *     # init tables
  *     initializeAliasTables(k, weights, probTable, aliasTable)             # <<<<<<<<<<<<<<
@@ -7191,7 +7174,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
  */
   __pyx_f_13_ldamhw_train_initializeAliasTables(__pyx_v_k, __pyx_v_weights, __pyx_v_probTable, __pyx_v_aliasTable);
 
-  /* "_ldamhw_train.pyx":689
+  /* "_ldamhw_train.pyx":685
  *     initializeAliasTables(k, weights, probTable, aliasTable)
  *     # gen samples
  *     generateMany(n, k, probTable, aliasTable, samples)             # <<<<<<<<<<<<<<
@@ -7200,7 +7183,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
  */
   __pyx_f_13_ldamhw_train_generateMany(__pyx_v_n, __pyx_v_k, __pyx_v_probTable, __pyx_v_aliasTable, __pyx_v_samples);
 
-  /* "_ldamhw_train.pyx":691
+  /* "_ldamhw_train.pyx":687
  *     generateMany(n, k, probTable, aliasTable, samples)
  *     # dealloc
  *     PyMem_Free(aliasTable)             # <<<<<<<<<<<<<<
@@ -7209,7 +7192,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
  */
   PyMem_Free(__pyx_v_aliasTable);
 
-  /* "_ldamhw_train.pyx":692
+  /* "_ldamhw_train.pyx":688
  *     # dealloc
  *     PyMem_Free(aliasTable)
  *     PyMem_Free(probTable)             # <<<<<<<<<<<<<<
@@ -7218,7 +7201,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
  */
   PyMem_Free(__pyx_v_probTable);
 
-  /* "_ldamhw_train.pyx":678
+  /* "_ldamhw_train.pyx":674
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef void genSamplesAlias(int n, int k, double * weights, Stack * samples):             # <<<<<<<<<<<<<<
@@ -7230,7 +7213,7 @@ static void __pyx_f_13_ldamhw_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":704
+/* "_ldamhw_train.pyx":700
  *     StackNode * root
  * 
  * cdef Stack * newStack():             # <<<<<<<<<<<<<<
@@ -7244,7 +7227,7 @@ static __pyx_t_13_ldamhw_train_Stack *__pyx_f_13_ldamhw_train_newStack(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("newStack", 0);
 
-  /* "_ldamhw_train.pyx":706
+  /* "_ldamhw_train.pyx":702
  * cdef Stack * newStack():
  *     cdef Stack * stack
  *     stack = <Stack *> PyMem_Malloc(sizeof(Stack *))             # <<<<<<<<<<<<<<
@@ -7253,7 +7236,7 @@ static __pyx_t_13_ldamhw_train_Stack *__pyx_f_13_ldamhw_train_newStack(void) {
  */
   __pyx_v_stack = ((__pyx_t_13_ldamhw_train_Stack *)PyMem_Malloc((sizeof(__pyx_t_13_ldamhw_train_Stack *))));
 
-  /* "_ldamhw_train.pyx":707
+  /* "_ldamhw_train.pyx":703
  *     cdef Stack * stack
  *     stack = <Stack *> PyMem_Malloc(sizeof(Stack *))
  *     stack.root = NULL             # <<<<<<<<<<<<<<
@@ -7262,7 +7245,7 @@ static __pyx_t_13_ldamhw_train_Stack *__pyx_f_13_ldamhw_train_newStack(void) {
  */
   __pyx_v_stack->root = NULL;
 
-  /* "_ldamhw_train.pyx":708
+  /* "_ldamhw_train.pyx":704
  *     stack = <Stack *> PyMem_Malloc(sizeof(Stack *))
  *     stack.root = NULL
  *     return stack             # <<<<<<<<<<<<<<
@@ -7272,7 +7255,7 @@ static __pyx_t_13_ldamhw_train_Stack *__pyx_f_13_ldamhw_train_newStack(void) {
   __pyx_r = __pyx_v_stack;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":704
+  /* "_ldamhw_train.pyx":700
  *     StackNode * root
  * 
  * cdef Stack * newStack():             # <<<<<<<<<<<<<<
@@ -7286,7 +7269,7 @@ static __pyx_t_13_ldamhw_train_Stack *__pyx_f_13_ldamhw_train_newStack(void) {
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":710
+/* "_ldamhw_train.pyx":706
  *     return stack
  * 
  * cdef StackNode * newStackNode(int data):             # <<<<<<<<<<<<<<
@@ -7300,7 +7283,7 @@ static __pyx_t_13_ldamhw_train_StackNode *__pyx_f_13_ldamhw_train_newStackNode(i
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("newStackNode", 0);
 
-  /* "_ldamhw_train.pyx":712
+  /* "_ldamhw_train.pyx":708
  * cdef StackNode * newStackNode(int data):
  *     cdef StackNode * sn
  *     sn = <StackNode *> malloc(sizeof(StackNode *))             # <<<<<<<<<<<<<<
@@ -7309,7 +7292,7 @@ static __pyx_t_13_ldamhw_train_StackNode *__pyx_f_13_ldamhw_train_newStackNode(i
  */
   __pyx_v_sn = ((__pyx_t_13_ldamhw_train_StackNode *)malloc((sizeof(__pyx_t_13_ldamhw_train_StackNode *))));
 
-  /* "_ldamhw_train.pyx":713
+  /* "_ldamhw_train.pyx":709
  *     cdef StackNode * sn
  *     sn = <StackNode *> malloc(sizeof(StackNode *))
  *     sn.data = data             # <<<<<<<<<<<<<<
@@ -7318,7 +7301,7 @@ static __pyx_t_13_ldamhw_train_StackNode *__pyx_f_13_ldamhw_train_newStackNode(i
  */
   __pyx_v_sn->data = __pyx_v_data;
 
-  /* "_ldamhw_train.pyx":714
+  /* "_ldamhw_train.pyx":710
  *     sn = <StackNode *> malloc(sizeof(StackNode *))
  *     sn.data = data
  *     return sn             # <<<<<<<<<<<<<<
@@ -7328,7 +7311,7 @@ static __pyx_t_13_ldamhw_train_StackNode *__pyx_f_13_ldamhw_train_newStackNode(i
   __pyx_r = __pyx_v_sn;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":710
+  /* "_ldamhw_train.pyx":706
  *     return stack
  * 
  * cdef StackNode * newStackNode(int data):             # <<<<<<<<<<<<<<
@@ -7342,7 +7325,7 @@ static __pyx_t_13_ldamhw_train_StackNode *__pyx_f_13_ldamhw_train_newStackNode(i
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":716
+/* "_ldamhw_train.pyx":712
  *     return sn
  * 
  * cdef int isEmpty(Stack * stack) nogil:             # <<<<<<<<<<<<<<
@@ -7353,7 +7336,7 @@ static __pyx_t_13_ldamhw_train_StackNode *__pyx_f_13_ldamhw_train_newStackNode(i
 static int __pyx_f_13_ldamhw_train_isEmpty(__pyx_t_13_ldamhw_train_Stack *__pyx_v_stack) {
   int __pyx_r;
 
-  /* "_ldamhw_train.pyx":717
+  /* "_ldamhw_train.pyx":713
  * 
  * cdef int isEmpty(Stack * stack) nogil:
  *     return not stack.root             # <<<<<<<<<<<<<<
@@ -7363,7 +7346,7 @@ static int __pyx_f_13_ldamhw_train_isEmpty(__pyx_t_13_ldamhw_train_Stack *__pyx_
   __pyx_r = (!(__pyx_v_stack->root != 0));
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":716
+  /* "_ldamhw_train.pyx":712
  *     return sn
  * 
  * cdef int isEmpty(Stack * stack) nogil:             # <<<<<<<<<<<<<<
@@ -7376,7 +7359,7 @@ static int __pyx_f_13_ldamhw_train_isEmpty(__pyx_t_13_ldamhw_train_Stack *__pyx_
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":719
+/* "_ldamhw_train.pyx":715
  *     return not stack.root
  * 
  * cdef void push(Stack * stack, int data):             # <<<<<<<<<<<<<<
@@ -7390,7 +7373,7 @@ static void __pyx_f_13_ldamhw_train_push(__pyx_t_13_ldamhw_train_Stack *__pyx_v_
   __pyx_t_13_ldamhw_train_StackNode *__pyx_t_1;
   __Pyx_RefNannySetupContext("push", 0);
 
-  /* "_ldamhw_train.pyx":721
+  /* "_ldamhw_train.pyx":717
  * cdef void push(Stack * stack, int data):
  *     cdef StackNode * sn
  *     sn = newStackNode(data)             # <<<<<<<<<<<<<<
@@ -7399,7 +7382,7 @@ static void __pyx_f_13_ldamhw_train_push(__pyx_t_13_ldamhw_train_Stack *__pyx_v_
  */
   __pyx_v_sn = __pyx_f_13_ldamhw_train_newStackNode(__pyx_v_data);
 
-  /* "_ldamhw_train.pyx":722
+  /* "_ldamhw_train.pyx":718
  *     cdef StackNode * sn
  *     sn = newStackNode(data)
  *     sn.next = stack.root             # <<<<<<<<<<<<<<
@@ -7409,7 +7392,7 @@ static void __pyx_f_13_ldamhw_train_push(__pyx_t_13_ldamhw_train_Stack *__pyx_v_
   __pyx_t_1 = __pyx_v_stack->root;
   __pyx_v_sn->next = __pyx_t_1;
 
-  /* "_ldamhw_train.pyx":723
+  /* "_ldamhw_train.pyx":719
  *     sn = newStackNode(data)
  *     sn.next = stack.root
  *     stack.root = sn             # <<<<<<<<<<<<<<
@@ -7418,7 +7401,7 @@ static void __pyx_f_13_ldamhw_train_push(__pyx_t_13_ldamhw_train_Stack *__pyx_v_
  */
   __pyx_v_stack->root = __pyx_v_sn;
 
-  /* "_ldamhw_train.pyx":719
+  /* "_ldamhw_train.pyx":715
  *     return not stack.root
  * 
  * cdef void push(Stack * stack, int data):             # <<<<<<<<<<<<<<
@@ -7430,7 +7413,7 @@ static void __pyx_f_13_ldamhw_train_push(__pyx_t_13_ldamhw_train_Stack *__pyx_v_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_ldamhw_train.pyx":725
+/* "_ldamhw_train.pyx":721
  *     stack.root = sn
  * 
  * cdef int pop(Stack * stack):             # <<<<<<<<<<<<<<
@@ -7448,7 +7431,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("pop", 0);
 
-  /* "_ldamhw_train.pyx":728
+  /* "_ldamhw_train.pyx":724
  *     cdef int data
  *     cdef StackNode * tmp
  *     if (isEmpty(stack)):             # <<<<<<<<<<<<<<
@@ -7458,7 +7441,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   __pyx_t_1 = (__pyx_f_13_ldamhw_train_isEmpty(__pyx_v_stack) != 0);
   if (__pyx_t_1) {
 
-    /* "_ldamhw_train.pyx":729
+    /* "_ldamhw_train.pyx":725
  *     cdef StackNode * tmp
  *     if (isEmpty(stack)):
  *         printf("Error: stack is empty!\n")             # <<<<<<<<<<<<<<
@@ -7467,7 +7450,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
  */
     (void)(printf(((char const *)"Error: stack is empty!\n")));
 
-    /* "_ldamhw_train.pyx":730
+    /* "_ldamhw_train.pyx":726
  *     if (isEmpty(stack)):
  *         printf("Error: stack is empty!\n")
  *         return -INT_MIN             # <<<<<<<<<<<<<<
@@ -7477,7 +7460,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
     __pyx_r = (-INT_MIN);
     goto __pyx_L0;
 
-    /* "_ldamhw_train.pyx":728
+    /* "_ldamhw_train.pyx":724
  *     cdef int data
  *     cdef StackNode * tmp
  *     if (isEmpty(stack)):             # <<<<<<<<<<<<<<
@@ -7486,7 +7469,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
  */
   }
 
-  /* "_ldamhw_train.pyx":731
+  /* "_ldamhw_train.pyx":727
  *         printf("Error: stack is empty!\n")
  *         return -INT_MIN
  *     tmp = stack.root             # <<<<<<<<<<<<<<
@@ -7496,7 +7479,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   __pyx_t_2 = __pyx_v_stack->root;
   __pyx_v_tmp = __pyx_t_2;
 
-  /* "_ldamhw_train.pyx":732
+  /* "_ldamhw_train.pyx":728
  *         return -INT_MIN
  *     tmp = stack.root
  *     data = stack.root.data             # <<<<<<<<<<<<<<
@@ -7506,7 +7489,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   __pyx_t_3 = __pyx_v_stack->root->data;
   __pyx_v_data = __pyx_t_3;
 
-  /* "_ldamhw_train.pyx":733
+  /* "_ldamhw_train.pyx":729
  *     tmp = stack.root
  *     data = stack.root.data
  *     stack.root = stack.root.next             # <<<<<<<<<<<<<<
@@ -7516,7 +7499,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   __pyx_t_2 = __pyx_v_stack->root->next;
   __pyx_v_stack->root = __pyx_t_2;
 
-  /* "_ldamhw_train.pyx":734
+  /* "_ldamhw_train.pyx":730
  *     data = stack.root.data
  *     stack.root = stack.root.next
  *     PyMem_Free(tmp)             # <<<<<<<<<<<<<<
@@ -7525,7 +7508,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
  */
   PyMem_Free(__pyx_v_tmp);
 
-  /* "_ldamhw_train.pyx":735
+  /* "_ldamhw_train.pyx":731
  *     stack.root = stack.root.next
  *     PyMem_Free(tmp)
  *     return data             # <<<<<<<<<<<<<<
@@ -7535,7 +7518,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   __pyx_r = __pyx_v_data;
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":725
+  /* "_ldamhw_train.pyx":721
  *     stack.root = sn
  * 
  * cdef int pop(Stack * stack):             # <<<<<<<<<<<<<<
@@ -7549,7 +7532,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":742
+/* "_ldamhw_train.pyx":738
  * # =========================== RNG TODO CHANGE RNG!!! ====================== #
  * @cython.cdivision(True)
  * cdef double randUniform() nogil:             # <<<<<<<<<<<<<<
@@ -7560,7 +7543,7 @@ static int __pyx_f_13_ldamhw_train_pop(__pyx_t_13_ldamhw_train_Stack *__pyx_v_st
 static double __pyx_f_13_ldamhw_train_randUniform(void) {
   double __pyx_r;
 
-  /* "_ldamhw_train.pyx":743
+  /* "_ldamhw_train.pyx":739
  * @cython.cdivision(True)
  * cdef double randUniform() nogil:
  *     return <double> rand() / RAND_MAX             # <<<<<<<<<<<<<<
@@ -7570,7 +7553,7 @@ static double __pyx_f_13_ldamhw_train_randUniform(void) {
   __pyx_r = (((double)rand()) / RAND_MAX);
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":742
+  /* "_ldamhw_train.pyx":738
  * # =========================== RNG TODO CHANGE RNG!!! ====================== #
  * @cython.cdivision(True)
  * cdef double randUniform() nogil:             # <<<<<<<<<<<<<<
@@ -7583,7 +7566,7 @@ static double __pyx_f_13_ldamhw_train_randUniform(void) {
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":745
+/* "_ldamhw_train.pyx":741
  *     return <double> rand() / RAND_MAX
  * 
  * cdef int randInt(int low, int high) nogil:             # <<<<<<<<<<<<<<
@@ -7594,7 +7577,7 @@ static double __pyx_f_13_ldamhw_train_randUniform(void) {
 static int __pyx_f_13_ldamhw_train_randInt(int __pyx_v_low, int __pyx_v_high) {
   int __pyx_r;
 
-  /* "_ldamhw_train.pyx":746
+  /* "_ldamhw_train.pyx":742
  * 
  * cdef int randInt(int low, int high) nogil:
  *     return <int> floor((high - low) * randUniform() + low)             # <<<<<<<<<<<<<<
@@ -7604,7 +7587,7 @@ static int __pyx_f_13_ldamhw_train_randInt(int __pyx_v_low, int __pyx_v_high) {
   __pyx_r = ((int)floor((((__pyx_v_high - __pyx_v_low) * __pyx_f_13_ldamhw_train_randUniform()) + __pyx_v_low)));
   goto __pyx_L0;
 
-  /* "_ldamhw_train.pyx":745
+  /* "_ldamhw_train.pyx":741
  *     return <double> rand() / RAND_MAX
  * 
  * cdef int randInt(int low, int high) nogil:             # <<<<<<<<<<<<<<
@@ -7617,7 +7600,7 @@ static int __pyx_f_13_ldamhw_train_randInt(int __pyx_v_low, int __pyx_v_high) {
   return __pyx_r;
 }
 
-/* "_ldamhw_train.pyx":751
+/* "_ldamhw_train.pyx":747
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef int rand_choice(int n, double * prob) nogil:             # <<<<<<<<<<<<<<
@@ -7635,7 +7618,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "_ldamhw_train.pyx":755
+  /* "_ldamhw_train.pyx":751
  *     cdef double r
  *     cdef double cuml
  *     r = <double> rand() / RAND_MAX             # <<<<<<<<<<<<<<
@@ -7644,7 +7627,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
  */
   __pyx_v_r = (((double)rand()) / RAND_MAX);
 
-  /* "_ldamhw_train.pyx":756
+  /* "_ldamhw_train.pyx":752
  *     cdef double cuml
  *     r = <double> rand() / RAND_MAX
  *     cuml = 0.0             # <<<<<<<<<<<<<<
@@ -7653,7 +7636,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
  */
   __pyx_v_cuml = 0.0;
 
-  /* "_ldamhw_train.pyx":757
+  /* "_ldamhw_train.pyx":753
  *     r = <double> rand() / RAND_MAX
  *     cuml = 0.0
  *     for i in range(n):             # <<<<<<<<<<<<<<
@@ -7665,7 +7648,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "_ldamhw_train.pyx":758
+    /* "_ldamhw_train.pyx":754
  *     cuml = 0.0
  *     for i in range(n):
  *         cuml = cuml + prob[i]             # <<<<<<<<<<<<<<
@@ -7674,7 +7657,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
  */
     __pyx_v_cuml = (__pyx_v_cuml + (__pyx_v_prob[__pyx_v_i]));
 
-    /* "_ldamhw_train.pyx":759
+    /* "_ldamhw_train.pyx":755
  *     for i in range(n):
  *         cuml = cuml + prob[i]
  *         if (r <= cuml):             # <<<<<<<<<<<<<<
@@ -7684,7 +7667,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
     __pyx_t_4 = ((__pyx_v_r <= __pyx_v_cuml) != 0);
     if (__pyx_t_4) {
 
-      /* "_ldamhw_train.pyx":760
+      /* "_ldamhw_train.pyx":756
  *         cuml = cuml + prob[i]
  *         if (r <= cuml):
  *             return i             # <<<<<<<<<<<<<<
@@ -7693,7 +7676,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "_ldamhw_train.pyx":759
+      /* "_ldamhw_train.pyx":755
  *     for i in range(n):
  *         cuml = cuml + prob[i]
  *         if (r <= cuml):             # <<<<<<<<<<<<<<
@@ -7703,7 +7686,7 @@ static int __pyx_f_13_ldamhw_train_rand_choice(int __pyx_v_n, double *__pyx_v_pr
     }
   }
 
-  /* "_ldamhw_train.pyx":751
+  /* "_ldamhw_train.pyx":747
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef int rand_choice(int n, double * prob) nogil:             # <<<<<<<<<<<<<<
@@ -10235,6 +10218,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_dictionary, __pyx_k_dictionary, sizeof(__pyx_k_dictionary), 0, 0, 1, 1},
   {&__pyx_n_s_doc_len, __pyx_k_doc_len, sizeof(__pyx_k_doc_len), 0, 0, 1, 1},
   {&__pyx_n_s_document, __pyx_k_document, sizeof(__pyx_k_document), 0, 0, 1, 1},
+  {&__pyx_n_s_dtype, __pyx_k_dtype, sizeof(__pyx_k_dtype), 0, 0, 1, 1},
+  {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
+  {&__pyx_n_s_float64, __pyx_k_float64, sizeof(__pyx_k_float64), 0, 0, 1, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_id2word, __pyx_k_id2word, sizeof(__pyx_k_id2word), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -10259,6 +10245,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_randint, __pyx_k_randint, sizeof(__pyx_k_randint), 0, 0, 1, 1},
   {&__pyx_n_s_random, __pyx_k_random, sizeof(__pyx_k_random), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
@@ -10412,7 +10399,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     cdef int d, t, w
  *     cdef int num_docs
  */
-  __pyx_tuple__12 = PyTuple_Pack(25, __pyx_n_s_num_topics, __pyx_n_s_num_passes, __pyx_n_s_corpus, __pyx_n_s_d, __pyx_n_s_t, __pyx_n_s_w, __pyx_n_s_num_docs, __pyx_n_s_num_terms, __pyx_n_s_cdata, __pyx_n_s_cTermSeqs, __pyx_n_s_cTopicSeqs, __pyx_n_s_cDocTopicCounts, __pyx_n_s_cTermTopicCounts, __pyx_n_s_cTermsPerTopic, __pyx_n_s_doc_len, __pyx_n_s_priors, __pyx_n_s_theta, __pyx_n_s_phi, __pyx_n_s_sum, __pyx_n_s_id2word, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic, __pyx_n_s_i); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 154, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(25, __pyx_n_s_num_topics, __pyx_n_s_num_passes, __pyx_n_s_corpus, __pyx_n_s_d, __pyx_n_s_t, __pyx_n_s_w, __pyx_n_s_num_docs, __pyx_n_s_num_terms, __pyx_n_s_cdata, __pyx_n_s_cTermSeqs, __pyx_n_s_cTopicSeqs, __pyx_n_s_cDocTopicCounts, __pyx_n_s_cTermTopicCounts, __pyx_n_s_cTermsPerTopic, __pyx_n_s_doc_len, __pyx_n_s_priors, __pyx_n_s_sum, __pyx_n_s_id2word, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic, __pyx_n_s_i, __pyx_n_s_theta, __pyx_n_s_phi); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 154, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
   __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(3, 0, 25, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_ldamhw_train_pyx, __pyx_n_s_train, 154, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 154, __pyx_L1_error)
@@ -10425,7 +10412,6 @@ static int __Pyx_InitCachedConstants(void) {
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_float_0_0 = PyFloat_FromDouble(0.0); if (unlikely(!__pyx_float_0_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
