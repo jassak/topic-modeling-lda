@@ -27,37 +27,65 @@ cdef SparseGraph * newSparseGraph(int nnodes, int ** adjMat, double ** weightsMa
         SparseGraph * sg
         int * neighb
         double * weight
+    # malloc
     sg = <SparseGraph *> PyMem_Malloc(sizeof(SparseGraph))
     sg.node = <SGNode *> PyMem_Malloc(nnodes * sizeof(SGNode))
     sg.nnodes = nnodes
     avdeg = 0.0
+    # for every node
     for i in range(nnodes):
+        # compute degree
         deg = 0
         for j in range(nnodes):
             deg += adjMat[i][j]
         sg.node[i].deg = deg
+        # malloc
         sg.node[i].neighb = <int *> PyMem_Malloc(deg * sizeof(int))
         sg.node[i].weight = <double *> PyMem_Malloc(deg * sizeof(double))
+        # build neighbours and weights
         k = 0
         for j in range(nnodes):
             if (adjMat[i][j] == 1):
                 sg.node[i].neighb[k] = j
                 sg.node[i].weight[k] = weightsMat[i][j]
                 k += 1
+        # normalize weights
         sum = 0.0
         for k in range(sg.node[i].deg):
             sum += sg.node[i].weight[k]
         for k in range(sg.node[i].deg):
             sg.node[i].weight[k] /= sum;
+        # create alias samplers
         sg.node[i].aliassampler = <AliasSampler *> PyMem_Malloc(sizeof(AliasSampler))
         sg.node[i].aliassampler.aliasTable = <int *> PyMem_Malloc(deg * sizeof(int))
         sg.node[i].aliassampler.probTable = <double *> PyMem_Malloc(deg * sizeof(double))
         initializeAliasTables(deg, sg.node[i].weight, sg.node[i].aliassampler.probTable, sg.node[i].aliassampler.aliasTable)
         sg.node[i].deg = deg
         avdeg += <double> deg
+    # compute average degree
     sg.avdeg = avdeg / nnodes
     return sg
 
+cdef int sampleNodeNeighbour(int inode, SparseGraph * sg):
+    cdef int ineighb
+    ineighb = generateOne(sg.node[inode].deg,  sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)
+    return sg.node[inode].neighb[ineighb]
+
+cdef void sparseDotProd(SparseGraph * sg, double * inVec, double * outVec):
+    cdef:
+        int i
+    for i in range(sg.nnodes):
+        outVec[i] = sparseRowDotProd(i, sg, inVec)
+
+cdef double sparseRowDotProd(int irow, SparseGraph * sg, double * inVec):
+    cdef:
+        int k
+        int nzj
+        double out = 0.0
+    for k in range(sg.node[irow].deg):
+        nzj = sg.node[irow].neighb[k]
+        out += sg.node[irow].weight[k] * inVec[nzj]
+    return out
 
 # =========================== TESTS =============================== #
 
@@ -128,7 +156,7 @@ cdef void c_test_sparsegraph():
     # test AliasSampler
     cdef:
         int nsam = 1000000
-        int inode = 0
+        int inode = 9
         int * counts
     # malloc
     counts = <int *> PyMem_Malloc(nsam * sizeof(int))
@@ -139,6 +167,24 @@ cdef void c_test_sparsegraph():
         counts[generateOne(sg.node[inode].deg, sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)] += 1
     for k in range(sg.node[inode].deg):
         printf("%f\n", <double> counts[k]/nsam)
+    # test dot prod
+    cdef double * outVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+    cdef double * inVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+    for i in range(nnodes):
+        inVec[i] = <double> i
+    sparseDotProd(sg, inVec, outVec)
+    for i in range(nnodes):
+        printf("%f\t", outVec[i])
+    printf("\n")
+
+    # test neighbour sampling
+    printf("test neighbour sampling\n")
+    printf("some neighbours:\t\n")
+    for i in range(50):
+        printf("%d\n", sampleNodeNeighbour(inode, sg))
+    printf("\n")
+
+
 
 def test_sparsegraph():
     c_test_sparsegraph()

@@ -813,7 +813,7 @@ typedef struct __pyx_t_11sparsegraph_CorpusData __pyx_t_11sparsegraph_CorpusData
 struct __pyx_t_11sparsegraph_Priors;
 typedef struct __pyx_t_11sparsegraph_Priors __pyx_t_11sparsegraph_Priors;
 
-/* "cstructs.pyx":10
+/* "datastructs.pyx":10
  * """
  * 
  * ctypedef struct StackNode:             # <<<<<<<<<<<<<<
@@ -825,7 +825,7 @@ struct __pyx_t_11sparsegraph_StackNode {
   __pyx_t_11sparsegraph_StackNode *next;
 };
 
-/* "cstructs.pyx":14
+/* "datastructs.pyx":14
  *     StackNode * next
  * 
  * ctypedef struct Stack:             # <<<<<<<<<<<<<<
@@ -836,7 +836,7 @@ struct __pyx_t_11sparsegraph_Stack {
   __pyx_t_11sparsegraph_StackNode *root;
 };
 
-/* "cstructs.pyx":17
+/* "datastructs.pyx":17
  *     StackNode * root
  * 
  * ctypedef struct CounterNode:             # <<<<<<<<<<<<<<
@@ -850,7 +850,7 @@ struct __pyx_t_11sparsegraph_CounterNode {
   __pyx_t_11sparsegraph_CounterNode *next;
 };
 
-/* "cstructs.pyx":23
+/* "datastructs.pyx":23
  *     CounterNode * next
  * 
  * ctypedef struct Counter:             # <<<<<<<<<<<<<<
@@ -865,7 +865,7 @@ struct __pyx_t_11sparsegraph_Counter {
   __pyx_t_11sparsegraph_CounterNode *tail;
 };
 
-/* "cstructs.pyx":30
+/* "datastructs.pyx":30
  *     CounterNode * tail
  * 
  * ctypedef struct SVNode:             # <<<<<<<<<<<<<<
@@ -879,7 +879,7 @@ struct __pyx_t_11sparsegraph_SVNode {
   __pyx_t_11sparsegraph_SVNode *next;
 };
 
-/* "cstructs.pyx":36
+/* "datastructs.pyx":36
  *     SVNode * next
  * 
  * ctypedef struct SparseVector:             # <<<<<<<<<<<<<<
@@ -894,7 +894,7 @@ struct __pyx_t_11sparsegraph_SparseVector {
   __pyx_t_11sparsegraph_SVNode *head;
 };
 
-/* "cstructs.pyx":43
+/* "datastructs.pyx":43
  *     SVNode * head
  * 
  * ctypedef struct SGNode:             # <<<<<<<<<<<<<<
@@ -908,7 +908,7 @@ struct __pyx_t_11sparsegraph_SGNode {
   __pyx_t_11sparsegraph_AliasSampler *aliassampler;
 };
 
-/* "cstructs.pyx":49
+/* "datastructs.pyx":49
  *         AliasSampler * aliassampler
  * 
  * ctypedef struct SparseGraph:             # <<<<<<<<<<<<<<
@@ -921,7 +921,7 @@ struct __pyx_t_11sparsegraph_SparseGraph {
   __pyx_t_11sparsegraph_SGNode *node;
 };
 
-/* "cstructs.pyx":54
+/* "datastructs.pyx":54
  *         SGNode * node
  * 
  * ctypedef struct AliasSampler:             # <<<<<<<<<<<<<<
@@ -933,7 +933,7 @@ struct __pyx_t_11sparsegraph_AliasSampler {
   double *probTable;
 };
 
-/* "cstructs.pyx":58
+/* "datastructs.pyx":58
  *     double * probTable
  * 
  * ctypedef struct CorpusData:             # <<<<<<<<<<<<<<
@@ -952,7 +952,7 @@ struct __pyx_t_11sparsegraph_CorpusData {
   int *cTermsPerTopic;
 };
 
-/* "cstructs.pyx":69
+/* "datastructs.pyx":69
  *     int * cTermsPerTopic
  * 
  * ctypedef struct Priors:             # <<<<<<<<<<<<<<
@@ -1168,6 +1168,9 @@ static void __pyx_f_11sparsegraph_generateMany(int, int, double *, int *, __pyx_
 static double __pyx_f_11sparsegraph_randUniform(void); /*proto*/
 static int __pyx_f_11sparsegraph_randInt(int, int); /*proto*/
 static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(int, int **, double **); /*proto*/
+static int __pyx_f_11sparsegraph_sampleNodeNeighbour(int, __pyx_t_11sparsegraph_SparseGraph *); /*proto*/
+static void __pyx_f_11sparsegraph_sparseDotProd(__pyx_t_11sparsegraph_SparseGraph *, double *, double *); /*proto*/
+static double __pyx_f_11sparsegraph_sparseRowDotProd(int, __pyx_t_11sparsegraph_SparseGraph *, double *); /*proto*/
 static int **__pyx_f_11sparsegraph_makeAdjMat(int); /*proto*/
 static double **__pyx_f_11sparsegraph_makeWeightsMat(int, int **); /*proto*/
 static void __pyx_f_11sparsegraph_c_test_sparsegraph(void); /*proto*/
@@ -2294,17 +2297,17 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
   int __pyx_t_9;
   __Pyx_RefNannySetupContext("newSparseGraph", 0);
 
-  /* "sparsegraph.pyx":30
- *         int * neighb
+  /* "sparsegraph.pyx":31
  *         double * weight
+ *     # malloc
  *     sg = <SparseGraph *> PyMem_Malloc(sizeof(SparseGraph))             # <<<<<<<<<<<<<<
  *     sg.node = <SGNode *> PyMem_Malloc(nnodes * sizeof(SGNode))
  *     sg.nnodes = nnodes
  */
   __pyx_v_sg = ((__pyx_t_11sparsegraph_SparseGraph *)PyMem_Malloc((sizeof(__pyx_t_11sparsegraph_SparseGraph))));
 
-  /* "sparsegraph.pyx":31
- *         double * weight
+  /* "sparsegraph.pyx":32
+ *     # malloc
  *     sg = <SparseGraph *> PyMem_Malloc(sizeof(SparseGraph))
  *     sg.node = <SGNode *> PyMem_Malloc(nnodes * sizeof(SGNode))             # <<<<<<<<<<<<<<
  *     sg.nnodes = nnodes
@@ -2312,47 +2315,47 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
  */
   __pyx_v_sg->node = ((__pyx_t_11sparsegraph_SGNode *)PyMem_Malloc((__pyx_v_nnodes * (sizeof(__pyx_t_11sparsegraph_SGNode)))));
 
-  /* "sparsegraph.pyx":32
+  /* "sparsegraph.pyx":33
  *     sg = <SparseGraph *> PyMem_Malloc(sizeof(SparseGraph))
  *     sg.node = <SGNode *> PyMem_Malloc(nnodes * sizeof(SGNode))
  *     sg.nnodes = nnodes             # <<<<<<<<<<<<<<
  *     avdeg = 0.0
- *     for i in range(nnodes):
+ *     # for every node
  */
   __pyx_v_sg->nnodes = __pyx_v_nnodes;
 
-  /* "sparsegraph.pyx":33
+  /* "sparsegraph.pyx":34
  *     sg.node = <SGNode *> PyMem_Malloc(nnodes * sizeof(SGNode))
  *     sg.nnodes = nnodes
  *     avdeg = 0.0             # <<<<<<<<<<<<<<
+ *     # for every node
  *     for i in range(nnodes):
- *         deg = 0
  */
   __pyx_v_avdeg = 0.0;
 
-  /* "sparsegraph.pyx":34
- *     sg.nnodes = nnodes
+  /* "sparsegraph.pyx":36
  *     avdeg = 0.0
+ *     # for every node
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
+ *         # compute degree
  *         deg = 0
- *         for j in range(nnodes):
  */
   __pyx_t_1 = __pyx_v_nnodes;
   __pyx_t_2 = __pyx_t_1;
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":35
- *     avdeg = 0.0
+    /* "sparsegraph.pyx":38
  *     for i in range(nnodes):
+ *         # compute degree
  *         deg = 0             # <<<<<<<<<<<<<<
  *         for j in range(nnodes):
  *             deg += adjMat[i][j]
  */
     __pyx_v_deg = 0;
 
-    /* "sparsegraph.pyx":36
- *     for i in range(nnodes):
+    /* "sparsegraph.pyx":39
+ *         # compute degree
  *         deg = 0
  *         for j in range(nnodes):             # <<<<<<<<<<<<<<
  *             deg += adjMat[i][j]
@@ -2363,54 +2366,54 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "sparsegraph.pyx":37
+      /* "sparsegraph.pyx":40
  *         deg = 0
  *         for j in range(nnodes):
  *             deg += adjMat[i][j]             # <<<<<<<<<<<<<<
  *         sg.node[i].deg = deg
- *         sg.node[i].neighb = <int *> PyMem_Malloc(deg * sizeof(int))
+ *         # malloc
  */
       __pyx_v_deg = (__pyx_v_deg + ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]));
     }
 
-    /* "sparsegraph.pyx":38
+    /* "sparsegraph.pyx":41
  *         for j in range(nnodes):
  *             deg += adjMat[i][j]
  *         sg.node[i].deg = deg             # <<<<<<<<<<<<<<
+ *         # malloc
  *         sg.node[i].neighb = <int *> PyMem_Malloc(deg * sizeof(int))
- *         sg.node[i].weight = <double *> PyMem_Malloc(deg * sizeof(double))
  */
     (__pyx_v_sg->node[__pyx_v_i]).deg = __pyx_v_deg;
 
-    /* "sparsegraph.pyx":39
- *             deg += adjMat[i][j]
+    /* "sparsegraph.pyx":43
  *         sg.node[i].deg = deg
+ *         # malloc
  *         sg.node[i].neighb = <int *> PyMem_Malloc(deg * sizeof(int))             # <<<<<<<<<<<<<<
  *         sg.node[i].weight = <double *> PyMem_Malloc(deg * sizeof(double))
- *         k = 0
+ *         # build neighbours and weights
  */
     (__pyx_v_sg->node[__pyx_v_i]).neighb = ((int *)PyMem_Malloc((__pyx_v_deg * (sizeof(int)))));
 
-    /* "sparsegraph.pyx":40
- *         sg.node[i].deg = deg
+    /* "sparsegraph.pyx":44
+ *         # malloc
  *         sg.node[i].neighb = <int *> PyMem_Malloc(deg * sizeof(int))
  *         sg.node[i].weight = <double *> PyMem_Malloc(deg * sizeof(double))             # <<<<<<<<<<<<<<
+ *         # build neighbours and weights
  *         k = 0
- *         for j in range(nnodes):
  */
     (__pyx_v_sg->node[__pyx_v_i]).weight = ((double *)PyMem_Malloc((__pyx_v_deg * (sizeof(double)))));
 
-    /* "sparsegraph.pyx":41
- *         sg.node[i].neighb = <int *> PyMem_Malloc(deg * sizeof(int))
+    /* "sparsegraph.pyx":46
  *         sg.node[i].weight = <double *> PyMem_Malloc(deg * sizeof(double))
+ *         # build neighbours and weights
  *         k = 0             # <<<<<<<<<<<<<<
  *         for j in range(nnodes):
  *             if (adjMat[i][j] == 1):
  */
     __pyx_v_k = 0;
 
-    /* "sparsegraph.pyx":42
- *         sg.node[i].weight = <double *> PyMem_Malloc(deg * sizeof(double))
+    /* "sparsegraph.pyx":47
+ *         # build neighbours and weights
  *         k = 0
  *         for j in range(nnodes):             # <<<<<<<<<<<<<<
  *             if (adjMat[i][j] == 1):
@@ -2421,7 +2424,7 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "sparsegraph.pyx":43
+      /* "sparsegraph.pyx":48
  *         k = 0
  *         for j in range(nnodes):
  *             if (adjMat[i][j] == 1):             # <<<<<<<<<<<<<<
@@ -2431,7 +2434,7 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
       __pyx_t_7 = ((((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]) == 1) != 0);
       if (__pyx_t_7) {
 
-        /* "sparsegraph.pyx":44
+        /* "sparsegraph.pyx":49
  *         for j in range(nnodes):
  *             if (adjMat[i][j] == 1):
  *                 sg.node[i].neighb[k] = j             # <<<<<<<<<<<<<<
@@ -2440,25 +2443,25 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
  */
         ((__pyx_v_sg->node[__pyx_v_i]).neighb[__pyx_v_k]) = __pyx_v_j;
 
-        /* "sparsegraph.pyx":45
+        /* "sparsegraph.pyx":50
  *             if (adjMat[i][j] == 1):
  *                 sg.node[i].neighb[k] = j
  *                 sg.node[i].weight[k] = weightsMat[i][j]             # <<<<<<<<<<<<<<
  *                 k += 1
- *         sum = 0.0
+ *         # normalize weights
  */
         ((__pyx_v_sg->node[__pyx_v_i]).weight[__pyx_v_k]) = ((__pyx_v_weightsMat[__pyx_v_i])[__pyx_v_j]);
 
-        /* "sparsegraph.pyx":46
+        /* "sparsegraph.pyx":51
  *                 sg.node[i].neighb[k] = j
  *                 sg.node[i].weight[k] = weightsMat[i][j]
  *                 k += 1             # <<<<<<<<<<<<<<
+ *         # normalize weights
  *         sum = 0.0
- *         for k in range(sg.node[i].deg):
  */
         __pyx_v_k = (__pyx_v_k + 1);
 
-        /* "sparsegraph.pyx":43
+        /* "sparsegraph.pyx":48
  *         k = 0
  *         for j in range(nnodes):
  *             if (adjMat[i][j] == 1):             # <<<<<<<<<<<<<<
@@ -2468,17 +2471,17 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
       }
     }
 
-    /* "sparsegraph.pyx":47
- *                 sg.node[i].weight[k] = weightsMat[i][j]
+    /* "sparsegraph.pyx":53
  *                 k += 1
+ *         # normalize weights
  *         sum = 0.0             # <<<<<<<<<<<<<<
  *         for k in range(sg.node[i].deg):
  *             sum += sg.node[i].weight[k]
  */
     __pyx_v_sum = 0.0;
 
-    /* "sparsegraph.pyx":48
- *                 k += 1
+    /* "sparsegraph.pyx":54
+ *         # normalize weights
  *         sum = 0.0
  *         for k in range(sg.node[i].deg):             # <<<<<<<<<<<<<<
  *             sum += sg.node[i].weight[k]
@@ -2489,7 +2492,7 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_k = __pyx_t_6;
 
-      /* "sparsegraph.pyx":49
+      /* "sparsegraph.pyx":55
  *         sum = 0.0
  *         for k in range(sg.node[i].deg):
  *             sum += sg.node[i].weight[k]             # <<<<<<<<<<<<<<
@@ -2499,41 +2502,41 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
       __pyx_v_sum = (__pyx_v_sum + ((__pyx_v_sg->node[__pyx_v_i]).weight[__pyx_v_k]));
     }
 
-    /* "sparsegraph.pyx":50
+    /* "sparsegraph.pyx":56
  *         for k in range(sg.node[i].deg):
  *             sum += sg.node[i].weight[k]
  *         for k in range(sg.node[i].deg):             # <<<<<<<<<<<<<<
  *             sg.node[i].weight[k] /= sum;
- *         sg.node[i].aliassampler = <AliasSampler *> PyMem_Malloc(sizeof(AliasSampler))
+ *         # create alias samplers
  */
     __pyx_t_4 = (__pyx_v_sg->node[__pyx_v_i]).deg;
     __pyx_t_5 = __pyx_t_4;
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_k = __pyx_t_6;
 
-      /* "sparsegraph.pyx":51
+      /* "sparsegraph.pyx":57
  *             sum += sg.node[i].weight[k]
  *         for k in range(sg.node[i].deg):
  *             sg.node[i].weight[k] /= sum;             # <<<<<<<<<<<<<<
+ *         # create alias samplers
  *         sg.node[i].aliassampler = <AliasSampler *> PyMem_Malloc(sizeof(AliasSampler))
- *         sg.node[i].aliassampler.aliasTable = <int *> PyMem_Malloc(deg * sizeof(int))
  */
       __pyx_t_8 = __pyx_v_i;
       __pyx_t_9 = __pyx_v_k;
       ((__pyx_v_sg->node[__pyx_t_8]).weight[__pyx_t_9]) = (((__pyx_v_sg->node[__pyx_t_8]).weight[__pyx_t_9]) / __pyx_v_sum);
     }
 
-    /* "sparsegraph.pyx":52
- *         for k in range(sg.node[i].deg):
+    /* "sparsegraph.pyx":59
  *             sg.node[i].weight[k] /= sum;
+ *         # create alias samplers
  *         sg.node[i].aliassampler = <AliasSampler *> PyMem_Malloc(sizeof(AliasSampler))             # <<<<<<<<<<<<<<
  *         sg.node[i].aliassampler.aliasTable = <int *> PyMem_Malloc(deg * sizeof(int))
  *         sg.node[i].aliassampler.probTable = <double *> PyMem_Malloc(deg * sizeof(double))
  */
     (__pyx_v_sg->node[__pyx_v_i]).aliassampler = ((__pyx_t_11sparsegraph_AliasSampler *)PyMem_Malloc((sizeof(__pyx_t_11sparsegraph_AliasSampler))));
 
-    /* "sparsegraph.pyx":53
- *             sg.node[i].weight[k] /= sum;
+    /* "sparsegraph.pyx":60
+ *         # create alias samplers
  *         sg.node[i].aliassampler = <AliasSampler *> PyMem_Malloc(sizeof(AliasSampler))
  *         sg.node[i].aliassampler.aliasTable = <int *> PyMem_Malloc(deg * sizeof(int))             # <<<<<<<<<<<<<<
  *         sg.node[i].aliassampler.probTable = <double *> PyMem_Malloc(deg * sizeof(double))
@@ -2541,7 +2544,7 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
  */
     (__pyx_v_sg->node[__pyx_v_i]).aliassampler->aliasTable = ((int *)PyMem_Malloc((__pyx_v_deg * (sizeof(int)))));
 
-    /* "sparsegraph.pyx":54
+    /* "sparsegraph.pyx":61
  *         sg.node[i].aliassampler = <AliasSampler *> PyMem_Malloc(sizeof(AliasSampler))
  *         sg.node[i].aliassampler.aliasTable = <int *> PyMem_Malloc(deg * sizeof(int))
  *         sg.node[i].aliassampler.probTable = <double *> PyMem_Malloc(deg * sizeof(double))             # <<<<<<<<<<<<<<
@@ -2550,7 +2553,7 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
  */
     (__pyx_v_sg->node[__pyx_v_i]).aliassampler->probTable = ((double *)PyMem_Malloc((__pyx_v_deg * (sizeof(double)))));
 
-    /* "sparsegraph.pyx":55
+    /* "sparsegraph.pyx":62
  *         sg.node[i].aliassampler.aliasTable = <int *> PyMem_Malloc(deg * sizeof(int))
  *         sg.node[i].aliassampler.probTable = <double *> PyMem_Malloc(deg * sizeof(double))
  *         initializeAliasTables(deg, sg.node[i].weight, sg.node[i].aliassampler.probTable, sg.node[i].aliassampler.aliasTable)             # <<<<<<<<<<<<<<
@@ -2559,40 +2562,40 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
  */
     __pyx_f_11sparsegraph_initializeAliasTables(__pyx_v_deg, (__pyx_v_sg->node[__pyx_v_i]).weight, (__pyx_v_sg->node[__pyx_v_i]).aliassampler->probTable, (__pyx_v_sg->node[__pyx_v_i]).aliassampler->aliasTable);
 
-    /* "sparsegraph.pyx":56
+    /* "sparsegraph.pyx":63
  *         sg.node[i].aliassampler.probTable = <double *> PyMem_Malloc(deg * sizeof(double))
  *         initializeAliasTables(deg, sg.node[i].weight, sg.node[i].aliassampler.probTable, sg.node[i].aliassampler.aliasTable)
  *         sg.node[i].deg = deg             # <<<<<<<<<<<<<<
  *         avdeg += <double> deg
- *     sg.avdeg = avdeg / nnodes
+ *     # compute average degree
  */
     (__pyx_v_sg->node[__pyx_v_i]).deg = __pyx_v_deg;
 
-    /* "sparsegraph.pyx":57
+    /* "sparsegraph.pyx":64
  *         initializeAliasTables(deg, sg.node[i].weight, sg.node[i].aliassampler.probTable, sg.node[i].aliassampler.aliasTable)
  *         sg.node[i].deg = deg
  *         avdeg += <double> deg             # <<<<<<<<<<<<<<
+ *     # compute average degree
  *     sg.avdeg = avdeg / nnodes
- *     return sg
  */
     __pyx_v_avdeg = (__pyx_v_avdeg + ((double)__pyx_v_deg));
   }
 
-  /* "sparsegraph.pyx":58
- *         sg.node[i].deg = deg
+  /* "sparsegraph.pyx":66
  *         avdeg += <double> deg
+ *     # compute average degree
  *     sg.avdeg = avdeg / nnodes             # <<<<<<<<<<<<<<
  *     return sg
  * 
  */
   __pyx_v_sg->avdeg = (__pyx_v_avdeg / __pyx_v_nnodes);
 
-  /* "sparsegraph.pyx":59
- *         avdeg += <double> deg
+  /* "sparsegraph.pyx":67
+ *     # compute average degree
  *     sg.avdeg = avdeg / nnodes
  *     return sg             # <<<<<<<<<<<<<<
  * 
- * 
+ * cdef int sampleNodeNeighbour(int inode, SparseGraph * sg):
  */
   __pyx_r = __pyx_v_sg;
   goto __pyx_L0;
@@ -2611,7 +2614,187 @@ static __pyx_t_11sparsegraph_SparseGraph *__pyx_f_11sparsegraph_newSparseGraph(i
   return __pyx_r;
 }
 
-/* "sparsegraph.pyx":64
+/* "sparsegraph.pyx":69
+ *     return sg
+ * 
+ * cdef int sampleNodeNeighbour(int inode, SparseGraph * sg):             # <<<<<<<<<<<<<<
+ *     cdef int ineighb
+ *     ineighb = generateOne(sg.node[inode].deg,  sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)
+ */
+
+static int __pyx_f_11sparsegraph_sampleNodeNeighbour(int __pyx_v_inode, __pyx_t_11sparsegraph_SparseGraph *__pyx_v_sg) {
+  int __pyx_v_ineighb;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("sampleNodeNeighbour", 0);
+
+  /* "sparsegraph.pyx":71
+ * cdef int sampleNodeNeighbour(int inode, SparseGraph * sg):
+ *     cdef int ineighb
+ *     ineighb = generateOne(sg.node[inode].deg,  sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)             # <<<<<<<<<<<<<<
+ *     return sg.node[inode].neighb[ineighb]
+ * 
+ */
+  __pyx_v_ineighb = __pyx_f_11sparsegraph_generateOne((__pyx_v_sg->node[__pyx_v_inode]).deg, (__pyx_v_sg->node[__pyx_v_inode]).aliassampler->probTable, (__pyx_v_sg->node[__pyx_v_inode]).aliassampler->aliasTable);
+
+  /* "sparsegraph.pyx":72
+ *     cdef int ineighb
+ *     ineighb = generateOne(sg.node[inode].deg,  sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)
+ *     return sg.node[inode].neighb[ineighb]             # <<<<<<<<<<<<<<
+ * 
+ * cdef void sparseDotProd(SparseGraph * sg, double * inVec, double * outVec):
+ */
+  __pyx_r = ((__pyx_v_sg->node[__pyx_v_inode]).neighb[__pyx_v_ineighb]);
+  goto __pyx_L0;
+
+  /* "sparsegraph.pyx":69
+ *     return sg
+ * 
+ * cdef int sampleNodeNeighbour(int inode, SparseGraph * sg):             # <<<<<<<<<<<<<<
+ *     cdef int ineighb
+ *     ineighb = generateOne(sg.node[inode].deg,  sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "sparsegraph.pyx":74
+ *     return sg.node[inode].neighb[ineighb]
+ * 
+ * cdef void sparseDotProd(SparseGraph * sg, double * inVec, double * outVec):             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         int i
+ */
+
+static void __pyx_f_11sparsegraph_sparseDotProd(__pyx_t_11sparsegraph_SparseGraph *__pyx_v_sg, double *__pyx_v_inVec, double *__pyx_v_outVec) {
+  int __pyx_v_i;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  __Pyx_RefNannySetupContext("sparseDotProd", 0);
+
+  /* "sparsegraph.pyx":77
+ *     cdef:
+ *         int i
+ *     for i in range(sg.nnodes):             # <<<<<<<<<<<<<<
+ *         outVec[i] = sparseRowDotProd(i, sg, inVec)
+ * 
+ */
+  __pyx_t_1 = __pyx_v_sg->nnodes;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "sparsegraph.pyx":78
+ *         int i
+ *     for i in range(sg.nnodes):
+ *         outVec[i] = sparseRowDotProd(i, sg, inVec)             # <<<<<<<<<<<<<<
+ * 
+ * cdef double sparseRowDotProd(int irow, SparseGraph * sg, double * inVec):
+ */
+    (__pyx_v_outVec[__pyx_v_i]) = __pyx_f_11sparsegraph_sparseRowDotProd(__pyx_v_i, __pyx_v_sg, __pyx_v_inVec);
+  }
+
+  /* "sparsegraph.pyx":74
+ *     return sg.node[inode].neighb[ineighb]
+ * 
+ * cdef void sparseDotProd(SparseGraph * sg, double * inVec, double * outVec):             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         int i
+ */
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "sparsegraph.pyx":80
+ *         outVec[i] = sparseRowDotProd(i, sg, inVec)
+ * 
+ * cdef double sparseRowDotProd(int irow, SparseGraph * sg, double * inVec):             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         int k
+ */
+
+static double __pyx_f_11sparsegraph_sparseRowDotProd(int __pyx_v_irow, __pyx_t_11sparsegraph_SparseGraph *__pyx_v_sg, double *__pyx_v_inVec) {
+  int __pyx_v_k;
+  int __pyx_v_nzj;
+  double __pyx_v_out;
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  __Pyx_RefNannySetupContext("sparseRowDotProd", 0);
+
+  /* "sparsegraph.pyx":84
+ *         int k
+ *         int nzj
+ *         double out = 0.0             # <<<<<<<<<<<<<<
+ *     for k in range(sg.node[irow].deg):
+ *         nzj = sg.node[irow].neighb[k]
+ */
+  __pyx_v_out = 0.0;
+
+  /* "sparsegraph.pyx":85
+ *         int nzj
+ *         double out = 0.0
+ *     for k in range(sg.node[irow].deg):             # <<<<<<<<<<<<<<
+ *         nzj = sg.node[irow].neighb[k]
+ *         out += sg.node[irow].weight[k] * inVec[nzj]
+ */
+  __pyx_t_1 = (__pyx_v_sg->node[__pyx_v_irow]).deg;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_k = __pyx_t_3;
+
+    /* "sparsegraph.pyx":86
+ *         double out = 0.0
+ *     for k in range(sg.node[irow].deg):
+ *         nzj = sg.node[irow].neighb[k]             # <<<<<<<<<<<<<<
+ *         out += sg.node[irow].weight[k] * inVec[nzj]
+ *     return out
+ */
+    __pyx_v_nzj = ((__pyx_v_sg->node[__pyx_v_irow]).neighb[__pyx_v_k]);
+
+    /* "sparsegraph.pyx":87
+ *     for k in range(sg.node[irow].deg):
+ *         nzj = sg.node[irow].neighb[k]
+ *         out += sg.node[irow].weight[k] * inVec[nzj]             # <<<<<<<<<<<<<<
+ *     return out
+ * 
+ */
+    __pyx_v_out = (__pyx_v_out + (((__pyx_v_sg->node[__pyx_v_irow]).weight[__pyx_v_k]) * (__pyx_v_inVec[__pyx_v_nzj])));
+  }
+
+  /* "sparsegraph.pyx":88
+ *         nzj = sg.node[irow].neighb[k]
+ *         out += sg.node[irow].weight[k] * inVec[nzj]
+ *     return out             # <<<<<<<<<<<<<<
+ * 
+ * # =========================== TESTS =============================== #
+ */
+  __pyx_r = __pyx_v_out;
+  goto __pyx_L0;
+
+  /* "sparsegraph.pyx":80
+ *         outVec[i] = sparseRowDotProd(i, sg, inVec)
+ * 
+ * cdef double sparseRowDotProd(int irow, SparseGraph * sg, double * inVec):             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         int k
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "sparsegraph.pyx":92
  * # =========================== TESTS =============================== #
  * 
  * cdef int ** makeAdjMat(int nnodes):             # <<<<<<<<<<<<<<
@@ -2633,7 +2816,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
   int __pyx_t_6;
   __Pyx_RefNannySetupContext("makeAdjMat", 0);
 
-  /* "sparsegraph.pyx":68
+  /* "sparsegraph.pyx":96
  *         int i, j
  *         int ** adjMat
  *     adjMat = <int **> PyMem_Malloc(nnodes * sizeof(int *))             # <<<<<<<<<<<<<<
@@ -2642,7 +2825,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
  */
   __pyx_v_adjMat = ((int **)PyMem_Malloc((__pyx_v_nnodes * (sizeof(int *)))));
 
-  /* "sparsegraph.pyx":69
+  /* "sparsegraph.pyx":97
  *         int ** adjMat
  *     adjMat = <int **> PyMem_Malloc(nnodes * sizeof(int *))
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -2654,7 +2837,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":70
+    /* "sparsegraph.pyx":98
  *     adjMat = <int **> PyMem_Malloc(nnodes * sizeof(int *))
  *     for i in range(nnodes):
  *         adjMat[i] = <int *> PyMem_Malloc(nnodes * sizeof(int))             # <<<<<<<<<<<<<<
@@ -2664,7 +2847,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
     (__pyx_v_adjMat[__pyx_v_i]) = ((int *)PyMem_Malloc((__pyx_v_nnodes * (sizeof(int)))));
   }
 
-  /* "sparsegraph.pyx":71
+  /* "sparsegraph.pyx":99
  *     for i in range(nnodes):
  *         adjMat[i] = <int *> PyMem_Malloc(nnodes * sizeof(int))
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -2676,7 +2859,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":72
+    /* "sparsegraph.pyx":100
  *         adjMat[i] = <int *> PyMem_Malloc(nnodes * sizeof(int))
  *     for i in range(nnodes):
  *         adjMat[i][i] = randInt(0, 2 )             # <<<<<<<<<<<<<<
@@ -2685,7 +2868,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
  */
     ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_i]) = __pyx_f_11sparsegraph_randInt(0, 2);
 
-    /* "sparsegraph.pyx":73
+    /* "sparsegraph.pyx":101
  *     for i in range(nnodes):
  *         adjMat[i][i] = randInt(0, 2 )
  *         for j in range(i + 1, nnodes):             # <<<<<<<<<<<<<<
@@ -2697,7 +2880,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
     for (__pyx_t_6 = (__pyx_v_i + 1); __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "sparsegraph.pyx":74
+      /* "sparsegraph.pyx":102
  *         adjMat[i][i] = randInt(0, 2 )
  *         for j in range(i + 1, nnodes):
  *             adjMat[i][j] = randInt(0, 2)             # <<<<<<<<<<<<<<
@@ -2706,7 +2889,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
  */
       ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]) = __pyx_f_11sparsegraph_randInt(0, 2);
 
-      /* "sparsegraph.pyx":75
+      /* "sparsegraph.pyx":103
  *         for j in range(i + 1, nnodes):
  *             adjMat[i][j] = randInt(0, 2)
  *             adjMat[j][i] = adjMat[i][j]             # <<<<<<<<<<<<<<
@@ -2717,7 +2900,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
     }
   }
 
-  /* "sparsegraph.pyx":76
+  /* "sparsegraph.pyx":104
  *             adjMat[i][j] = randInt(0, 2)
  *             adjMat[j][i] = adjMat[i][j]
  *     return adjMat             # <<<<<<<<<<<<<<
@@ -2727,7 +2910,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
   __pyx_r = __pyx_v_adjMat;
   goto __pyx_L0;
 
-  /* "sparsegraph.pyx":64
+  /* "sparsegraph.pyx":92
  * # =========================== TESTS =============================== #
  * 
  * cdef int ** makeAdjMat(int nnodes):             # <<<<<<<<<<<<<<
@@ -2741,7 +2924,7 @@ static int **__pyx_f_11sparsegraph_makeAdjMat(int __pyx_v_nnodes) {
   return __pyx_r;
 }
 
-/* "sparsegraph.pyx":78
+/* "sparsegraph.pyx":106
  *     return adjMat
  * 
  * cdef double ** makeWeightsMat(int nnodes, int ** adjMat):             # <<<<<<<<<<<<<<
@@ -2763,7 +2946,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
   int __pyx_t_6;
   __Pyx_RefNannySetupContext("makeWeightsMat", 0);
 
-  /* "sparsegraph.pyx":82
+  /* "sparsegraph.pyx":110
  *         int i, j
  *         double ** weightsMat
  *     weightsMat = <double **> PyMem_Malloc(nnodes * sizeof(double *))             # <<<<<<<<<<<<<<
@@ -2772,7 +2955,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
  */
   __pyx_v_weightsMat = ((double **)PyMem_Malloc((__pyx_v_nnodes * (sizeof(double *)))));
 
-  /* "sparsegraph.pyx":83
+  /* "sparsegraph.pyx":111
  *         double ** weightsMat
  *     weightsMat = <double **> PyMem_Malloc(nnodes * sizeof(double *))
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -2784,7 +2967,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":84
+    /* "sparsegraph.pyx":112
  *     weightsMat = <double **> PyMem_Malloc(nnodes * sizeof(double *))
  *     for i in range(nnodes):
  *         weightsMat[i] = <double *> PyMem_Malloc(nnodes * sizeof(double))             # <<<<<<<<<<<<<<
@@ -2794,7 +2977,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
     (__pyx_v_weightsMat[__pyx_v_i]) = ((double *)PyMem_Malloc((__pyx_v_nnodes * (sizeof(double)))));
   }
 
-  /* "sparsegraph.pyx":85
+  /* "sparsegraph.pyx":113
  *     for i in range(nnodes):
  *         weightsMat[i] = <double *> PyMem_Malloc(nnodes * sizeof(double))
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -2806,7 +2989,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":86
+    /* "sparsegraph.pyx":114
  *         weightsMat[i] = <double *> PyMem_Malloc(nnodes * sizeof(double))
  *     for i in range(nnodes):
  *         for j in range(i, nnodes):             # <<<<<<<<<<<<<<
@@ -2818,7 +3001,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
     for (__pyx_t_6 = __pyx_v_i; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "sparsegraph.pyx":87
+      /* "sparsegraph.pyx":115
  *     for i in range(nnodes):
  *         for j in range(i, nnodes):
  *             weightsMat[i][j] = adjMat[i][j] * randUniform()             # <<<<<<<<<<<<<<
@@ -2827,7 +3010,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
  */
       ((__pyx_v_weightsMat[__pyx_v_i])[__pyx_v_j]) = (((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]) * __pyx_f_11sparsegraph_randUniform());
 
-      /* "sparsegraph.pyx":88
+      /* "sparsegraph.pyx":116
  *         for j in range(i, nnodes):
  *             weightsMat[i][j] = adjMat[i][j] * randUniform()
  *             weightsMat[j][i] = weightsMat[i][j]             # <<<<<<<<<<<<<<
@@ -2838,7 +3021,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
     }
   }
 
-  /* "sparsegraph.pyx":90
+  /* "sparsegraph.pyx":118
  *             weightsMat[j][i] = weightsMat[i][j]
  * 
  *     return weightsMat             # <<<<<<<<<<<<<<
@@ -2848,7 +3031,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
   __pyx_r = __pyx_v_weightsMat;
   goto __pyx_L0;
 
-  /* "sparsegraph.pyx":78
+  /* "sparsegraph.pyx":106
  *     return adjMat
  * 
  * cdef double ** makeWeightsMat(int nnodes, int ** adjMat):             # <<<<<<<<<<<<<<
@@ -2862,7 +3045,7 @@ static double **__pyx_f_11sparsegraph_makeWeightsMat(int __pyx_v_nnodes, int **_
   return __pyx_r;
 }
 
-/* "sparsegraph.pyx":92
+/* "sparsegraph.pyx":120
  *     return weightsMat
  * 
  * cdef void c_test_sparsegraph():             # <<<<<<<<<<<<<<
@@ -2881,6 +3064,8 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   int __pyx_v_nsam;
   int __pyx_v_inode;
   int *__pyx_v_counts;
+  double *__pyx_v_outVec;
+  double *__pyx_v_inVec;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
@@ -2890,7 +3075,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   int __pyx_t_6;
   __Pyx_RefNannySetupContext("c_test_sparsegraph", 0);
 
-  /* "sparsegraph.pyx":95
+  /* "sparsegraph.pyx":123
  *     cdef:
  *         int i, j, k
  *         int nnodes = 10             # <<<<<<<<<<<<<<
@@ -2899,7 +3084,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   __pyx_v_nnodes = 10;
 
-  /* "sparsegraph.pyx":100
+  /* "sparsegraph.pyx":128
  *         SparseGraph * sg
  *     # init rng
  *     srand(1)             # <<<<<<<<<<<<<<
@@ -2908,7 +3093,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   srand(1);
 
-  /* "sparsegraph.pyx":102
+  /* "sparsegraph.pyx":130
  *     srand(1)
  *     # make matrices
  *     adjMat = makeAdjMat(nnodes)             # <<<<<<<<<<<<<<
@@ -2917,7 +3102,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   __pyx_v_adjMat = __pyx_f_11sparsegraph_makeAdjMat(__pyx_v_nnodes);
 
-  /* "sparsegraph.pyx":103
+  /* "sparsegraph.pyx":131
  *     # make matrices
  *     adjMat = makeAdjMat(nnodes)
  *     weightsMat = makeWeightsMat(nnodes, adjMat)             # <<<<<<<<<<<<<<
@@ -2926,7 +3111,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   __pyx_v_weightsMat = __pyx_f_11sparsegraph_makeWeightsMat(__pyx_v_nnodes, __pyx_v_adjMat);
 
-  /* "sparsegraph.pyx":105
+  /* "sparsegraph.pyx":133
  *     weightsMat = makeWeightsMat(nnodes, adjMat)
  *     # print matrices
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -2938,7 +3123,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":106
+    /* "sparsegraph.pyx":134
  *     # print matrices
  *     for i in range(nnodes):
  *         for j in range(nnodes):             # <<<<<<<<<<<<<<
@@ -2950,38 +3135,29 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "sparsegraph.pyx":107
+      /* "sparsegraph.pyx":135
  *     for i in range(nnodes):
  *         for j in range(nnodes):
  *             printf("%d ", adjMat[i][j])             # <<<<<<<<<<<<<<
  *         printf("\n")
- *         fflush(stdout)
+ *     for i in range(nnodes):
  */
       (void)(printf(((char const *)"%d "), ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j])));
     }
 
-    /* "sparsegraph.pyx":108
+    /* "sparsegraph.pyx":136
  *         for j in range(nnodes):
  *             printf("%d ", adjMat[i][j])
  *         printf("\n")             # <<<<<<<<<<<<<<
- *         fflush(stdout)
- *     for i in range(nnodes):
- */
-    (void)(printf(((char const *)"\n")));
-
-    /* "sparsegraph.pyx":109
- *             printf("%d ", adjMat[i][j])
- *         printf("\n")
- *         fflush(stdout)             # <<<<<<<<<<<<<<
  *     for i in range(nnodes):
  *         for j in range(nnodes):
  */
-    (void)(fflush(stdout));
+    (void)(printf(((char const *)"\n")));
   }
 
-  /* "sparsegraph.pyx":110
+  /* "sparsegraph.pyx":137
+ *             printf("%d ", adjMat[i][j])
  *         printf("\n")
- *         fflush(stdout)
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
  *         for j in range(nnodes):
  *             printf("%f ", weightsMat[i][j])
@@ -2991,8 +3167,8 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":111
- *         fflush(stdout)
+    /* "sparsegraph.pyx":138
+ *         printf("\n")
  *     for i in range(nnodes):
  *         for j in range(nnodes):             # <<<<<<<<<<<<<<
  *             printf("%f ", weightsMat[i][j])
@@ -3003,37 +3179,28 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "sparsegraph.pyx":112
+      /* "sparsegraph.pyx":139
  *     for i in range(nnodes):
  *         for j in range(nnodes):
  *             printf("%f ", weightsMat[i][j])             # <<<<<<<<<<<<<<
  *         printf("\n")
- *         fflush(stdout)
+ *     # make sparse graph
  */
       (void)(printf(((char const *)"%f "), ((__pyx_v_weightsMat[__pyx_v_i])[__pyx_v_j])));
     }
 
-    /* "sparsegraph.pyx":113
+    /* "sparsegraph.pyx":140
  *         for j in range(nnodes):
  *             printf("%f ", weightsMat[i][j])
  *         printf("\n")             # <<<<<<<<<<<<<<
- *         fflush(stdout)
- *     # make sparse graph
- */
-    (void)(printf(((char const *)"\n")));
-
-    /* "sparsegraph.pyx":114
- *             printf("%f ", weightsMat[i][j])
- *         printf("\n")
- *         fflush(stdout)             # <<<<<<<<<<<<<<
  *     # make sparse graph
  *     sg = newSparseGraph(nnodes, adjMat, weightsMat)
  */
-    (void)(fflush(stdout));
+    (void)(printf(((char const *)"\n")));
   }
 
-  /* "sparsegraph.pyx":116
- *         fflush(stdout)
+  /* "sparsegraph.pyx":142
+ *         printf("\n")
  *     # make sparse graph
  *     sg = newSparseGraph(nnodes, adjMat, weightsMat)             # <<<<<<<<<<<<<<
  *     # print graph
@@ -3041,7 +3208,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   __pyx_v_sg = __pyx_f_11sparsegraph_newSparseGraph(__pyx_v_nnodes, __pyx_v_adjMat, __pyx_v_weightsMat);
 
-  /* "sparsegraph.pyx":118
+  /* "sparsegraph.pyx":144
  *     sg = newSparseGraph(nnodes, adjMat, weightsMat)
  *     # print graph
  *     printf("node neighbours:\n")             # <<<<<<<<<<<<<<
@@ -3050,7 +3217,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   (void)(printf(((char const *)"node neighbours:\n")));
 
-  /* "sparsegraph.pyx":119
+  /* "sparsegraph.pyx":145
  *     # print graph
  *     printf("node neighbours:\n")
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -3062,7 +3229,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":120
+    /* "sparsegraph.pyx":146
  *     printf("node neighbours:\n")
  *     for i in range(nnodes):
  *         printf("node %d:", i)             # <<<<<<<<<<<<<<
@@ -3071,7 +3238,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
     (void)(printf(((char const *)"node %d:"), __pyx_v_i));
 
-    /* "sparsegraph.pyx":121
+    /* "sparsegraph.pyx":147
  *     for i in range(nnodes):
  *         printf("node %d:", i)
  *         for k in range(sg.node[i].deg):             # <<<<<<<<<<<<<<
@@ -3083,7 +3250,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_k = __pyx_t_6;
 
-      /* "sparsegraph.pyx":122
+      /* "sparsegraph.pyx":148
  *         printf("node %d:", i)
  *         for k in range(sg.node[i].deg):
  *             printf("\t%d", sg.node[i].neighb[k])             # <<<<<<<<<<<<<<
@@ -3093,7 +3260,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
       (void)(printf(((char const *)"\t%d"), ((__pyx_v_sg->node[__pyx_v_i]).neighb[__pyx_v_k])));
     }
 
-    /* "sparsegraph.pyx":123
+    /* "sparsegraph.pyx":149
  *         for k in range(sg.node[i].deg):
  *             printf("\t%d", sg.node[i].neighb[k])
  *         printf("\n")             # <<<<<<<<<<<<<<
@@ -3103,7 +3270,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     (void)(printf(((char const *)"\n")));
   }
 
-  /* "sparsegraph.pyx":124
+  /* "sparsegraph.pyx":150
  *             printf("\t%d", sg.node[i].neighb[k])
  *         printf("\n")
  *     printf("node weights:\n");             # <<<<<<<<<<<<<<
@@ -3112,7 +3279,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   (void)(printf(((char const *)"node weights:\n")));
 
-  /* "sparsegraph.pyx":125
+  /* "sparsegraph.pyx":151
  *         printf("\n")
  *     printf("node weights:\n");
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -3124,7 +3291,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":126
+    /* "sparsegraph.pyx":152
  *     printf("node weights:\n");
  *     for i in range(nnodes):
  *         printf("node %d:", i)             # <<<<<<<<<<<<<<
@@ -3133,7 +3300,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
     (void)(printf(((char const *)"node %d:"), __pyx_v_i));
 
-    /* "sparsegraph.pyx":127
+    /* "sparsegraph.pyx":153
  *     for i in range(nnodes):
  *         printf("node %d:", i)
  *         for k in range(sg.node[i].deg):             # <<<<<<<<<<<<<<
@@ -3145,7 +3312,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_k = __pyx_t_6;
 
-      /* "sparsegraph.pyx":128
+      /* "sparsegraph.pyx":154
  *         printf("node %d:", i)
  *         for k in range(sg.node[i].deg):
  *             printf("\t%f", sg.node[i].weight[k])             # <<<<<<<<<<<<<<
@@ -3155,7 +3322,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
       (void)(printf(((char const *)"\t%f"), ((__pyx_v_sg->node[__pyx_v_i]).weight[__pyx_v_k])));
     }
 
-    /* "sparsegraph.pyx":129
+    /* "sparsegraph.pyx":155
  *         for k in range(sg.node[i].deg):
  *             printf("\t%f", sg.node[i].weight[k])
  *         printf("\n")             # <<<<<<<<<<<<<<
@@ -3165,25 +3332,25 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     (void)(printf(((char const *)"\n")));
   }
 
-  /* "sparsegraph.pyx":132
+  /* "sparsegraph.pyx":158
  *     # test AliasSampler
  *     cdef:
  *         int nsam = 1000000             # <<<<<<<<<<<<<<
- *         int inode = 0
+ *         int inode = 9
  *         int * counts
  */
   __pyx_v_nsam = 0xF4240;
 
-  /* "sparsegraph.pyx":133
+  /* "sparsegraph.pyx":159
  *     cdef:
  *         int nsam = 1000000
- *         int inode = 0             # <<<<<<<<<<<<<<
+ *         int inode = 9             # <<<<<<<<<<<<<<
  *         int * counts
  *     # malloc
  */
-  __pyx_v_inode = 0;
+  __pyx_v_inode = 9;
 
-  /* "sparsegraph.pyx":136
+  /* "sparsegraph.pyx":162
  *         int * counts
  *     # malloc
  *     counts = <int *> PyMem_Malloc(nsam * sizeof(int))             # <<<<<<<<<<<<<<
@@ -3192,7 +3359,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
  */
   __pyx_v_counts = ((int *)PyMem_Malloc((__pyx_v_nsam * (sizeof(int)))));
 
-  /* "sparsegraph.pyx":138
+  /* "sparsegraph.pyx":164
  *     counts = <int *> PyMem_Malloc(nsam * sizeof(int))
  *     # run tests
  *     for k in range(sg.node[inode].deg):             # <<<<<<<<<<<<<<
@@ -3204,7 +3371,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "sparsegraph.pyx":139
+    /* "sparsegraph.pyx":165
  *     # run tests
  *     for k in range(sg.node[inode].deg):
  *         counts[k] = 0             # <<<<<<<<<<<<<<
@@ -3214,7 +3381,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     (__pyx_v_counts[__pyx_v_k]) = 0;
   }
 
-  /* "sparsegraph.pyx":140
+  /* "sparsegraph.pyx":166
  *     for k in range(sg.node[inode].deg):
  *         counts[k] = 0
  *     for i in range(nsam):             # <<<<<<<<<<<<<<
@@ -3226,7 +3393,7 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "sparsegraph.pyx":141
+    /* "sparsegraph.pyx":167
  *         counts[k] = 0
  *     for i in range(nsam):
  *         counts[generateOne(sg.node[inode].deg, sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)] += 1             # <<<<<<<<<<<<<<
@@ -3237,33 +3404,160 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
     (__pyx_v_counts[__pyx_t_4]) = ((__pyx_v_counts[__pyx_t_4]) + 1);
   }
 
-  /* "sparsegraph.pyx":142
+  /* "sparsegraph.pyx":168
  *     for i in range(nsam):
  *         counts[generateOne(sg.node[inode].deg, sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)] += 1
  *     for k in range(sg.node[inode].deg):             # <<<<<<<<<<<<<<
  *         printf("%f\n", <double> counts[k]/nsam)
- * 
+ *     # test dot prod
  */
   __pyx_t_1 = (__pyx_v_sg->node[__pyx_v_inode]).deg;
   __pyx_t_2 = __pyx_t_1;
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_k = __pyx_t_3;
 
-    /* "sparsegraph.pyx":143
+    /* "sparsegraph.pyx":169
  *         counts[generateOne(sg.node[inode].deg, sg.node[inode].aliassampler.probTable, sg.node[inode].aliassampler.aliasTable)] += 1
  *     for k in range(sg.node[inode].deg):
  *         printf("%f\n", <double> counts[k]/nsam)             # <<<<<<<<<<<<<<
- * 
- * def test_sparsegraph():
+ *     # test dot prod
+ *     cdef double * outVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
  */
     if (unlikely(__pyx_v_nsam == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(1, 143, __pyx_L1_error)
+      __PYX_ERR(1, 169, __pyx_L1_error)
     }
     (void)(printf(((char const *)"%f\n"), (((double)(__pyx_v_counts[__pyx_v_k])) / __pyx_v_nsam)));
   }
 
-  /* "sparsegraph.pyx":92
+  /* "sparsegraph.pyx":171
+ *         printf("%f\n", <double> counts[k]/nsam)
+ *     # test dot prod
+ *     cdef double * outVec = <double *> PyMem_Malloc(nnodes * sizeof(double))             # <<<<<<<<<<<<<<
+ *     cdef double * inVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+ *     for i in range(nnodes):
+ */
+  __pyx_v_outVec = ((double *)PyMem_Malloc((__pyx_v_nnodes * (sizeof(double)))));
+
+  /* "sparsegraph.pyx":172
+ *     # test dot prod
+ *     cdef double * outVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+ *     cdef double * inVec = <double *> PyMem_Malloc(nnodes * sizeof(double))             # <<<<<<<<<<<<<<
+ *     for i in range(nnodes):
+ *         inVec[i] = <double> i
+ */
+  __pyx_v_inVec = ((double *)PyMem_Malloc((__pyx_v_nnodes * (sizeof(double)))));
+
+  /* "sparsegraph.pyx":173
+ *     cdef double * outVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+ *     cdef double * inVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+ *     for i in range(nnodes):             # <<<<<<<<<<<<<<
+ *         inVec[i] = <double> i
+ *     sparseDotProd(sg, inVec, outVec)
+ */
+  __pyx_t_1 = __pyx_v_nnodes;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "sparsegraph.pyx":174
+ *     cdef double * inVec = <double *> PyMem_Malloc(nnodes * sizeof(double))
+ *     for i in range(nnodes):
+ *         inVec[i] = <double> i             # <<<<<<<<<<<<<<
+ *     sparseDotProd(sg, inVec, outVec)
+ *     for i in range(nnodes):
+ */
+    (__pyx_v_inVec[__pyx_v_i]) = ((double)__pyx_v_i);
+  }
+
+  /* "sparsegraph.pyx":175
+ *     for i in range(nnodes):
+ *         inVec[i] = <double> i
+ *     sparseDotProd(sg, inVec, outVec)             # <<<<<<<<<<<<<<
+ *     for i in range(nnodes):
+ *         printf("%f\t", outVec[i])
+ */
+  __pyx_f_11sparsegraph_sparseDotProd(__pyx_v_sg, __pyx_v_inVec, __pyx_v_outVec);
+
+  /* "sparsegraph.pyx":176
+ *         inVec[i] = <double> i
+ *     sparseDotProd(sg, inVec, outVec)
+ *     for i in range(nnodes):             # <<<<<<<<<<<<<<
+ *         printf("%f\t", outVec[i])
+ *     printf("\n")
+ */
+  __pyx_t_1 = __pyx_v_nnodes;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "sparsegraph.pyx":177
+ *     sparseDotProd(sg, inVec, outVec)
+ *     for i in range(nnodes):
+ *         printf("%f\t", outVec[i])             # <<<<<<<<<<<<<<
+ *     printf("\n")
+ * 
+ */
+    (void)(printf(((char const *)"%f\t"), (__pyx_v_outVec[__pyx_v_i])));
+  }
+
+  /* "sparsegraph.pyx":178
+ *     for i in range(nnodes):
+ *         printf("%f\t", outVec[i])
+ *     printf("\n")             # <<<<<<<<<<<<<<
+ * 
+ *     # test neighbour sampling
+ */
+  (void)(printf(((char const *)"\n")));
+
+  /* "sparsegraph.pyx":181
+ * 
+ *     # test neighbour sampling
+ *     printf("test neighbour sampling\n")             # <<<<<<<<<<<<<<
+ *     printf("some neighbours:\t\n")
+ *     for i in range(50):
+ */
+  (void)(printf(((char const *)"test neighbour sampling\n")));
+
+  /* "sparsegraph.pyx":182
+ *     # test neighbour sampling
+ *     printf("test neighbour sampling\n")
+ *     printf("some neighbours:\t\n")             # <<<<<<<<<<<<<<
+ *     for i in range(50):
+ *         printf("%d\n", sampleNodeNeighbour(inode, sg))
+ */
+  (void)(printf(((char const *)"some neighbours:\t\n")));
+
+  /* "sparsegraph.pyx":183
+ *     printf("test neighbour sampling\n")
+ *     printf("some neighbours:\t\n")
+ *     for i in range(50):             # <<<<<<<<<<<<<<
+ *         printf("%d\n", sampleNodeNeighbour(inode, sg))
+ *     printf("\n")
+ */
+  for (__pyx_t_1 = 0; __pyx_t_1 < 50; __pyx_t_1+=1) {
+    __pyx_v_i = __pyx_t_1;
+
+    /* "sparsegraph.pyx":184
+ *     printf("some neighbours:\t\n")
+ *     for i in range(50):
+ *         printf("%d\n", sampleNodeNeighbour(inode, sg))             # <<<<<<<<<<<<<<
+ *     printf("\n")
+ * 
+ */
+    (void)(printf(((char const *)"%d\n"), __pyx_f_11sparsegraph_sampleNodeNeighbour(__pyx_v_inode, __pyx_v_sg)));
+  }
+
+  /* "sparsegraph.pyx":185
+ *     for i in range(50):
+ *         printf("%d\n", sampleNodeNeighbour(inode, sg))
+ *     printf("\n")             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  (void)(printf(((char const *)"\n")));
+
+  /* "sparsegraph.pyx":120
  *     return weightsMat
  * 
  * cdef void c_test_sparsegraph():             # <<<<<<<<<<<<<<
@@ -3279,8 +3573,8 @@ static void __pyx_f_11sparsegraph_c_test_sparsegraph(void) {
   __Pyx_RefNannyFinishContext();
 }
 
-/* "sparsegraph.pyx":145
- *         printf("%f\n", <double> counts[k]/nsam)
+/* "sparsegraph.pyx":189
+ * 
  * 
  * def test_sparsegraph():             # <<<<<<<<<<<<<<
  *     c_test_sparsegraph()
@@ -3305,15 +3599,15 @@ static PyObject *__pyx_pf_11sparsegraph_test_sparsegraph(CYTHON_UNUSED PyObject 
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("test_sparsegraph", 0);
 
-  /* "sparsegraph.pyx":146
+  /* "sparsegraph.pyx":190
  * 
  * def test_sparsegraph():
  *     c_test_sparsegraph()             # <<<<<<<<<<<<<<
  */
   __pyx_f_11sparsegraph_c_test_sparsegraph();
 
-  /* "sparsegraph.pyx":145
- *         printf("%f\n", <double> counts[k]/nsam)
+  /* "sparsegraph.pyx":189
+ * 
  * 
  * def test_sparsegraph():             # <<<<<<<<<<<<<<
  *     c_test_sparsegraph()
@@ -3383,13 +3677,13 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "sparsegraph.pyx":145
- *         printf("%f\n", <double> counts[k]/nsam)
+  /* "sparsegraph.pyx":189
+ * 
  * 
  * def test_sparsegraph():             # <<<<<<<<<<<<<<
  *     c_test_sparsegraph()
  */
-  __pyx_codeobj_ = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_sparsegraph_pyx, __pyx_n_s_test_sparsegraph, 145, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj_)) __PYX_ERR(1, 145, __pyx_L1_error)
+  __pyx_codeobj_ = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_sparsegraph_pyx, __pyx_n_s_test_sparsegraph, 189, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj_)) __PYX_ERR(1, 189, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3641,15 +3935,15 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   #endif
 
-  /* "sparsegraph.pyx":145
- *         printf("%f\n", <double> counts[k]/nsam)
+  /* "sparsegraph.pyx":189
+ * 
  * 
  * def test_sparsegraph():             # <<<<<<<<<<<<<<
  *     c_test_sparsegraph()
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_11sparsegraph_1test_sparsegraph, NULL, __pyx_n_s_sparsegraph); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 145, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_11sparsegraph_1test_sparsegraph, NULL, __pyx_n_s_sparsegraph); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_sparsegraph, __pyx_t_1) < 0) __PYX_ERR(1, 145, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_sparsegraph, __pyx_t_1) < 0) __PYX_ERR(1, 189, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "sparsegraph.pyx":1
