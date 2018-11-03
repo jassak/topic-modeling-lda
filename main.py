@@ -5,12 +5,12 @@
 """
 @author: jason
 """
+import numpy as np
+import random
 
 def gen_erdosrenyi_graph(nnodes, avdeg):
     adj_mat = np.zeros((nnodes, nnodes), int)
     for i in range(nnodes):
-        if not i % 100:
-            logger.debug('erdos renyi, node:{0}'.format(i))
         for j in range(i + 1, nnodes):
             if random.random() < avdeg / (nnodes - 1):
                 adj_mat[i][j] = 1
@@ -21,15 +21,11 @@ def make_rand_sim_matrix(num_terms, avdeg):
     adj_mat = gen_erdosrenyi_graph(num_terms, avdeg)
     sim_mat = np.zeros((num_terms, num_terms), np.float32)
     for i in range(num_terms):
-        if not i % 100:
-            logger.debug('rand graph, node:{0}'.format(i))
         for j in range(i + 1, num_terms):
             if adj_mat[i][j] == 1:
                 sim_mat[i][j] = random.random()
                 sim_mat[j][i] = sim_mat[i][j]
     for i in range(num_terms):
-        if not i % 100:
-            logger.debug('rand graph normalization, node:{0}'.format(i))
         if sum(sim_mat[i]) > 0:
             sim_mat[i] = sim_mat[i] / sum(sim_mat[i])
     return sim_mat
