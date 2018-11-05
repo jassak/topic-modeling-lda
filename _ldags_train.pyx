@@ -63,7 +63,7 @@ def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam)
     num_docs = len(term_seqs)
 
     # init doc_len
-    doc_len = <int *>PyMem_Malloc(num_docs * sizeof(int))
+    doc_len = <int *>malloc(num_docs * sizeof(int))
     for i in range(num_docs):
         doc_len[i] = len(term_seqs[i])
 
@@ -137,101 +137,102 @@ cdef void _train(CorpusData * cdata, Priors * priors, int num_passes, SparseGrap
     doc_len = cdata.doc_len
 
     # malloc
-    stale_samples = <Stack **> PyMem_Malloc(num_terms * sizeof(Stack *))
+    stale_samples = <Stack **> malloc(num_terms * sizeof(Stack *))
     for w in range(num_terms):
         stale_samples[w] = newStack()
-    qq = <double **> PyMem_Malloc(num_terms * sizeof(double *))
+    qq = <double **> malloc(num_terms * sizeof(double *))
     for w in range(num_terms):
-        qq[w] = <double *> PyMem_Malloc(num_topics * sizeof(double))
-    qq_norm = <double *> PyMem_Malloc(num_terms * sizeof(double))
-    qqS_norm = <double *> PyMem_Malloc(num_terms * sizeof(double))
+        qq[w] = <double *> malloc(num_topics * sizeof(double))
+    qq_norm = <double *> malloc(num_terms * sizeof(double))
+    qqS_norm = <double *> malloc(num_terms * sizeof(double))
 
     # init stale samples
     init_stale_samples(cdata, priors, stale_samples, qq, qq_norm, qqS_norm, sim_graph)
     # compute qqS_norm = sim_graph . qq_norm
     sparseDotProd(sim_graph, qq_norm, qqS_norm)
 
-    # start monte calro
-    for p in range(num_passes):
-        printf("pass: %d\n", p)
-        for d in range(num_docs):
-            for s in range(doc_len[d]):
-                # get current term and topic
-                cur_w = cdata.cTermSeqs[d][s]
-                old_t = cdata.cTopicSeqs[d][s]
+    with nogil:
+        # start monte calro
+        for p in range(num_passes):
+            printf("pass: %d\n", p)
+            for d in range(num_docs):
+                for s in range(doc_len[d]):
+                    # get current term and topic
+                    cur_w = cdata.cTermSeqs[d][s]
+                    old_t = cdata.cTopicSeqs[d][s]
 
-                # check if stale samples for term_id are exhausted, generate and recompute qqS_norm[cur_w]
-                # TODO Probably needs deletion if sample is popped only in bucket_sampling
-                if isEmpty(stale_samples[cur_w]):
-                    generate_stale_samples(num_topics + sim_graph.node[cur_w].deg - 1, cur_w, cdata, priors, stale_samples,\
-                                        qq, qq_norm, qqS_norm, sim_graph)
-                    qqS_norm[cur_w] = sparseRowDotProd(cur_w, sim_graph, qq_norm)
-
-                # remove current term from counts
-                decrementCounter(old_t, cdata.cDocTopicCounts[d])
-                cdata.cTermTopicCounts[cur_w][old_t] -= 1
-                cdata.cTermsPerTopic[old_t] -= 1
-
-                # compute sparse component pdw^S and pdw_norm^S
-                ppdwS = compute_sparse_comp(d, cur_w, cdata, priors, sim_graph, 5)
-
-                # draw from proposal distribution q(t, w, d)^S with bucket sampling
-                # if new_t returns non-negative ppdwS was used
-                # if new_t returns -1 qq (stale_samples) has to be used and stale_samples regenerated if needed
-                new_t = bucket_sampling(cur_w, ppdwS, stale_samples, qqS_norm[cur_w], sim_graph)
-                if new_t == -1:
-                    neighb_w = sampleNodeNeighbour(cur_w, sim_graph)
-                    if isEmpty(stale_samples[neighb_w]):
-                        generate_stale_samples(num_topics + sim_graph.node[neighb_w].deg - 1, neighb_w, cdata,\
-                                                priors, stale_samples, qq, qq_norm, qqS_norm, sim_graph)
+                    # check if stale samples for term_id are exhausted, generate and recompute qqS_norm[cur_w]
+                    # TODO Probably needs deletion if sample is popped only in bucket_sampling
+                    if isEmpty(stale_samples[cur_w]):
+                        generate_stale_samples(num_topics + sim_graph.node[cur_w].deg - 1, cur_w, cdata, priors, stale_samples,\
+                                            qq, qq_norm, qqS_norm, sim_graph)
                         qqS_norm[cur_w] = sparseRowDotProd(cur_w, sim_graph, qq_norm)
-                    new_t = pop(stale_samples[neighb_w])
 
-                # draw a neighbour of cur_w as a shortcut to approximate qqS which will be used in next step (see paper 3.3.1)
-                neighb_w = sampleNodeNeighbour(cur_w, sim_graph)
+                    # remove current term from counts
+                    decrementCounter(old_t, cdata.cDocTopicCounts[d])
+                    cdata.cTermTopicCounts[cur_w][old_t] -= 1
+                    cdata.cTermsPerTopic[old_t] -= 1
 
-                # accept new_topic with prob_ratio (M-H step)
-                old_dtc = getCount(old_t, cdata.cDocTopicCounts[d])
-                new_dtc = getCount(new_t, cdata.cDocTopicCounts[d])
-                # prob numerator (the last term comes from qqS[cur_w] \approx qq[neighb_w])
-                prob_num = (new_dtc + priors.alpha[new_t]) \
-                            * (cdata.cTermTopicCounts[cur_w][new_t] + priors.beta[cur_w]) \
-                            * (cdata.cTermsPerTopic[old_t] + priors.w_beta) \
-                            * ((ppdwS.norm * getSVVal(old_t, ppdwS)) + (qq_norm[cur_w] * qq[neighb_w][old_t]))
-                # prob denominator (the last term comes from qqS[cur_w] \approx qq[neighb_w])
-                prob_den = (old_dtc + priors.alpha[old_t]) \
-                            * (cdata.cTermTopicCounts[cur_w][old_t] + priors.beta[cur_w]) \
-                            * (cdata.cTermsPerTopic[new_t] + priors.w_beta) \
-                            * ((ppdwS.norm * getSVVal(new_t, ppdwS)) + (qq_norm[cur_w] * qq[neighb_w][new_t]))
-                # prob ratio
-                prob_ratio = prob_num / prob_den
-                if prob_ratio >= 1.0:
-                    accept = 1
-                else:
-                    accept = randUniform() < prob_ratio
+                    # compute sparse component pdw^S and pdw_norm^S
+                    ppdwS = compute_sparse_comp(d, cur_w, cdata, priors, sim_graph, 5)
 
-                # if move is accepted put new topic into seqs and counts
-                if accept:
-                    cdata.cTopicSeqs[d][s] = new_t
-                    incrementCounter(new_t, cdata.cDocTopicCounts[d])
-                    cdata.cTermTopicCounts[cur_w][new_t] += 1
-                    cdata.cTermsPerTopic[new_t] += 1
-                # else put back old topic
-                else:
-                    cdata.cTopicSeqs[d][s] = old_t
-                    incrementCounter(old_t, cdata.cDocTopicCounts[d])
-                    cdata.cTermTopicCounts[cur_w][old_t] += 1
-                    cdata.cTermsPerTopic[old_t] += 1
+                    # draw from proposal distribution q(t, w, d)^S with bucket sampling
+                    # if new_t returns non-negative ppdwS was used
+                    # if new_t returns -1 qq (stale_samples) has to be used and stale_samples regenerated if needed
+                    new_t = bucket_sampling(cur_w, ppdwS, stale_samples, qqS_norm[cur_w], sim_graph)
+                    if new_t == -1:
+                        neighb_w = sampleNodeNeighbour(cur_w, sim_graph)
+                        if isEmpty(stale_samples[neighb_w]):
+                            generate_stale_samples(num_topics + sim_graph.node[neighb_w].deg - 1, neighb_w, cdata,\
+                                                    priors, stale_samples, qq, qq_norm, qqS_norm, sim_graph)
+                            qqS_norm[cur_w] = sparseRowDotProd(cur_w, sim_graph, qq_norm)
+                        new_t = pop(stale_samples[neighb_w])
 
-                # dealloc
-                freeSparseVector(ppdwS)
+                    # draw a neighbour of cur_w as a shortcut to approximate qqS which will be used in next step (see paper 3.3.1)
+                    neighb_w = sampleNodeNeighbour(cur_w, sim_graph)
+
+                    # accept new_topic with prob_ratio (M-H step)
+                    old_dtc = getCount(old_t, cdata.cDocTopicCounts[d])
+                    new_dtc = getCount(new_t, cdata.cDocTopicCounts[d])
+                    # prob numerator (the last term comes from qqS[cur_w] \approx qq[neighb_w])
+                    prob_num = (new_dtc + priors.alpha[new_t]) \
+                                * (cdata.cTermTopicCounts[cur_w][new_t] + priors.beta[cur_w]) \
+                                * (cdata.cTermsPerTopic[old_t] + priors.w_beta) \
+                                * ((ppdwS.norm * getSVVal(old_t, ppdwS)) + (qq_norm[cur_w] * qq[neighb_w][old_t]))
+                    # prob denominator (the last term comes from qqS[cur_w] \approx qq[neighb_w])
+                    prob_den = (old_dtc + priors.alpha[old_t]) \
+                                * (cdata.cTermTopicCounts[cur_w][old_t] + priors.beta[cur_w]) \
+                                * (cdata.cTermsPerTopic[new_t] + priors.w_beta) \
+                                * ((ppdwS.norm * getSVVal(new_t, ppdwS)) + (qq_norm[cur_w] * qq[neighb_w][new_t]))
+                    # prob ratio
+                    prob_ratio = prob_num / prob_den
+                    if prob_ratio >= 1.0:
+                        accept = 1
+                    else:
+                        accept = randUniform() < prob_ratio
+
+                    # if move is accepted put new topic into seqs and counts
+                    if accept:
+                        cdata.cTopicSeqs[d][s] = new_t
+                        incrementCounter(new_t, cdata.cDocTopicCounts[d])
+                        cdata.cTermTopicCounts[cur_w][new_t] += 1
+                        cdata.cTermsPerTopic[new_t] += 1
+                    # else put back old topic
+                    else:
+                        cdata.cTopicSeqs[d][s] = old_t
+                        incrementCounter(old_t, cdata.cDocTopicCounts[d])
+                        cdata.cTermTopicCounts[cur_w][old_t] += 1
+                        cdata.cTermsPerTopic[old_t] += 1
+
+                    # dealloc
+                    freeSparseVector(ppdwS)
 
     # TODO dealloc everything
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef void init_stale_samples(CorpusData * cdata, Priors * priors, Stack ** stale_samples, \
-                            double ** qq, double * qq_norm, double * qqS_norm, SparseGraph * sim_graph):
+                            double ** qq, double * qq_norm, double * qqS_norm, SparseGraph * sim_graph) nogil:
     cdef int w
     for w in range(cdata.num_terms):
         generate_stale_samples(cdata.num_topics + sim_graph.node[w].deg - 1, w, cdata, priors, stale_samples,\
@@ -241,7 +242,7 @@ cdef void init_stale_samples(CorpusData * cdata, Priors * priors, Stack ** stale
 @cython.wraparound(False)
 @cython.cdivision(True)
 cdef void generate_stale_samples(int num_sam, int cur_w, CorpusData * cdata, Priors * priors, Stack ** stale_samples,\
-                            double ** qq, double * qq_norm, double * qqS_norm, SparseGraph * sim_graph):
+                            double ** qq, double * qq_norm, double * qqS_norm, SparseGraph * sim_graph) nogil:
     cdef:
         int t
     # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
@@ -259,7 +260,7 @@ cdef void generate_stale_samples(int num_sam, int cur_w, CorpusData * cdata, Pri
 @cython.wraparound(False)
 @cython.cdivision(True)
 cdef SparseVector * compute_sparse_comp(int d, int cur_w, CorpusData * cdata, Priors * priors, \
-                                        SparseGraph * sim_graph, int num_neighbs):
+                                        SparseGraph * sim_graph, int num_neighbs) nogil:
     cdef:
         int k
         int n, neighb_w
@@ -284,13 +285,13 @@ cdef SparseVector * compute_sparse_comp(int d, int cur_w, CorpusData * cdata, Pr
         val *= sum / num_neighbs
         setSVVal(nztopic, val, ppdwS)
     normalizeSV(ppdwS)
-    PyMem_Free(nzlist)
+    free(nzlist)
     return ppdwS
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef int bucket_sampling(int cur_w, SparseVector * ppdwS, Stack ** stale_samples, double qqS_normw, SparseGraph * sim_graph):
+cdef int bucket_sampling(int cur_w, SparseVector * ppdwS, Stack ** stale_samples, double qqS_normw, SparseGraph * sim_graph) nogil:
     cdef:
         int new_t_id, new_t
         int * nzkeys
@@ -300,8 +301,8 @@ cdef int bucket_sampling(int cur_w, SparseVector * ppdwS, Stack ** stale_samples
         nzvals = getSVnzValList(nzkeys, ppdwS)
         new_t_id = rand_choice(ppdwS.nnz, nzvals)
         new_t = nzkeys[new_t_id]
-        PyMem_Free(nzkeys)
-        PyMem_Free(nzvals)
+        free(nzkeys)
+        free(nzvals)
         return new_t
     else:
         return -1

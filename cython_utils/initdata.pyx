@@ -56,11 +56,11 @@ def init_seqs_and_counts(num_topics, num_terms, corpus):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef CorpusData * _initCData(int num_topics, int num_terms, int num_docs, int ** cTermSeqs, int ** cTopicSeqs,
-    int ** cTermTopicCounts, int *cTermsPerTopic, int * doc_len):
+    int ** cTermTopicCounts, int *cTermsPerTopic, int * doc_len) nogil:
     cdef int d
     cdef CorpusData * cdata
     # cdata malloc
-    cdata = <CorpusData *> PyMem_Malloc(sizeof(CorpusData))
+    cdata = <CorpusData *> malloc(sizeof(CorpusData))
     # pack existing vars in CData struct
     cdata.num_topics = num_topics
     cdata.num_terms = num_terms
@@ -76,11 +76,11 @@ cdef CorpusData * _initCData(int num_topics, int num_terms, int num_docs, int **
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef Counter ** _init_docTopicCounts(int num_docs, int num_terms, int **cTopicSeqs, int * doc_len):
+cdef Counter ** _init_docTopicCounts(int num_docs, int num_terms, int **cTopicSeqs, int * doc_len) nogil:
     cdef:
         int d
         Counter ** cDocTopicCounts
-    cDocTopicCounts = <Counter **> PyMem_Malloc(num_docs * sizeof(Counter *))
+    cDocTopicCounts = <Counter **> malloc(num_docs * sizeof(Counter *))
     for d in range(num_docs):
         cDocTopicCounts[d] = newCounter(num_terms)
         countSequence(doc_len[d], num_terms, cTopicSeqs[d], cDocTopicCounts[d])
@@ -94,10 +94,10 @@ cdef int ** _cythonize_2dlist(list lists):
     cdef int i, j
     cdef int ** cLists
     # malloc
-    cLists = <int **>PyMem_Malloc(num_lists * sizeof(int *))
+    cLists = <int **>malloc(num_lists * sizeof(int *))
     for i in range(num_lists):
         list_len = len(lists[i])
-        cLists[i] = <int *>PyMem_Malloc(list_len * sizeof(int))
+        cLists[i] = <int *>malloc(list_len * sizeof(int))
         # list to C pointer
         for j in range(list_len):
             cLists[i][j] = <int>lists[i][j]
@@ -110,7 +110,7 @@ cdef int * _cythonize_1dlist(list alist):
     cdef int i
     cdef int * cList
     # malloc
-    cList = <int *>PyMem_Malloc(list_len * sizeof(int))
+    cList = <int *>malloc(list_len * sizeof(int))
     # list to C pointer
     for i in range(list_len):
         cList[i] = <int>alist[i]
@@ -119,16 +119,16 @@ cdef int * _cythonize_1dlist(list alist):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef Priors * _init_priors(int num_topics, int num_terms):
+cdef Priors * _init_priors(int num_topics, int num_terms) nogil:
     cdef int i
     cdef double * alpha
     cdef double * beta
     cdef double w_beta
     cdef Priors * priors
     # malloc
-    priors = <Priors *> PyMem_Malloc(sizeof(Priors))
-    alpha = <double *> PyMem_Malloc(num_topics * sizeof(double))
-    beta = <double *> PyMem_Malloc(num_terms * sizeof(double))
+    priors = <Priors *> malloc(sizeof(Priors))
+    alpha = <double *> malloc(num_topics * sizeof(double))
+    beta = <double *> malloc(num_terms * sizeof(double))
     # compute priors
     for i in range(num_topics):
         alpha[i] = 1.0 / num_topics
@@ -152,12 +152,12 @@ cdef SparseGraph * _init_similarity_graph(int num_terms, double lam, list simila
         double ** SMat
         SparseGraph * sg
     # malloc
-    adjMat = <int **> PyMem_Malloc(num_terms * sizeof(int *))
+    adjMat = <int **> malloc(num_terms * sizeof(int *))
     for i in range(num_terms):
-        adjMat[i] = <int *> PyMem_Malloc(num_terms * sizeof(int))
-    SMat = <double **> PyMem_Malloc(num_terms * sizeof(double *))
+        adjMat[i] = <int *> malloc(num_terms * sizeof(int))
+    SMat = <double **> malloc(num_terms * sizeof(double *))
     for i in range(num_terms):
-        SMat[i] = <double *> PyMem_Malloc(num_terms * sizeof(double))
+        SMat[i] = <double *> malloc(num_terms * sizeof(double))
     # make sure similarity_matrix is stochastic
     for i in range(num_terms):
         sum_row = sum(similarity_matrix[i])

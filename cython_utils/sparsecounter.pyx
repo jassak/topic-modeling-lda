@@ -38,7 +38,7 @@ from libc.stdio cimport printf
 #         cdef int i
 #         cdef int nseq = len(seq)
 #         cdef int * cseq
-#         cseq = <int *> PyMem_Malloc(nseq * sizeof(int))
+#         cseq = <int *> malloc(nseq * sizeof(int))
 #         for i in range(nseq):
 #             cseq[i] = <int> seq[i]
 #         countSequence(<int> nseq, <int> self._c_counter.nElem, cseq, self._c_counter)
@@ -60,11 +60,11 @@ from libc.stdio cimport printf
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef Counter * newCounter(int nElem):
+cdef Counter * newCounter(int nElem) nogil:
     cdef int k
     cdef Counter * counter
-    counter = <Counter *> PyMem_Malloc(sizeof(Counter))
-    counter.entry = <CounterNode *> PyMem_Malloc(nElem * sizeof(CounterNode))
+    counter = <Counter *> malloc(sizeof(Counter))
+    counter.entry = <CounterNode *> malloc(nElem * sizeof(CounterNode))
     counter.nnz = 0
     counter.nElem = nElem
     counter.head = NULL
@@ -142,10 +142,10 @@ cdef void countSequence(int nseq, int nElem, int * seq, Counter * counter) nogil
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef int * getNZList(Counter * counter):
+cdef int * getNZList(Counter * counter) nogil:
     cdef int i, inz
     cdef int * nzlist
-    nzlist = <int *> PyMem_Malloc(counter.nnz * sizeof(int))
+    nzlist = <int *> malloc(counter.nnz * sizeof(int))
     inz = counter.head.label
     for i in range(counter.nnz):
         nzlist[i] = inz
@@ -153,6 +153,6 @@ cdef int * getNZList(Counter * counter):
             inz = counter.entry[inz].next.label
     return nzlist
 
-cdef void freeCounter(Counter * counter):
-   PyMem_Free(counter.entry)
-   PyMem_Free(counter)
+cdef void freeCounter(Counter * counter) nogil:
+   free(counter.entry)
+   free(counter)

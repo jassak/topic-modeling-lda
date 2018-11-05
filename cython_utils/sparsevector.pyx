@@ -14,14 +14,14 @@ from libc.stdlib cimport rand, RAND_MAX, srand, malloc, free
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef SparseVector * newSparseVector(int nElem):
+cdef SparseVector * newSparseVector(int nElem) nogil:
     cdef:
         int key
         SparseVector * sv
-    sv = <SparseVector *> PyMem_Malloc(sizeof(SparseVector))
+    sv = <SparseVector *> malloc(sizeof(SparseVector))
     sv.nElem = nElem
     sv.nnz = 0
-    sv.entry = <SVNode *> PyMem_Malloc(nElem * sizeof(SVNode))
+    sv.entry = <SVNode *> malloc(nElem * sizeof(SVNode))
     sv.head = NULL
     for key in range(nElem):
         initSVNode(key, &sv.entry[key])
@@ -48,7 +48,7 @@ cdef double getSVVal(int key, SparseVector * sv) nogil:
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void normalizeSV(SparseVector * sv):
+cdef void normalizeSV(SparseVector * sv) nogil:
     cdef:
         int k
         int keynz
@@ -62,11 +62,11 @@ cdef void normalizeSV(SparseVector * sv):
     for k in range(sv.nnz):
         keynz = nzkeys[k]
         sv.entry[keynz].val /= norm
-    PyMem_Free(nzkeys)
+    free(nzkeys)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef int * getSVnzKeyList(SparseVector * sv):
+cdef int * getSVnzKeyList(SparseVector * sv) nogil:
     cdef:
         int k
         int keynz
@@ -75,7 +75,7 @@ cdef int * getSVnzKeyList(SparseVector * sv):
         keynz = sv.head.key
     else:
         printf("getSVnzKeyList Error: sparse vector is empty!\n")
-    nzkeys = <int *> PyMem_Malloc(sv.nnz * sizeof(int))
+    nzkeys = <int *> malloc(sv.nnz * sizeof(int))
     for k in range(sv.nnz):
         nzkeys[k] = keynz
         if sv.entry[keynz].next != NULL:
@@ -84,20 +84,20 @@ cdef int * getSVnzKeyList(SparseVector * sv):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef double * getSVnzValList(int * nzkeys, SparseVector * sv):
+cdef double * getSVnzValList(int * nzkeys, SparseVector * sv) nogil:
     cdef:
         int k
         int keynz
         double * nzvals
-    nzvals = <double *> PyMem_Malloc(sv.nnz * sizeof(double))
+    nzvals = <double *> malloc(sv.nnz * sizeof(double))
     for k in range(sv.nnz):
         keynz = nzkeys[k]
         nzvals[k] = sv.entry[keynz].val
     return nzvals
 
-cdef void freeSparseVector(SparseVector * sv):
-    PyMem_Free(sv.entry)
-    PyMem_Free(sv)
+cdef void freeSparseVector(SparseVector * sv) nogil:
+    free(sv.entry)
+    free(sv)
 
 # def test_sparsevector():
 #     c_test_sparsevector()

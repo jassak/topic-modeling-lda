@@ -12,13 +12,13 @@ from cpython.mem cimport PyMem_Malloc, PyMem_Free
 from libc.limits cimport INT_MIN
 from libc.stdio cimport printf
 
-cdef Stack * newStack():
+cdef Stack * newStack() nogil:
     cdef Stack * stack
-    stack = <Stack *> PyMem_Malloc(sizeof(Stack *))
+    stack = <Stack *> malloc(sizeof(Stack *))
     stack.root = NULL
     return stack
 
-cdef StackNode * newStackNode(int data):
+cdef StackNode * newStackNode(int data) nogil:
     cdef StackNode * sn
     sn = <StackNode *> malloc(sizeof(StackNode *))
     sn.data = data
@@ -27,13 +27,13 @@ cdef StackNode * newStackNode(int data):
 cdef int isEmpty(Stack * stack) nogil:
     return not stack.root
 
-cdef void push(Stack * stack, int data):
+cdef void push(Stack * stack, int data) nogil:
     cdef StackNode * sn
     sn = newStackNode(data)
     sn.next = stack.root
     stack.root = sn
 
-cdef int pop(Stack * stack):
+cdef int pop(Stack * stack) nogil:
     cdef int data
     cdef StackNode * tmp
     if (isEmpty(stack)):
@@ -42,5 +42,5 @@ cdef int pop(Stack * stack):
     tmp = stack.root
     data = stack.root.data
     stack.root = stack.root.next
-    PyMem_Free(tmp)
+    free(tmp)
     return data

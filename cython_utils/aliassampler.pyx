@@ -19,14 +19,14 @@ from libc.stdio cimport printf
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void initializeAliasTables(int k, double * weights, double * probTable, int * aliasTable):
+cdef void initializeAliasTables(int k, double * weights, double * probTable, int * aliasTable) nogil:
     cdef:
         int i, s, l
         Stack * small
         Stack * large
         double * probScaled
     # malloc
-    probScaled = <double *> PyMem_Malloc(k * sizeof(double))
+    probScaled = <double *> malloc(k * sizeof(double))
     small = newStack()
     large = newStack()
     # rescale probabilities
@@ -57,9 +57,9 @@ cdef void initializeAliasTables(int k, double * weights, double * probTable, int
         l = pop(large)
         probTable[l] = 1.0
     # dealloc
-    PyMem_Free(probScaled)
-    PyMem_Free(small)
-    PyMem_Free(large)
+    free(probScaled)
+    free(small)
+    free(large)
 
 cdef int generateOne(int k, double * probTable, int * aliasTable) nogil:
     cdef:
@@ -77,7 +77,7 @@ cdef int generateOne(int k, double * probTable, int * aliasTable) nogil:
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef void generateMany(int n, int k, double * probTable, int * aliasTable, Stack * samples):
+cdef void generateMany(int n, int k, double * probTable, int * aliasTable, Stack * samples) nogil:
     cdef int i, s
     for i in range(n):
         s = generateOne(k, probTable, aliasTable)
@@ -86,21 +86,21 @@ cdef void generateMany(int n, int k, double * probTable, int * aliasTable, Stack
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void genSamplesAlias(int n, int k, double * weights, Stack * samples):
+cdef void genSamplesAlias(int n, int k, double * weights, Stack * samples) nogil:
     cdef:
         int i
         int * aliasTable
         double * probTable
     # malloc
-    aliasTable = <int *> PyMem_Malloc(k * sizeof(int))
-    probTable = <double *> PyMem_Malloc(k * sizeof(double))
+    aliasTable = <int *> malloc(k * sizeof(int))
+    probTable = <double *> malloc(k * sizeof(double))
     # init tables
     initializeAliasTables(k, weights, probTable, aliasTable)
     # gen samples
     generateMany(n, k, probTable, aliasTable, samples)
     # dealloc
-    PyMem_Free(aliasTable)
-    PyMem_Free(probTable)
+    free(aliasTable)
+    free(probTable)
 
 
 # ========================= Tests ===========================#
@@ -118,8 +118,8 @@ cdef void genSamplesAlias(int n, int k, double * weights, Stack * samples):
 #         StackNode * samples
 #         double * weights
 #     # malloc
-#     counts = <int *> PyMem_Malloc(k * sizeof(int))
-#     weights = <double *> PyMem_Malloc(k * sizeof(double))
+#     counts = <int *> malloc(k * sizeof(int))
+#     weights = <double *> malloc(k * sizeof(double))
 #     # init rand
 #     srand(time(NULL))
 #     # init variables
