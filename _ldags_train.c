@@ -1342,6 +1342,9 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
 
+/* GetModuleGlobalName.proto */
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
+
 /* GetItemInt.proto */
 #define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
     (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
@@ -1363,26 +1366,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize
 static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
 static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
                                                      int is_list, int wraparound, int boundscheck);
-
-/* ListAppend.proto */
-#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
-static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
-    PyListObject* L = (PyListObject*) list;
-    Py_ssize_t len = Py_SIZE(list);
-    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
-        Py_INCREF(x);
-        PyList_SET_ITEM(list, len, x);
-        Py_SIZE(list) = len+1;
-        return 0;
-    }
-    return PyList_Append(list, x);
-}
-#else
-#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
-#endif
-
-/* GetModuleGlobalName.proto */
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
 
 /* PyObjectCall.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1422,6 +1405,23 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 #else
 #define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
+#endif
+
+/* ListAppend.proto */
+#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
+static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
+        Py_INCREF(x);
+        PyList_SET_ITEM(list, len, x);
+        Py_SIZE(list) = len+1;
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
 #endif
 
 /* SetItemInt.proto */
@@ -1501,14 +1501,6 @@ static PyObject* __Pyx_PyFloat_SubtractObjC(PyObject *op1, PyObject *op2, double
 #else
 #define __Pyx_PyFloat_SubtractObjC(op1, op2, floatval, inplace)\
     (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
-#endif
-
-/* PyIntBinop.proto */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyInt_AddCObj(PyObject *op1, PyObject *op2, long intval, int inplace);
-#else
-#define __Pyx_PyInt_AddCObj(op1, op2, intval, inplace)\
-    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
 #endif
 
 /* RaiseException.proto */
@@ -1837,7 +1829,6 @@ int __pyx_module_is_main__ldags_train = 0;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_zip;
 static PyObject *__pyx_builtin_sum;
-static PyObject *__pyx_builtin_max;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_builtin_ImportError;
@@ -1851,12 +1842,10 @@ static const char __pyx_k_di[] = "di";
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_end[] = "end";
 static const char __pyx_k_lam[] = "lam";
-static const char __pyx_k_max[] = "max";
 static const char __pyx_k_phi[] = "phi";
 static const char __pyx_k_sum[] = "sum";
 static const char __pyx_k_zip[] = "zip";
 static const char __pyx_k_file[] = "file";
-static const char __pyx_k_keys[] = "keys";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_size[] = "size";
 static const char __pyx_k_term[] = "term";
@@ -1878,21 +1867,16 @@ static const char __pyx_k_random[] = "random";
 static const char __pyx_k_tolist[] = "tolist";
 static const char __pyx_k_doc_len[] = "doc_len";
 static const char __pyx_k_float64[] = "float64";
-static const char __pyx_k_id2word[] = "id2word";
 static const char __pyx_k_randint[] = "randint";
-static const char __pyx_k_document[] = "document";
 static const char __pyx_k_num_docs[] = "num_docs";
 static const char __pyx_k_simgraph[] = "simgraph";
-static const char __pyx_k_term_seq[] = "term_seq";
 static const char __pyx_k_cTermSeqs[] = "cTermSeqs";
 static const char __pyx_k_num_terms[] = "num_terms";
 static const char __pyx_k_sim_graph[] = "sim_graph";
-static const char __pyx_k_term_pair[] = "term_pair";
 static const char __pyx_k_term_seqs[] = "term_seqs";
 static const char __pyx_k_topic_seq[] = "topic_seq";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_cTopicSeqs[] = "cTopicSeqs";
-static const char __pyx_k_dictionary[] = "dictionary";
 static const char __pyx_k_num_passes[] = "num_passes";
 static const char __pyx_k_num_topics[] = "num_topics";
 static const char __pyx_k_topic_seqs[] = "topic_seqs";
@@ -1938,26 +1922,21 @@ static PyObject *__pyx_n_s_corpus;
 static PyObject *__pyx_kp_s_cython_utils_initdata_pyx;
 static PyObject *__pyx_n_s_d;
 static PyObject *__pyx_n_s_di;
-static PyObject *__pyx_n_s_dictionary;
 static PyObject *__pyx_n_s_doc_len;
-static PyObject *__pyx_n_s_document;
 static PyObject *__pyx_n_s_dtype;
 static PyObject *__pyx_n_s_empty;
 static PyObject *__pyx_n_s_end;
 static PyObject *__pyx_n_s_file;
 static PyObject *__pyx_n_s_float64;
 static PyObject *__pyx_n_s_i;
-static PyObject *__pyx_n_s_id2word;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_init_seqs_and_counts;
 static PyObject *__pyx_n_s_j;
 static PyObject *__pyx_n_s_k;
-static PyObject *__pyx_n_s_keys;
 static PyObject *__pyx_n_s_lam;
 static PyObject *__pyx_n_s_ldags_train;
 static PyObject *__pyx_kp_s_ldags_train_pyx;
 static PyObject *__pyx_n_s_main;
-static PyObject *__pyx_n_s_max;
 static PyObject *__pyx_kp_u_ndarray_is_not_C_contiguous;
 static PyObject *__pyx_kp_u_ndarray_is_not_Fortran_contiguou;
 static PyObject *__pyx_n_s_np;
@@ -1984,8 +1963,6 @@ static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_t;
 static PyObject *__pyx_n_s_term;
-static PyObject *__pyx_n_s_term_pair;
-static PyObject *__pyx_n_s_term_seq;
 static PyObject *__pyx_n_s_term_seqs;
 static PyObject *__pyx_n_s_term_topic_counts;
 static PyObject *__pyx_n_s_terms_per_topic;
@@ -2195,7 +2172,7 @@ static int __pyx_f_12_ldags_train_rand_choice(int __pyx_v_n, double *__pyx_v_pro
  * 
  * def init_seqs_and_counts(num_topics, num_terms, corpus):             # <<<<<<<<<<<<<<
  *     cdef int di, topic, term
- *     # Build term_seqs[d][s]
+ *     # Get term_seqs[d][s] from corpus
  */
 
 /* Python wrapper */
@@ -2276,9 +2253,6 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
   int __pyx_v_topic;
   int __pyx_v_term;
   PyObject *__pyx_v_term_seqs = NULL;
-  PyObject *__pyx_v_document = NULL;
-  PyObject *__pyx_v_term_seq = NULL;
-  PyObject *__pyx_v_term_pair = NULL;
   PyObject *__pyx_v_topic_seqs = NULL;
   PyObject *__pyx_v_topic_seq = NULL;
   PyObject *__pyx_v_term_topic_counts = NULL;
@@ -2287,314 +2261,143 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   Py_ssize_t __pyx_t_2;
-  PyObject *(*__pyx_t_3)(PyObject *);
-  PyObject *__pyx_t_4 = NULL;
-  Py_ssize_t __pyx_t_5;
-  PyObject *(*__pyx_t_6)(PyObject *);
+  Py_ssize_t __pyx_t_3;
+  int __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
   PyObject *__pyx_t_7 = NULL;
   PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
+  Py_ssize_t __pyx_t_9;
   int __pyx_t_10;
-  int __pyx_t_11;
-  Py_ssize_t __pyx_t_12;
-  long __pyx_t_13;
-  long __pyx_t_14;
-  Py_ssize_t __pyx_t_15;
-  PyObject *(*__pyx_t_16)(PyObject *);
+  long __pyx_t_11;
+  long __pyx_t_12;
+  Py_ssize_t __pyx_t_13;
+  PyObject *(*__pyx_t_14)(PyObject *);
+  PyObject *(*__pyx_t_15)(PyObject *);
+  int __pyx_t_16;
   int __pyx_t_17;
-  int __pyx_t_18;
+  long __pyx_t_18;
   long __pyx_t_19;
-  long __pyx_t_20;
   __Pyx_RefNannySetupContext("init_seqs_and_counts", 0);
 
   /* "cython_utils/initdata.pyx":28
  *     cdef int di, topic, term
- *     # Build term_seqs[d][s]
- *     term_seqs = []             # <<<<<<<<<<<<<<
- *     for document in corpus:
- *         term_seq = []
- */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 28, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_term_seqs = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "cython_utils/initdata.pyx":29
- *     # Build term_seqs[d][s]
- *     term_seqs = []
- *     for document in corpus:             # <<<<<<<<<<<<<<
- *         term_seq = []
- *         for term_pair in document:
- */
-  if (likely(PyList_CheckExact(__pyx_v_corpus)) || PyTuple_CheckExact(__pyx_v_corpus)) {
-    __pyx_t_1 = __pyx_v_corpus; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
-    __pyx_t_3 = NULL;
-  } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_corpus); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 29, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 29, __pyx_L1_error)
-  }
-  for (;;) {
-    if (likely(!__pyx_t_3)) {
-      if (likely(PyList_CheckExact(__pyx_t_1))) {
-        if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(1, 29, __pyx_L1_error)
-        #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 29, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        #endif
-      } else {
-        if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(1, 29, __pyx_L1_error)
-        #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 29, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        #endif
-      }
-    } else {
-      __pyx_t_4 = __pyx_t_3(__pyx_t_1);
-      if (unlikely(!__pyx_t_4)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(1, 29, __pyx_L1_error)
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_4);
-    }
-    __Pyx_XDECREF_SET(__pyx_v_document, __pyx_t_4);
-    __pyx_t_4 = 0;
-
-    /* "cython_utils/initdata.pyx":30
- *     term_seqs = []
- *     for document in corpus:
- *         term_seq = []             # <<<<<<<<<<<<<<
- *         for term_pair in document:
- *             term_seq += [term_pair[0]] * int(term_pair[1])
- */
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 30, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_XDECREF_SET(__pyx_v_term_seq, ((PyObject*)__pyx_t_4));
-    __pyx_t_4 = 0;
-
-    /* "cython_utils/initdata.pyx":31
- *     for document in corpus:
- *         term_seq = []
- *         for term_pair in document:             # <<<<<<<<<<<<<<
- *             term_seq += [term_pair[0]] * int(term_pair[1])
- *         term_seqs.append(term_seq)
- */
-    if (likely(PyList_CheckExact(__pyx_v_document)) || PyTuple_CheckExact(__pyx_v_document)) {
-      __pyx_t_4 = __pyx_v_document; __Pyx_INCREF(__pyx_t_4); __pyx_t_5 = 0;
-      __pyx_t_6 = NULL;
-    } else {
-      __pyx_t_5 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_document); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 31, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_6 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 31, __pyx_L1_error)
-    }
-    for (;;) {
-      if (likely(!__pyx_t_6)) {
-        if (likely(PyList_CheckExact(__pyx_t_4))) {
-          if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_4)) break;
-          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_7 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_7); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(1, 31, __pyx_L1_error)
-          #else
-          __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 31, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          #endif
-        } else {
-          if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
-          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_7); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(1, 31, __pyx_L1_error)
-          #else
-          __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 31, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          #endif
-        }
-      } else {
-        __pyx_t_7 = __pyx_t_6(__pyx_t_4);
-        if (unlikely(!__pyx_t_7)) {
-          PyObject* exc_type = PyErr_Occurred();
-          if (exc_type) {
-            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(1, 31, __pyx_L1_error)
-          }
-          break;
-        }
-        __Pyx_GOTREF(__pyx_t_7);
-      }
-      __Pyx_XDECREF_SET(__pyx_v_term_pair, __pyx_t_7);
-      __pyx_t_7 = 0;
-
-      /* "cython_utils/initdata.pyx":32
- *         term_seq = []
- *         for term_pair in document:
- *             term_seq += [term_pair[0]] * int(term_pair[1])             # <<<<<<<<<<<<<<
- *         term_seqs.append(term_seq)
- *     # Init randomly topic_seqs[d][s]
- */
-      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_term_pair, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 32, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_term_pair, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 32, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_9 = __Pyx_PyNumber_Int(__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 32, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = PyList_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 32, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __Pyx_GIVEREF(__pyx_t_7);
-      PyList_SET_ITEM(__pyx_t_8, 0, __pyx_t_7);
-      { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_8, __pyx_t_9); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 32, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_temp);
-        __Pyx_DECREF(__pyx_t_8);
-        __pyx_t_8 = __pyx_temp;
-      }
-      __pyx_t_7 = 0;
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_v_term_seq, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 32, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF_SET(__pyx_v_term_seq, ((PyObject*)__pyx_t_9));
-      __pyx_t_9 = 0;
-
-      /* "cython_utils/initdata.pyx":31
- *     for document in corpus:
- *         term_seq = []
- *         for term_pair in document:             # <<<<<<<<<<<<<<
- *             term_seq += [term_pair[0]] * int(term_pair[1])
- *         term_seqs.append(term_seq)
- */
-    }
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "cython_utils/initdata.pyx":33
- *         for term_pair in document:
- *             term_seq += [term_pair[0]] * int(term_pair[1])
- *         term_seqs.append(term_seq)             # <<<<<<<<<<<<<<
+ *     # Get term_seqs[d][s] from corpus
+ *     term_seqs = corpus.term_seqs             # <<<<<<<<<<<<<<
  *     # Init randomly topic_seqs[d][s]
  *     topic_seqs = []
  */
-    __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_term_seqs, __pyx_v_term_seq); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(1, 33, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_corpus, __pyx_n_s_term_seqs); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 28, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_term_seqs = __pyx_t_1;
+  __pyx_t_1 = 0;
 
-    /* "cython_utils/initdata.pyx":29
- *     # Build term_seqs[d][s]
- *     term_seqs = []
- *     for document in corpus:             # <<<<<<<<<<<<<<
- *         term_seq = []
- *         for term_pair in document:
- */
-  }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "cython_utils/initdata.pyx":35
- *         term_seqs.append(term_seq)
+  /* "cython_utils/initdata.pyx":30
+ *     term_seqs = corpus.term_seqs
  *     # Init randomly topic_seqs[d][s]
  *     topic_seqs = []             # <<<<<<<<<<<<<<
  *     for di in range(len(term_seqs)):
  *         # init to a random seq, problem: not sparse
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 35, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_topic_seqs = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "cython_utils/initdata.pyx":36
+  /* "cython_utils/initdata.pyx":31
  *     # Init randomly topic_seqs[d][s]
  *     topic_seqs = []
  *     for di in range(len(term_seqs)):             # <<<<<<<<<<<<<<
  *         # init to a random seq, problem: not sparse
  *          topic_seq = np.random.randint(num_topics, size=len(term_seqs[di])).tolist()
  */
-  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_term_seqs); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(1, 36, __pyx_L1_error)
-  __pyx_t_5 = __pyx_t_2;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_5; __pyx_t_11+=1) {
-    __pyx_v_di = __pyx_t_11;
+  __pyx_t_2 = PyObject_Length(__pyx_v_term_seqs); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(1, 31, __pyx_L1_error)
+  __pyx_t_3 = __pyx_t_2;
+  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
+    __pyx_v_di = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":38
+    /* "cython_utils/initdata.pyx":33
  *     for di in range(len(term_seqs)):
  *         # init to a random seq, problem: not sparse
  *          topic_seq = np.random.randint(num_topics, size=len(term_seqs[di])).tolist()             # <<<<<<<<<<<<<<
  * #         topic_seq = np.random.randint(10, size=len(term_seqs[di])).tolist()
  *          topic_seqs.append(topic_seq)
  */
-    __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_random); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_randint); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_random); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_randint); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_v_num_topics);
     __Pyx_GIVEREF(__pyx_v_num_topics);
-    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_v_num_topics);
-    __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 38, __pyx_L1_error)
+    PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_num_topics);
+    __pyx_t_7 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_term_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 33, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_term_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_12 = PyObject_Length(__pyx_t_7); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyInt_FromSsize_t(__pyx_t_12); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_size, __pyx_t_7) < 0) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __pyx_t_9 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(1, 33, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_tolist); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 38, __pyx_L1_error)
+    __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 33, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
+    if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_size, __pyx_t_8) < 0) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = NULL;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
-      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_8);
-      if (likely(__pyx_t_7)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
-        __Pyx_INCREF(__pyx_t_7);
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_tolist); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 33, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
+      if (likely(__pyx_t_8)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+        __Pyx_INCREF(__pyx_t_8);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_8, function);
+        __Pyx_DECREF_SET(__pyx_t_7, function);
       }
     }
-    if (__pyx_t_7) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 38, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    if (__pyx_t_8) {
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 33, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     } else {
-      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 38, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 33, __pyx_L1_error)
     }
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_XDECREF_SET(__pyx_v_topic_seq, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "cython_utils/initdata.pyx":40
+    /* "cython_utils/initdata.pyx":35
  *          topic_seq = np.random.randint(num_topics, size=len(term_seqs[di])).tolist()
  * #         topic_seq = np.random.randint(10, size=len(term_seqs[di])).tolist()
  *          topic_seqs.append(topic_seq)             # <<<<<<<<<<<<<<
  *     # Build term_topic_counts[w][t]
  *     term_topic_counts = [None] * num_terms
  */
-    __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_topic_seqs, __pyx_v_topic_seq); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(1, 40, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_topic_seqs, __pyx_v_topic_seq); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(1, 35, __pyx_L1_error)
   }
 
-  /* "cython_utils/initdata.pyx":42
+  /* "cython_utils/initdata.pyx":37
  *          topic_seqs.append(topic_seq)
  *     # Build term_topic_counts[w][t]
  *     term_topic_counts = [None] * num_terms             # <<<<<<<<<<<<<<
  *     for term in range(num_terms):
  *         term_topic_counts[term] = [0] * num_topics
  */
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 42, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(Py_None);
   __Pyx_GIVEREF(Py_None);
   PyList_SET_ITEM(__pyx_t_1, 0, Py_None);
-  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_terms); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 42, __pyx_L1_error)
+  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_terms); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_temp);
     __Pyx_DECREF(__pyx_t_1);
     __pyx_t_1 = __pyx_temp;
@@ -2602,52 +2405,52 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
   __pyx_v_term_topic_counts = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "cython_utils/initdata.pyx":43
+  /* "cython_utils/initdata.pyx":38
  *     # Build term_topic_counts[w][t]
  *     term_topic_counts = [None] * num_terms
  *     for term in range(num_terms):             # <<<<<<<<<<<<<<
  *         term_topic_counts[term] = [0] * num_topics
  *     for di in range(len(term_seqs)):
  */
-  __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_terms); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(1, 43, __pyx_L1_error)
-  __pyx_t_14 = __pyx_t_13;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_14; __pyx_t_11+=1) {
-    __pyx_v_term = __pyx_t_11;
+  __pyx_t_11 = __Pyx_PyInt_As_long(__pyx_v_num_terms); if (unlikely((__pyx_t_11 == (long)-1) && PyErr_Occurred())) __PYX_ERR(1, 38, __pyx_L1_error)
+  __pyx_t_12 = __pyx_t_11;
+  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_12; __pyx_t_4+=1) {
+    __pyx_v_term = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":44
+    /* "cython_utils/initdata.pyx":39
  *     term_topic_counts = [None] * num_terms
  *     for term in range(num_terms):
  *         term_topic_counts[term] = [0] * num_topics             # <<<<<<<<<<<<<<
  *     for di in range(len(term_seqs)):
  *         assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
  */
-    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 44, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 39, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
     PyList_SET_ITEM(__pyx_t_1, 0, __pyx_int_0);
-    { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 44, __pyx_L1_error)
+    { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_1, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 39, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_temp);
       __Pyx_DECREF(__pyx_t_1);
       __pyx_t_1 = __pyx_temp;
     }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_term_topic_counts, __pyx_v_term, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(1, 44, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_term_topic_counts, __pyx_v_term, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(1, 39, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "cython_utils/initdata.pyx":45
+  /* "cython_utils/initdata.pyx":40
  *     for term in range(num_terms):
  *         term_topic_counts[term] = [0] * num_topics
  *     for di in range(len(term_seqs)):             # <<<<<<<<<<<<<<
  *         assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
  *         for term, topic in zip(term_seqs[di], topic_seqs[di]):
  */
-  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_term_seqs); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(1, 45, __pyx_L1_error)
-  __pyx_t_5 = __pyx_t_2;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_5; __pyx_t_11+=1) {
-    __pyx_v_di = __pyx_t_11;
+  __pyx_t_2 = PyObject_Length(__pyx_v_term_seqs); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(1, 40, __pyx_L1_error)
+  __pyx_t_3 = __pyx_t_2;
+  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
+    __pyx_v_di = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":46
+    /* "cython_utils/initdata.pyx":41
  *         term_topic_counts[term] = [0] * num_topics
  *     for di in range(len(term_seqs)):
  *         assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine             # <<<<<<<<<<<<<<
@@ -2656,156 +2459,156 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
  */
     #ifndef CYTHON_WITHOUT_ASSERTIONS
     if (unlikely(!Py_OptimizeFlag)) {
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_term_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 46, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_term_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 41, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_12 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(1, 46, __pyx_L1_error)
+      __pyx_t_9 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(1, 41, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_topic_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 46, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_topic_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 41, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_15 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_15 == ((Py_ssize_t)-1))) __PYX_ERR(1, 46, __pyx_L1_error)
+      __pyx_t_13 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_13 == ((Py_ssize_t)-1))) __PYX_ERR(1, 41, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(!((__pyx_t_12 == __pyx_t_15) != 0))) {
+      if (unlikely(!((__pyx_t_9 == __pyx_t_13) != 0))) {
         PyErr_SetNone(PyExc_AssertionError);
-        __PYX_ERR(1, 46, __pyx_L1_error)
+        __PYX_ERR(1, 41, __pyx_L1_error)
       }
     }
     #endif
 
-    /* "cython_utils/initdata.pyx":47
+    /* "cython_utils/initdata.pyx":42
  *     for di in range(len(term_seqs)):
  *         assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
  *         for term, topic in zip(term_seqs[di], topic_seqs[di]):             # <<<<<<<<<<<<<<
  *             term_topic_counts[term][topic] += 1
  *     # Sum above across terms to build terms_per_topic[t]
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_term_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 47, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_term_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 42, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_topic_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 47, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 47, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_topic_seqs, __pyx_v_di, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 42, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
-    __Pyx_GIVEREF(__pyx_t_8);
-    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_8);
-    __pyx_t_1 = 0;
-    __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_zip, __pyx_t_7, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 47, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 42, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (likely(PyList_CheckExact(__pyx_t_8)) || PyTuple_CheckExact(__pyx_t_8)) {
-      __pyx_t_7 = __pyx_t_8; __Pyx_INCREF(__pyx_t_7); __pyx_t_15 = 0;
-      __pyx_t_3 = NULL;
-    } else {
-      __pyx_t_15 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 47, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_3 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 47, __pyx_L1_error)
-    }
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_7);
+    __pyx_t_1 = 0;
+    __pyx_t_7 = 0;
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_builtin_zip, __pyx_t_8, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 42, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    if (likely(PyList_CheckExact(__pyx_t_7)) || PyTuple_CheckExact(__pyx_t_7)) {
+      __pyx_t_8 = __pyx_t_7; __Pyx_INCREF(__pyx_t_8); __pyx_t_13 = 0;
+      __pyx_t_14 = NULL;
+    } else {
+      __pyx_t_13 = -1; __pyx_t_8 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 42, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_14 = Py_TYPE(__pyx_t_8)->tp_iternext; if (unlikely(!__pyx_t_14)) __PYX_ERR(1, 42, __pyx_L1_error)
+    }
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     for (;;) {
-      if (likely(!__pyx_t_3)) {
-        if (likely(PyList_CheckExact(__pyx_t_7))) {
-          if (__pyx_t_15 >= PyList_GET_SIZE(__pyx_t_7)) break;
+      if (likely(!__pyx_t_14)) {
+        if (likely(PyList_CheckExact(__pyx_t_8))) {
+          if (__pyx_t_13 >= PyList_GET_SIZE(__pyx_t_8)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_8 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_15); __Pyx_INCREF(__pyx_t_8); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(1, 47, __pyx_L1_error)
+          __pyx_t_7 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_13); __Pyx_INCREF(__pyx_t_7); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(1, 42, __pyx_L1_error)
           #else
-          __pyx_t_8 = PySequence_ITEM(__pyx_t_7, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 47, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_7 = PySequence_ITEM(__pyx_t_8, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 42, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_7);
           #endif
         } else {
-          if (__pyx_t_15 >= PyTuple_GET_SIZE(__pyx_t_7)) break;
+          if (__pyx_t_13 >= PyTuple_GET_SIZE(__pyx_t_8)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_8 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_15); __Pyx_INCREF(__pyx_t_8); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(1, 47, __pyx_L1_error)
+          __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_8, __pyx_t_13); __Pyx_INCREF(__pyx_t_7); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(1, 42, __pyx_L1_error)
           #else
-          __pyx_t_8 = PySequence_ITEM(__pyx_t_7, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 47, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_7 = PySequence_ITEM(__pyx_t_8, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 42, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_7);
           #endif
         }
       } else {
-        __pyx_t_8 = __pyx_t_3(__pyx_t_7);
-        if (unlikely(!__pyx_t_8)) {
+        __pyx_t_7 = __pyx_t_14(__pyx_t_8);
+        if (unlikely(!__pyx_t_7)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(1, 47, __pyx_L1_error)
+            else __PYX_ERR(1, 42, __pyx_L1_error)
           }
           break;
         }
-        __Pyx_GOTREF(__pyx_t_8);
+        __Pyx_GOTREF(__pyx_t_7);
       }
-      if ((likely(PyTuple_CheckExact(__pyx_t_8))) || (PyList_CheckExact(__pyx_t_8))) {
-        PyObject* sequence = __pyx_t_8;
+      if ((likely(PyTuple_CheckExact(__pyx_t_7))) || (PyList_CheckExact(__pyx_t_7))) {
+        PyObject* sequence = __pyx_t_7;
         Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
         if (unlikely(size != 2)) {
           if (size > 2) __Pyx_RaiseTooManyValuesError(2);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(1, 47, __pyx_L1_error)
+          __PYX_ERR(1, 42, __pyx_L1_error)
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
         if (likely(PyTuple_CheckExact(sequence))) {
           __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
-          __pyx_t_9 = PyTuple_GET_ITEM(sequence, 1); 
+          __pyx_t_6 = PyTuple_GET_ITEM(sequence, 1); 
         } else {
           __pyx_t_1 = PyList_GET_ITEM(sequence, 0); 
-          __pyx_t_9 = PyList_GET_ITEM(sequence, 1); 
+          __pyx_t_6 = PyList_GET_ITEM(sequence, 1); 
         }
         __Pyx_INCREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_6);
         #else
-        __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 42, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 47, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 42, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_6);
         #endif
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_4 = PyObject_GetIter(__pyx_t_8); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __pyx_t_16 = Py_TYPE(__pyx_t_4)->tp_iternext;
-        index = 0; __pyx_t_1 = __pyx_t_16(__pyx_t_4); if (unlikely(!__pyx_t_1)) goto __pyx_L15_unpacking_failed;
+        __pyx_t_5 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 42, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_15 = Py_TYPE(__pyx_t_5)->tp_iternext;
+        index = 0; __pyx_t_1 = __pyx_t_15(__pyx_t_5); if (unlikely(!__pyx_t_1)) goto __pyx_L11_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_1);
-        index = 1; __pyx_t_9 = __pyx_t_16(__pyx_t_4); if (unlikely(!__pyx_t_9)) goto __pyx_L15_unpacking_failed;
-        __Pyx_GOTREF(__pyx_t_9);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_16(__pyx_t_4), 2) < 0) __PYX_ERR(1, 47, __pyx_L1_error)
-        __pyx_t_16 = NULL;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        goto __pyx_L16_unpacking_done;
-        __pyx_L15_unpacking_failed:;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_16 = NULL;
+        index = 1; __pyx_t_6 = __pyx_t_15(__pyx_t_5); if (unlikely(!__pyx_t_6)) goto __pyx_L11_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_6);
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_5), 2) < 0) __PYX_ERR(1, 42, __pyx_L1_error)
+        __pyx_t_15 = NULL;
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        goto __pyx_L12_unpacking_done;
+        __pyx_L11_unpacking_failed:;
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(1, 47, __pyx_L1_error)
-        __pyx_L16_unpacking_done:;
+        __PYX_ERR(1, 42, __pyx_L1_error)
+        __pyx_L12_unpacking_done:;
       }
-      __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 47, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_16 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 42, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_18 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_18 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 47, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_v_term = __pyx_t_17;
-      __pyx_v_topic = __pyx_t_18;
+      __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_6); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 42, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_v_term = __pyx_t_16;
+      __pyx_v_topic = __pyx_t_17;
 
-      /* "cython_utils/initdata.pyx":48
+      /* "cython_utils/initdata.pyx":43
  *         assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
  *         for term, topic in zip(term_seqs[di], topic_seqs[di]):
  *             term_topic_counts[term][topic] += 1             # <<<<<<<<<<<<<<
  *     # Sum above across terms to build terms_per_topic[t]
  *     terms_per_topic = [0] * num_topics
  */
-      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_term_topic_counts, __pyx_v_term, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 48, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_18 = __pyx_v_topic;
-      __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_8, __pyx_t_18, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 48, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_9, __pyx_int_1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 48, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_term_topic_counts, __pyx_v_term, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 43, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_17 = __pyx_v_topic;
+      __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_7, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 43, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_6, __pyx_int_1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 43, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_8, __pyx_t_18, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(1, 48, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_t_17, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(1, 43, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "cython_utils/initdata.pyx":47
+      /* "cython_utils/initdata.pyx":42
  *     for di in range(len(term_seqs)):
  *         assert len(term_seqs[di]) == len(topic_seqs[di])  # Check if everything is fine
  *         for term, topic in zip(term_seqs[di], topic_seqs[di]):             # <<<<<<<<<<<<<<
@@ -2813,78 +2616,78 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
  *     # Sum above across terms to build terms_per_topic[t]
  */
     }
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
 
-  /* "cython_utils/initdata.pyx":50
+  /* "cython_utils/initdata.pyx":45
  *             term_topic_counts[term][topic] += 1
  *     # Sum above across terms to build terms_per_topic[t]
  *     terms_per_topic = [0] * num_topics             # <<<<<<<<<<<<<<
  *     for topic in range(num_topics):
  *         for term in range(num_terms):
  */
-  __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 50, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_8 = PyList_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
   __Pyx_INCREF(__pyx_int_0);
   __Pyx_GIVEREF(__pyx_int_0);
-  PyList_SET_ITEM(__pyx_t_7, 0, __pyx_int_0);
-  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_7, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 50, __pyx_L1_error)
+  PyList_SET_ITEM(__pyx_t_8, 0, __pyx_int_0);
+  { PyObject* __pyx_temp = PyNumber_InPlaceMultiply(__pyx_t_8, __pyx_v_num_topics); if (unlikely(!__pyx_temp)) __PYX_ERR(1, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_temp);
-    __Pyx_DECREF(__pyx_t_7);
-    __pyx_t_7 = __pyx_temp;
+    __Pyx_DECREF(__pyx_t_8);
+    __pyx_t_8 = __pyx_temp;
   }
-  __pyx_v_terms_per_topic = ((PyObject*)__pyx_t_7);
-  __pyx_t_7 = 0;
+  __pyx_v_terms_per_topic = ((PyObject*)__pyx_t_8);
+  __pyx_t_8 = 0;
 
-  /* "cython_utils/initdata.pyx":51
+  /* "cython_utils/initdata.pyx":46
  *     # Sum above across terms to build terms_per_topic[t]
  *     terms_per_topic = [0] * num_topics
  *     for topic in range(num_topics):             # <<<<<<<<<<<<<<
  *         for term in range(num_terms):
  *             terms_per_topic[topic] += term_topic_counts[term][topic]
  */
-  __pyx_t_13 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_13 == (long)-1) && PyErr_Occurred())) __PYX_ERR(1, 51, __pyx_L1_error)
-  __pyx_t_14 = __pyx_t_13;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_14; __pyx_t_11+=1) {
-    __pyx_v_topic = __pyx_t_11;
+  __pyx_t_11 = __Pyx_PyInt_As_long(__pyx_v_num_topics); if (unlikely((__pyx_t_11 == (long)-1) && PyErr_Occurred())) __PYX_ERR(1, 46, __pyx_L1_error)
+  __pyx_t_12 = __pyx_t_11;
+  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_12; __pyx_t_4+=1) {
+    __pyx_v_topic = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":52
+    /* "cython_utils/initdata.pyx":47
  *     terms_per_topic = [0] * num_topics
  *     for topic in range(num_topics):
  *         for term in range(num_terms):             # <<<<<<<<<<<<<<
  *             terms_per_topic[topic] += term_topic_counts[term][topic]
  *     return term_seqs, topic_seqs, term_topic_counts, terms_per_topic
  */
-    __pyx_t_19 = __Pyx_PyInt_As_long(__pyx_v_num_terms); if (unlikely((__pyx_t_19 == (long)-1) && PyErr_Occurred())) __PYX_ERR(1, 52, __pyx_L1_error)
-    __pyx_t_20 = __pyx_t_19;
-    for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_20; __pyx_t_18+=1) {
-      __pyx_v_term = __pyx_t_18;
+    __pyx_t_18 = __Pyx_PyInt_As_long(__pyx_v_num_terms); if (unlikely((__pyx_t_18 == (long)-1) && PyErr_Occurred())) __PYX_ERR(1, 47, __pyx_L1_error)
+    __pyx_t_19 = __pyx_t_18;
+    for (__pyx_t_17 = 0; __pyx_t_17 < __pyx_t_19; __pyx_t_17+=1) {
+      __pyx_v_term = __pyx_t_17;
 
-      /* "cython_utils/initdata.pyx":53
+      /* "cython_utils/initdata.pyx":48
  *     for topic in range(num_topics):
  *         for term in range(num_terms):
  *             terms_per_topic[topic] += term_topic_counts[term][topic]             # <<<<<<<<<<<<<<
  *     return term_seqs, topic_seqs, term_topic_counts, terms_per_topic
  * 
  */
-      __pyx_t_17 = __pyx_v_topic;
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_terms_per_topic, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 53, __pyx_L1_error)
+      __pyx_t_16 = __pyx_v_topic;
+      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_terms_per_topic, __pyx_t_16, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 48, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_term_topic_counts, __pyx_v_term, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 48, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_term_topic_counts, __pyx_v_term, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 53, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_8, __pyx_v_topic, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 53, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, __pyx_v_topic, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 48, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 53, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_terms_per_topic, __pyx_t_17, __pyx_t_8, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(1, 53, __pyx_L1_error)
+      __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_t_8, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 48, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_terms_per_topic, __pyx_t_16, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(1, 48, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
   }
 
-  /* "cython_utils/initdata.pyx":54
+  /* "cython_utils/initdata.pyx":49
  *         for term in range(num_terms):
  *             terms_per_topic[topic] += term_topic_counts[term][topic]
  *     return term_seqs, topic_seqs, term_topic_counts, terms_per_topic             # <<<<<<<<<<<<<<
@@ -2892,22 +2695,22 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
  * @cython.boundscheck(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_8 = PyTuple_New(4); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 54, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
+  __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 49, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
   __Pyx_INCREF(__pyx_v_term_seqs);
   __Pyx_GIVEREF(__pyx_v_term_seqs);
-  PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_v_term_seqs);
+  PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_v_term_seqs);
   __Pyx_INCREF(__pyx_v_topic_seqs);
   __Pyx_GIVEREF(__pyx_v_topic_seqs);
-  PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_v_topic_seqs);
+  PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_v_topic_seqs);
   __Pyx_INCREF(__pyx_v_term_topic_counts);
   __Pyx_GIVEREF(__pyx_v_term_topic_counts);
-  PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_v_term_topic_counts);
+  PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_v_term_topic_counts);
   __Pyx_INCREF(__pyx_v_terms_per_topic);
   __Pyx_GIVEREF(__pyx_v_terms_per_topic);
-  PyTuple_SET_ITEM(__pyx_t_8, 3, __pyx_v_terms_per_topic);
-  __pyx_r = __pyx_t_8;
-  __pyx_t_8 = 0;
+  PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_v_terms_per_topic);
+  __pyx_r = __pyx_t_7;
+  __pyx_t_7 = 0;
   goto __pyx_L0;
 
   /* "cython_utils/initdata.pyx":25
@@ -2915,23 +2718,20 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
  * 
  * def init_seqs_and_counts(num_topics, num_terms, corpus):             # <<<<<<<<<<<<<<
  *     cdef int di, topic, term
- *     # Build term_seqs[d][s]
+ *     # Get term_seqs[d][s] from corpus
  */
 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_9);
   __Pyx_AddTraceback("_ldags_train.init_seqs_and_counts", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_term_seqs);
-  __Pyx_XDECREF(__pyx_v_document);
-  __Pyx_XDECREF(__pyx_v_term_seq);
-  __Pyx_XDECREF(__pyx_v_term_pair);
   __Pyx_XDECREF(__pyx_v_topic_seqs);
   __Pyx_XDECREF(__pyx_v_topic_seq);
   __Pyx_XDECREF(__pyx_v_term_topic_counts);
@@ -2941,7 +2741,7 @@ static PyObject *__pyx_pf_12_ldags_train_init_seqs_and_counts(CYTHON_UNUSED PyOb
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":58
+/* "cython_utils/initdata.pyx":53
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef CorpusData * _initCData(int num_topics, int num_terms, int num_docs, int ** cTermSeqs, int ** cTopicSeqs,             # <<<<<<<<<<<<<<
@@ -2953,7 +2753,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
   __pyx_t_12_ldags_train_CorpusData *__pyx_v_cdata;
   __pyx_t_12_ldags_train_CorpusData *__pyx_r;
 
-  /* "cython_utils/initdata.pyx":63
+  /* "cython_utils/initdata.pyx":58
  *     cdef CorpusData * cdata
  *     # cdata malloc
  *     cdata = <CorpusData *> malloc(sizeof(CorpusData))             # <<<<<<<<<<<<<<
@@ -2962,7 +2762,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata = ((__pyx_t_12_ldags_train_CorpusData *)malloc((sizeof(__pyx_t_12_ldags_train_CorpusData))));
 
-  /* "cython_utils/initdata.pyx":65
+  /* "cython_utils/initdata.pyx":60
  *     cdata = <CorpusData *> malloc(sizeof(CorpusData))
  *     # pack existing vars in CData struct
  *     cdata.num_topics = num_topics             # <<<<<<<<<<<<<<
@@ -2971,7 +2771,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->num_topics = __pyx_v_num_topics;
 
-  /* "cython_utils/initdata.pyx":66
+  /* "cython_utils/initdata.pyx":61
  *     # pack existing vars in CData struct
  *     cdata.num_topics = num_topics
  *     cdata.num_terms = num_terms             # <<<<<<<<<<<<<<
@@ -2980,7 +2780,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->num_terms = __pyx_v_num_terms;
 
-  /* "cython_utils/initdata.pyx":67
+  /* "cython_utils/initdata.pyx":62
  *     cdata.num_topics = num_topics
  *     cdata.num_terms = num_terms
  *     cdata.num_docs = num_docs             # <<<<<<<<<<<<<<
@@ -2989,7 +2789,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->num_docs = __pyx_v_num_docs;
 
-  /* "cython_utils/initdata.pyx":68
+  /* "cython_utils/initdata.pyx":63
  *     cdata.num_terms = num_terms
  *     cdata.num_docs = num_docs
  *     cdata.cTermSeqs = cTermSeqs             # <<<<<<<<<<<<<<
@@ -2998,7 +2798,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->cTermSeqs = __pyx_v_cTermSeqs;
 
-  /* "cython_utils/initdata.pyx":69
+  /* "cython_utils/initdata.pyx":64
  *     cdata.num_docs = num_docs
  *     cdata.cTermSeqs = cTermSeqs
  *     cdata.cTopicSeqs = cTopicSeqs             # <<<<<<<<<<<<<<
@@ -3007,7 +2807,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->cTopicSeqs = __pyx_v_cTopicSeqs;
 
-  /* "cython_utils/initdata.pyx":70
+  /* "cython_utils/initdata.pyx":65
  *     cdata.cTermSeqs = cTermSeqs
  *     cdata.cTopicSeqs = cTopicSeqs
  *     cdata.cTermTopicCounts = cTermTopicCounts             # <<<<<<<<<<<<<<
@@ -3016,7 +2816,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->cTermTopicCounts = __pyx_v_cTermTopicCounts;
 
-  /* "cython_utils/initdata.pyx":71
+  /* "cython_utils/initdata.pyx":66
  *     cdata.cTopicSeqs = cTopicSeqs
  *     cdata.cTermTopicCounts = cTermTopicCounts
  *     cdata.cTermsPerTopic = cTermsPerTopic             # <<<<<<<<<<<<<<
@@ -3025,7 +2825,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->cTermsPerTopic = __pyx_v_cTermsPerTopic;
 
-  /* "cython_utils/initdata.pyx":72
+  /* "cython_utils/initdata.pyx":67
  *     cdata.cTermTopicCounts = cTermTopicCounts
  *     cdata.cTermsPerTopic = cTermsPerTopic
  *     cdata.doc_len = doc_len             # <<<<<<<<<<<<<<
@@ -3034,7 +2834,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->doc_len = __pyx_v_doc_len;
 
-  /* "cython_utils/initdata.pyx":74
+  /* "cython_utils/initdata.pyx":69
  *     cdata.doc_len = doc_len
  *     # build cDocTopicCounts[d]
  *     cdata.cDocTopicCounts = _init_docTopicCounts(num_docs, num_terms, cTopicSeqs, doc_len)             # <<<<<<<<<<<<<<
@@ -3043,7 +2843,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
  */
   __pyx_v_cdata->cDocTopicCounts = __pyx_f_12_ldags_train__init_docTopicCounts(__pyx_v_num_docs, __pyx_v_num_terms, __pyx_v_cTopicSeqs, __pyx_v_doc_len);
 
-  /* "cython_utils/initdata.pyx":75
+  /* "cython_utils/initdata.pyx":70
  *     # build cDocTopicCounts[d]
  *     cdata.cDocTopicCounts = _init_docTopicCounts(num_docs, num_terms, cTopicSeqs, doc_len)
  *     return cdata             # <<<<<<<<<<<<<<
@@ -3053,7 +2853,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
   __pyx_r = __pyx_v_cdata;
   goto __pyx_L0;
 
-  /* "cython_utils/initdata.pyx":58
+  /* "cython_utils/initdata.pyx":53
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef CorpusData * _initCData(int num_topics, int num_terms, int num_docs, int ** cTermSeqs, int ** cTopicSeqs,             # <<<<<<<<<<<<<<
@@ -3066,7 +2866,7 @@ static __pyx_t_12_ldags_train_CorpusData *__pyx_f_12_ldags_train__initCData(int 
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":79
+/* "cython_utils/initdata.pyx":74
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef Counter ** _init_docTopicCounts(int num_docs, int num_terms, int **cTopicSeqs, int * doc_len) nogil:             # <<<<<<<<<<<<<<
@@ -3082,7 +2882,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "cython_utils/initdata.pyx":83
+  /* "cython_utils/initdata.pyx":78
  *         int d
  *         Counter ** cDocTopicCounts
  *     cDocTopicCounts = <Counter **> malloc(num_docs * sizeof(Counter *))             # <<<<<<<<<<<<<<
@@ -3091,7 +2891,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
  */
   __pyx_v_cDocTopicCounts = ((__pyx_t_12_ldags_train_Counter **)malloc((__pyx_v_num_docs * (sizeof(__pyx_t_12_ldags_train_Counter *)))));
 
-  /* "cython_utils/initdata.pyx":84
+  /* "cython_utils/initdata.pyx":79
  *         Counter ** cDocTopicCounts
  *     cDocTopicCounts = <Counter **> malloc(num_docs * sizeof(Counter *))
  *     for d in range(num_docs):             # <<<<<<<<<<<<<<
@@ -3103,7 +2903,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_d = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":85
+    /* "cython_utils/initdata.pyx":80
  *     cDocTopicCounts = <Counter **> malloc(num_docs * sizeof(Counter *))
  *     for d in range(num_docs):
  *         cDocTopicCounts[d] = newCounter(num_terms)             # <<<<<<<<<<<<<<
@@ -3112,7 +2912,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
  */
     (__pyx_v_cDocTopicCounts[__pyx_v_d]) = __pyx_f_12_ldags_train_newCounter(__pyx_v_num_terms);
 
-    /* "cython_utils/initdata.pyx":86
+    /* "cython_utils/initdata.pyx":81
  *     for d in range(num_docs):
  *         cDocTopicCounts[d] = newCounter(num_terms)
  *         countSequence(doc_len[d], num_terms, cTopicSeqs[d], cDocTopicCounts[d])             # <<<<<<<<<<<<<<
@@ -3122,7 +2922,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
     __pyx_f_12_ldags_train_countSequence((__pyx_v_doc_len[__pyx_v_d]), __pyx_v_num_terms, (__pyx_v_cTopicSeqs[__pyx_v_d]), (__pyx_v_cDocTopicCounts[__pyx_v_d]));
   }
 
-  /* "cython_utils/initdata.pyx":87
+  /* "cython_utils/initdata.pyx":82
  *         cDocTopicCounts[d] = newCounter(num_terms)
  *         countSequence(doc_len[d], num_terms, cTopicSeqs[d], cDocTopicCounts[d])
  *     return cDocTopicCounts             # <<<<<<<<<<<<<<
@@ -3132,7 +2932,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
   __pyx_r = __pyx_v_cDocTopicCounts;
   goto __pyx_L0;
 
-  /* "cython_utils/initdata.pyx":79
+  /* "cython_utils/initdata.pyx":74
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef Counter ** _init_docTopicCounts(int num_docs, int num_terms, int **cTopicSeqs, int * doc_len) nogil:             # <<<<<<<<<<<<<<
@@ -3145,7 +2945,7 @@ static __pyx_t_12_ldags_train_Counter **__pyx_f_12_ldags_train__init_docTopicCou
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":91
+/* "cython_utils/initdata.pyx":86
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int ** _cythonize_2dlist(list lists):             # <<<<<<<<<<<<<<
@@ -3172,7 +2972,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
   int __pyx_t_9;
   __Pyx_RefNannySetupContext("_cythonize_2dlist", 0);
 
-  /* "cython_utils/initdata.pyx":92
+  /* "cython_utils/initdata.pyx":87
  * @cython.wraparound(False)
  * cdef int ** _cythonize_2dlist(list lists):
  *     cdef int num_lists = len(lists)             # <<<<<<<<<<<<<<
@@ -3181,12 +2981,12 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
  */
   if (unlikely(__pyx_v_lists == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(1, 92, __pyx_L1_error)
+    __PYX_ERR(1, 87, __pyx_L1_error)
   }
-  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_lists); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 92, __pyx_L1_error)
+  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_lists); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 87, __pyx_L1_error)
   __pyx_v_num_lists = __pyx_t_1;
 
-  /* "cython_utils/initdata.pyx":97
+  /* "cython_utils/initdata.pyx":92
  *     cdef int ** cLists
  *     # malloc
  *     cLists = <int **>malloc(num_lists * sizeof(int *))             # <<<<<<<<<<<<<<
@@ -3195,7 +2995,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
  */
   __pyx_v_cLists = ((int **)malloc((__pyx_v_num_lists * (sizeof(int *)))));
 
-  /* "cython_utils/initdata.pyx":98
+  /* "cython_utils/initdata.pyx":93
  *     # malloc
  *     cLists = <int **>malloc(num_lists * sizeof(int *))
  *     for i in range(num_lists):             # <<<<<<<<<<<<<<
@@ -3207,7 +3007,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":99
+    /* "cython_utils/initdata.pyx":94
  *     cLists = <int **>malloc(num_lists * sizeof(int *))
  *     for i in range(num_lists):
  *         list_len = len(lists[i])             # <<<<<<<<<<<<<<
@@ -3216,15 +3016,15 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
  */
     if (unlikely(__pyx_v_lists == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(1, 99, __pyx_L1_error)
+      __PYX_ERR(1, 94, __pyx_L1_error)
     }
     __pyx_t_5 = PyList_GET_ITEM(__pyx_v_lists, __pyx_v_i);
     __Pyx_INCREF(__pyx_t_5);
-    __pyx_t_1 = PyObject_Length(__pyx_t_5); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 99, __pyx_L1_error)
+    __pyx_t_1 = PyObject_Length(__pyx_t_5); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 94, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_list_len = __pyx_t_1;
 
-    /* "cython_utils/initdata.pyx":100
+    /* "cython_utils/initdata.pyx":95
  *     for i in range(num_lists):
  *         list_len = len(lists[i])
  *         cLists[i] = <int *>malloc(list_len * sizeof(int))             # <<<<<<<<<<<<<<
@@ -3233,7 +3033,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
  */
     (__pyx_v_cLists[__pyx_v_i]) = ((int *)malloc((__pyx_v_list_len * (sizeof(int)))));
 
-    /* "cython_utils/initdata.pyx":102
+    /* "cython_utils/initdata.pyx":97
  *         cLists[i] = <int *>malloc(list_len * sizeof(int))
  *         # list to C pointer
  *         for j in range(list_len):             # <<<<<<<<<<<<<<
@@ -3245,7 +3045,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
     for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_j = __pyx_t_8;
 
-      /* "cython_utils/initdata.pyx":103
+      /* "cython_utils/initdata.pyx":98
  *         # list to C pointer
  *         for j in range(list_len):
  *             cLists[i][j] = <int>lists[i][j]             # <<<<<<<<<<<<<<
@@ -3254,17 +3054,17 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
  */
       if (unlikely(__pyx_v_lists == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(1, 103, __pyx_L1_error)
+        __PYX_ERR(1, 98, __pyx_L1_error)
       }
-      __pyx_t_5 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_lists, __pyx_v_i), __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 103, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_lists, __pyx_v_i), __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 98, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 103, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 98, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       ((__pyx_v_cLists[__pyx_v_i])[__pyx_v_j]) = ((int)__pyx_t_9);
     }
   }
 
-  /* "cython_utils/initdata.pyx":104
+  /* "cython_utils/initdata.pyx":99
  *         for j in range(list_len):
  *             cLists[i][j] = <int>lists[i][j]
  *     return cLists             # <<<<<<<<<<<<<<
@@ -3274,7 +3074,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
   __pyx_r = __pyx_v_cLists;
   goto __pyx_L0;
 
-  /* "cython_utils/initdata.pyx":91
+  /* "cython_utils/initdata.pyx":86
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int ** _cythonize_2dlist(list lists):             # <<<<<<<<<<<<<<
@@ -3292,7 +3092,7 @@ static int **__pyx_f_12_ldags_train__cythonize_2dlist(PyObject *__pyx_v_lists) {
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":108
+/* "cython_utils/initdata.pyx":103
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int * _cythonize_1dlist(list alist):             # <<<<<<<<<<<<<<
@@ -3313,7 +3113,7 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("_cythonize_1dlist", 0);
 
-  /* "cython_utils/initdata.pyx":109
+  /* "cython_utils/initdata.pyx":104
  * @cython.wraparound(False)
  * cdef int * _cythonize_1dlist(list alist):
  *     cdef int list_len = len(alist)             # <<<<<<<<<<<<<<
@@ -3322,12 +3122,12 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
  */
   if (unlikely(__pyx_v_alist == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(1, 109, __pyx_L1_error)
+    __PYX_ERR(1, 104, __pyx_L1_error)
   }
-  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_alist); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 109, __pyx_L1_error)
+  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_alist); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 104, __pyx_L1_error)
   __pyx_v_list_len = __pyx_t_1;
 
-  /* "cython_utils/initdata.pyx":113
+  /* "cython_utils/initdata.pyx":108
  *     cdef int * cList
  *     # malloc
  *     cList = <int *>malloc(list_len * sizeof(int))             # <<<<<<<<<<<<<<
@@ -3336,7 +3136,7 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
  */
   __pyx_v_cList = ((int *)malloc((__pyx_v_list_len * (sizeof(int)))));
 
-  /* "cython_utils/initdata.pyx":115
+  /* "cython_utils/initdata.pyx":110
  *     cList = <int *>malloc(list_len * sizeof(int))
  *     # list to C pointer
  *     for i in range(list_len):             # <<<<<<<<<<<<<<
@@ -3348,7 +3148,7 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":116
+    /* "cython_utils/initdata.pyx":111
  *     # list to C pointer
  *     for i in range(list_len):
  *         cList[i] = <int>alist[i]             # <<<<<<<<<<<<<<
@@ -3357,13 +3157,13 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
  */
     if (unlikely(__pyx_v_alist == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(1, 116, __pyx_L1_error)
+      __PYX_ERR(1, 111, __pyx_L1_error)
     }
-    __pyx_t_5 = __Pyx_PyInt_As_int(PyList_GET_ITEM(__pyx_v_alist, __pyx_v_i)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 116, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_As_int(PyList_GET_ITEM(__pyx_v_alist, __pyx_v_i)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 111, __pyx_L1_error)
     (__pyx_v_cList[__pyx_v_i]) = ((int)__pyx_t_5);
   }
 
-  /* "cython_utils/initdata.pyx":117
+  /* "cython_utils/initdata.pyx":112
  *     for i in range(list_len):
  *         cList[i] = <int>alist[i]
  *     return cList             # <<<<<<<<<<<<<<
@@ -3373,7 +3173,7 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
   __pyx_r = __pyx_v_cList;
   goto __pyx_L0;
 
-  /* "cython_utils/initdata.pyx":108
+  /* "cython_utils/initdata.pyx":103
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef int * _cythonize_1dlist(list alist):             # <<<<<<<<<<<<<<
@@ -3390,7 +3190,7 @@ static int *__pyx_f_12_ldags_train__cythonize_1dlist(PyObject *__pyx_v_alist) {
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":122
+/* "cython_utils/initdata.pyx":117
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef Priors * _init_priors(int num_topics, int num_terms) nogil:             # <<<<<<<<<<<<<<
@@ -3409,7 +3209,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "cython_utils/initdata.pyx":129
+  /* "cython_utils/initdata.pyx":124
  *     cdef Priors * priors
  *     # malloc
  *     priors = <Priors *> malloc(sizeof(Priors))             # <<<<<<<<<<<<<<
@@ -3418,7 +3218,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_priors = ((__pyx_t_12_ldags_train_Priors *)malloc((sizeof(__pyx_t_12_ldags_train_Priors))));
 
-  /* "cython_utils/initdata.pyx":130
+  /* "cython_utils/initdata.pyx":125
  *     # malloc
  *     priors = <Priors *> malloc(sizeof(Priors))
  *     alpha = <double *> malloc(num_topics * sizeof(double))             # <<<<<<<<<<<<<<
@@ -3427,7 +3227,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_alpha = ((double *)malloc((__pyx_v_num_topics * (sizeof(double)))));
 
-  /* "cython_utils/initdata.pyx":131
+  /* "cython_utils/initdata.pyx":126
  *     priors = <Priors *> malloc(sizeof(Priors))
  *     alpha = <double *> malloc(num_topics * sizeof(double))
  *     beta = <double *> malloc(num_terms * sizeof(double))             # <<<<<<<<<<<<<<
@@ -3436,7 +3236,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_beta = ((double *)malloc((__pyx_v_num_terms * (sizeof(double)))));
 
-  /* "cython_utils/initdata.pyx":133
+  /* "cython_utils/initdata.pyx":128
  *     beta = <double *> malloc(num_terms * sizeof(double))
  *     # compute priors
  *     for i in range(num_topics):             # <<<<<<<<<<<<<<
@@ -3448,7 +3248,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":134
+    /* "cython_utils/initdata.pyx":129
  *     # compute priors
  *     for i in range(num_topics):
  *         alpha[i] = 1.0 / num_topics             # <<<<<<<<<<<<<<
@@ -3458,7 +3258,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
     (__pyx_v_alpha[__pyx_v_i]) = (1.0 / __pyx_v_num_topics);
   }
 
-  /* "cython_utils/initdata.pyx":135
+  /* "cython_utils/initdata.pyx":130
  *     for i in range(num_topics):
  *         alpha[i] = 1.0 / num_topics
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3470,7 +3270,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":136
+    /* "cython_utils/initdata.pyx":131
  *         alpha[i] = 1.0 / num_topics
  *     for i in range(num_terms):
  *         beta[i] = 1.0 / num_terms             # <<<<<<<<<<<<<<
@@ -3480,7 +3280,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
     (__pyx_v_beta[__pyx_v_i]) = (1.0 / __pyx_v_num_terms);
   }
 
-  /* "cython_utils/initdata.pyx":137
+  /* "cython_utils/initdata.pyx":132
  *     for i in range(num_terms):
  *         beta[i] = 1.0 / num_terms
  *     w_beta = 0.             # <<<<<<<<<<<<<<
@@ -3489,7 +3289,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_w_beta = 0.;
 
-  /* "cython_utils/initdata.pyx":138
+  /* "cython_utils/initdata.pyx":133
  *         beta[i] = 1.0 / num_terms
  *     w_beta = 0.
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3501,7 +3301,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":139
+    /* "cython_utils/initdata.pyx":134
  *     w_beta = 0.
  *     for i in range(num_terms):
  *         w_beta += beta[i]             # <<<<<<<<<<<<<<
@@ -3511,7 +3311,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
     __pyx_v_w_beta = (__pyx_v_w_beta + (__pyx_v_beta[__pyx_v_i]));
   }
 
-  /* "cython_utils/initdata.pyx":140
+  /* "cython_utils/initdata.pyx":135
  *     for i in range(num_terms):
  *         w_beta += beta[i]
  *     priors.alpha = alpha             # <<<<<<<<<<<<<<
@@ -3520,7 +3320,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_priors->alpha = __pyx_v_alpha;
 
-  /* "cython_utils/initdata.pyx":141
+  /* "cython_utils/initdata.pyx":136
  *         w_beta += beta[i]
  *     priors.alpha = alpha
  *     priors.beta = beta             # <<<<<<<<<<<<<<
@@ -3529,7 +3329,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_priors->beta = __pyx_v_beta;
 
-  /* "cython_utils/initdata.pyx":142
+  /* "cython_utils/initdata.pyx":137
  *     priors.alpha = alpha
  *     priors.beta = beta
  *     priors.w_beta = w_beta             # <<<<<<<<<<<<<<
@@ -3538,7 +3338,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
  */
   __pyx_v_priors->w_beta = __pyx_v_w_beta;
 
-  /* "cython_utils/initdata.pyx":143
+  /* "cython_utils/initdata.pyx":138
  *     priors.beta = beta
  *     priors.w_beta = w_beta
  *     return priors             # <<<<<<<<<<<<<<
@@ -3548,7 +3348,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
   __pyx_r = __pyx_v_priors;
   goto __pyx_L0;
 
-  /* "cython_utils/initdata.pyx":122
+  /* "cython_utils/initdata.pyx":117
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef Priors * _init_priors(int num_topics, int num_terms) nogil:             # <<<<<<<<<<<<<<
@@ -3561,7 +3361,7 @@ static __pyx_t_12_ldags_train_Priors *__pyx_f_12_ldags_train__init_priors(int __
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":148
+/* "cython_utils/initdata.pyx":143
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef SparseGraph * _init_similarity_graph(int num_terms, double lam, list similarity_matrix):             # <<<<<<<<<<<<<<
@@ -3585,14 +3385,14 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   int __pyx_t_5;
   int __pyx_t_6;
   int __pyx_t_7;
-  int __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  double __pyx_t_11;
-  int __pyx_t_12;
+  double __pyx_t_8;
+  int __pyx_t_9;
+  int __pyx_t_10;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
   __Pyx_RefNannySetupContext("_init_similarity_graph", 0);
 
-  /* "cython_utils/initdata.pyx":155
+  /* "cython_utils/initdata.pyx":150
  *         SparseGraph * sg
  *     # malloc
  *     adjMat = <int **> malloc(num_terms * sizeof(int *))             # <<<<<<<<<<<<<<
@@ -3601,7 +3401,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
   __pyx_v_adjMat = ((int **)malloc((__pyx_v_num_terms * (sizeof(int *)))));
 
-  /* "cython_utils/initdata.pyx":156
+  /* "cython_utils/initdata.pyx":151
  *     # malloc
  *     adjMat = <int **> malloc(num_terms * sizeof(int *))
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3613,7 +3413,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":157
+    /* "cython_utils/initdata.pyx":152
  *     adjMat = <int **> malloc(num_terms * sizeof(int *))
  *     for i in range(num_terms):
  *         adjMat[i] = <int *> malloc(num_terms * sizeof(int))             # <<<<<<<<<<<<<<
@@ -3623,7 +3423,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
     (__pyx_v_adjMat[__pyx_v_i]) = ((int *)malloc((__pyx_v_num_terms * (sizeof(int)))));
   }
 
-  /* "cython_utils/initdata.pyx":158
+  /* "cython_utils/initdata.pyx":153
  *     for i in range(num_terms):
  *         adjMat[i] = <int *> malloc(num_terms * sizeof(int))
  *     SMat = <double **> malloc(num_terms * sizeof(double *))             # <<<<<<<<<<<<<<
@@ -3632,7 +3432,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
   __pyx_v_SMat = ((double **)malloc((__pyx_v_num_terms * (sizeof(double *)))));
 
-  /* "cython_utils/initdata.pyx":159
+  /* "cython_utils/initdata.pyx":154
  *         adjMat[i] = <int *> malloc(num_terms * sizeof(int))
  *     SMat = <double **> malloc(num_terms * sizeof(double *))
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3644,7 +3444,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":160
+    /* "cython_utils/initdata.pyx":155
  *     SMat = <double **> malloc(num_terms * sizeof(double *))
  *     for i in range(num_terms):
  *         SMat[i] = <double *> malloc(num_terms * sizeof(double))             # <<<<<<<<<<<<<<
@@ -3654,7 +3454,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
     (__pyx_v_SMat[__pyx_v_i]) = ((double *)malloc((__pyx_v_num_terms * (sizeof(double)))));
   }
 
-  /* "cython_utils/initdata.pyx":162
+  /* "cython_utils/initdata.pyx":157
  *         SMat[i] = <double *> malloc(num_terms * sizeof(double))
  *     # make sure similarity_matrix is stochastic
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3666,60 +3466,80 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":163
+    /* "cython_utils/initdata.pyx":158
  *     # make sure similarity_matrix is stochastic
  *     for i in range(num_terms):
  *         sum_row = sum(similarity_matrix[i])             # <<<<<<<<<<<<<<
  *         for j in range(num_terms):
- *             similarity_matrix[i][j] /= sum_row
+ *             if fabs(sum_row) > 1e-10:
  */
     if (unlikely(__pyx_v_similarity_matrix == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(1, 163, __pyx_L1_error)
+      __PYX_ERR(1, 158, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_sum, PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i)); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 163, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_sum, PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i)); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_sum_row, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "cython_utils/initdata.pyx":164
+    /* "cython_utils/initdata.pyx":159
  *     for i in range(num_terms):
  *         sum_row = sum(similarity_matrix[i])
  *         for j in range(num_terms):             # <<<<<<<<<<<<<<
- *             similarity_matrix[i][j] /= sum_row
- *     # create S = (1 - lam) * I + lam * similarity_matrix (eq.(8) in Ahmed, Long, Silva, Wang 2017)
+ *             if fabs(sum_row) > 1e-10:
+ *                 similarity_matrix[i][j] /= sum_row
  */
     __pyx_t_5 = __pyx_v_num_terms;
     __pyx_t_6 = __pyx_t_5;
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_j = __pyx_t_7;
 
-      /* "cython_utils/initdata.pyx":165
+      /* "cython_utils/initdata.pyx":160
  *         sum_row = sum(similarity_matrix[i])
  *         for j in range(num_terms):
- *             similarity_matrix[i][j] /= sum_row             # <<<<<<<<<<<<<<
+ *             if fabs(sum_row) > 1e-10:             # <<<<<<<<<<<<<<
+ *                 similarity_matrix[i][j] /= sum_row
+ *     # create S = (1 - lam) * I + lam * similarity_matrix (eq.(8) in Ahmed, Long, Silva, Wang 2017)
+ */
+      __pyx_t_8 = __pyx_PyFloat_AsDouble(__pyx_v_sum_row); if (unlikely((__pyx_t_8 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 160, __pyx_L1_error)
+      __pyx_t_9 = ((fabs(__pyx_t_8) > 1e-10) != 0);
+      if (__pyx_t_9) {
+
+        /* "cython_utils/initdata.pyx":161
+ *         for j in range(num_terms):
+ *             if fabs(sum_row) > 1e-10:
+ *                 similarity_matrix[i][j] /= sum_row             # <<<<<<<<<<<<<<
  *     # create S = (1 - lam) * I + lam * similarity_matrix (eq.(8) in Ahmed, Long, Silva, Wang 2017)
  *     # and its adjacency matrix
  */
-      if (unlikely(__pyx_v_similarity_matrix == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(1, 165, __pyx_L1_error)
+        if (unlikely(__pyx_v_similarity_matrix == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(1, 161, __pyx_L1_error)
+        }
+        __Pyx_INCREF(PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i));
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i);
+        __pyx_t_10 = __pyx_v_j;
+        __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_10, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(1, 161, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __pyx_t_12 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_11, __pyx_v_sum_row); if (unlikely(!__pyx_t_12)) __PYX_ERR(1, 161, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_t_10, __pyx_t_12, int, 1, __Pyx_PyInt_From_int, 0, 0, 0) < 0)) __PYX_ERR(1, 161, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+        /* "cython_utils/initdata.pyx":160
+ *         sum_row = sum(similarity_matrix[i])
+ *         for j in range(num_terms):
+ *             if fabs(sum_row) > 1e-10:             # <<<<<<<<<<<<<<
+ *                 similarity_matrix[i][j] /= sum_row
+ *     # create S = (1 - lam) * I + lam * similarity_matrix (eq.(8) in Ahmed, Long, Silva, Wang 2017)
+ */
       }
-      __Pyx_INCREF(PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i));
-      __pyx_t_4 = PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i);
-      __pyx_t_8 = __pyx_v_j;
-      __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_8, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 165, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_9, __pyx_v_sum_row); if (unlikely(!__pyx_t_10)) __PYX_ERR(1, 165, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_t_8, __pyx_t_10, int, 1, __Pyx_PyInt_From_int, 0, 0, 0) < 0)) __PYX_ERR(1, 165, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
   }
 
-  /* "cython_utils/initdata.pyx":168
+  /* "cython_utils/initdata.pyx":164
  *     # create S = (1 - lam) * I + lam * similarity_matrix (eq.(8) in Ahmed, Long, Silva, Wang 2017)
  *     # and its adjacency matrix
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -3731,7 +3551,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_utils/initdata.pyx":169
+    /* "cython_utils/initdata.pyx":165
  *     # and its adjacency matrix
  *     for i in range(num_terms):
  *         adjMat[i][i] = 1             # <<<<<<<<<<<<<<
@@ -3740,7 +3560,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
     ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_i]) = 1;
 
-    /* "cython_utils/initdata.pyx":170
+    /* "cython_utils/initdata.pyx":166
  *     for i in range(num_terms):
  *         adjMat[i][i] = 1
  *         SMat[i][i] = 1.0 - lam             # <<<<<<<<<<<<<<
@@ -3749,7 +3569,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
     ((__pyx_v_SMat[__pyx_v_i])[__pyx_v_i]) = (1.0 - __pyx_v_lam);
 
-    /* "cython_utils/initdata.pyx":171
+    /* "cython_utils/initdata.pyx":167
  *         adjMat[i][i] = 1
  *         SMat[i][i] = 1.0 - lam
  *         for j in range(i + 1, num_terms):             # <<<<<<<<<<<<<<
@@ -3761,7 +3581,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
     for (__pyx_t_7 = (__pyx_v_i + 1); __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_j = __pyx_t_7;
 
-      /* "cython_utils/initdata.pyx":172
+      /* "cython_utils/initdata.pyx":168
  *         SMat[i][i] = 1.0 - lam
  *         for j in range(i + 1, num_terms):
  *             if fabs(similarity_matrix[i][j] - 0.0) > 1e-10:             # <<<<<<<<<<<<<<
@@ -3770,19 +3590,19 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
       if (unlikely(__pyx_v_similarity_matrix == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(1, 172, __pyx_L1_error)
+        __PYX_ERR(1, 168, __pyx_L1_error)
       }
-      __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i), __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 172, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i), __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_10 = __Pyx_PyFloat_SubtractObjC(__pyx_t_4, __pyx_float_0_0, 0.0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(1, 172, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_12 = __Pyx_PyFloat_SubtractObjC(__pyx_t_4, __pyx_float_0_0, 0.0, 0); if (unlikely(!__pyx_t_12)) __PYX_ERR(1, 168, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_12);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_11 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_11 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 172, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_12 = ((fabs(__pyx_t_11) > 1e-10) != 0);
-      if (__pyx_t_12) {
+      __pyx_t_8 = __pyx_PyFloat_AsDouble(__pyx_t_12); if (unlikely((__pyx_t_8 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 168, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+      __pyx_t_9 = ((fabs(__pyx_t_8) > 1e-10) != 0);
+      if (__pyx_t_9) {
 
-        /* "cython_utils/initdata.pyx":173
+        /* "cython_utils/initdata.pyx":169
  *         for j in range(i + 1, num_terms):
  *             if fabs(similarity_matrix[i][j] - 0.0) > 1e-10:
  *                 adjMat[i][j] = 1             # <<<<<<<<<<<<<<
@@ -3791,7 +3611,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
         ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]) = 1;
 
-        /* "cython_utils/initdata.pyx":174
+        /* "cython_utils/initdata.pyx":170
  *             if fabs(similarity_matrix[i][j] - 0.0) > 1e-10:
  *                 adjMat[i][j] = 1
  *                 adjMat[j][i] = adjMat[i][j]             # <<<<<<<<<<<<<<
@@ -3800,30 +3620,30 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
         ((__pyx_v_adjMat[__pyx_v_j])[__pyx_v_i]) = ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]);
 
-        /* "cython_utils/initdata.pyx":175
+        /* "cython_utils/initdata.pyx":171
  *                 adjMat[i][j] = 1
  *                 adjMat[j][i] = adjMat[i][j]
  *                 SMat[i][j] = lam * similarity_matrix[i][j]             # <<<<<<<<<<<<<<
  *                 SMat[j][i] = SMat[i][j]
  *             else:
  */
-        __pyx_t_10 = PyFloat_FromDouble(__pyx_v_lam); if (unlikely(!__pyx_t_10)) __PYX_ERR(1, 175, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_10);
+        __pyx_t_12 = PyFloat_FromDouble(__pyx_v_lam); if (unlikely(!__pyx_t_12)) __PYX_ERR(1, 171, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
         if (unlikely(__pyx_v_similarity_matrix == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(1, 175, __pyx_L1_error)
+          __PYX_ERR(1, 171, __pyx_L1_error)
         }
-        __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i), __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 175, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_similarity_matrix, __pyx_v_i), __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 171, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_9 = PyNumber_Multiply(__pyx_t_10, __pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 175, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __pyx_t_11 = PyNumber_Multiply(__pyx_t_12, __pyx_t_4); if (unlikely(!__pyx_t_11)) __PYX_ERR(1, 171, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_11 = __pyx_PyFloat_AsDouble(__pyx_t_9); if (unlikely((__pyx_t_11 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 175, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        ((__pyx_v_SMat[__pyx_v_i])[__pyx_v_j]) = __pyx_t_11;
+        __pyx_t_8 = __pyx_PyFloat_AsDouble(__pyx_t_11); if (unlikely((__pyx_t_8 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 171, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        ((__pyx_v_SMat[__pyx_v_i])[__pyx_v_j]) = __pyx_t_8;
 
-        /* "cython_utils/initdata.pyx":176
+        /* "cython_utils/initdata.pyx":172
  *                 adjMat[j][i] = adjMat[i][j]
  *                 SMat[i][j] = lam * similarity_matrix[i][j]
  *                 SMat[j][i] = SMat[i][j]             # <<<<<<<<<<<<<<
@@ -3832,17 +3652,17 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
         ((__pyx_v_SMat[__pyx_v_j])[__pyx_v_i]) = ((__pyx_v_SMat[__pyx_v_i])[__pyx_v_j]);
 
-        /* "cython_utils/initdata.pyx":172
+        /* "cython_utils/initdata.pyx":168
  *         SMat[i][i] = 1.0 - lam
  *         for j in range(i + 1, num_terms):
  *             if fabs(similarity_matrix[i][j] - 0.0) > 1e-10:             # <<<<<<<<<<<<<<
  *                 adjMat[i][j] = 1
  *                 adjMat[j][i] = adjMat[i][j]
  */
-        goto __pyx_L15;
+        goto __pyx_L16;
       }
 
-      /* "cython_utils/initdata.pyx":178
+      /* "cython_utils/initdata.pyx":174
  *                 SMat[j][i] = SMat[i][j]
  *             else:
  *                 adjMat[i][j] = 0             # <<<<<<<<<<<<<<
@@ -3852,7 +3672,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
       /*else*/ {
         ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]) = 0;
 
-        /* "cython_utils/initdata.pyx":179
+        /* "cython_utils/initdata.pyx":175
  *             else:
  *                 adjMat[i][j] = 0
  *                 adjMat[j][i] = adjMat[i][j]             # <<<<<<<<<<<<<<
@@ -3861,7 +3681,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
         ((__pyx_v_adjMat[__pyx_v_j])[__pyx_v_i]) = ((__pyx_v_adjMat[__pyx_v_i])[__pyx_v_j]);
 
-        /* "cython_utils/initdata.pyx":180
+        /* "cython_utils/initdata.pyx":176
  *                 adjMat[i][j] = 0
  *                 adjMat[j][i] = adjMat[i][j]
  *                 SMat[i][j] = 0.0             # <<<<<<<<<<<<<<
@@ -3870,7 +3690,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
         ((__pyx_v_SMat[__pyx_v_i])[__pyx_v_j]) = 0.0;
 
-        /* "cython_utils/initdata.pyx":181
+        /* "cython_utils/initdata.pyx":177
  *                 adjMat[j][i] = adjMat[i][j]
  *                 SMat[i][j] = 0.0
  *                 SMat[j][i] = SMat[i][j]             # <<<<<<<<<<<<<<
@@ -3879,11 +3699,11 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
         ((__pyx_v_SMat[__pyx_v_j])[__pyx_v_i]) = ((__pyx_v_SMat[__pyx_v_i])[__pyx_v_j]);
       }
-      __pyx_L15:;
+      __pyx_L16:;
     }
   }
 
-  /* "cython_utils/initdata.pyx":183
+  /* "cython_utils/initdata.pyx":179
  *                 SMat[j][i] = SMat[i][j]
  *     # create similarity graph base on S
  *     sg = newSparseGraph(num_terms, adjMat, SMat)             # <<<<<<<<<<<<<<
@@ -3892,7 +3712,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
  */
   __pyx_v_sg = __pyx_f_12_ldags_train_newSparseGraph(__pyx_v_num_terms, __pyx_v_adjMat, __pyx_v_SMat);
 
-  /* "cython_utils/initdata.pyx":184
+  /* "cython_utils/initdata.pyx":180
  *     # create similarity graph base on S
  *     sg = newSparseGraph(num_terms, adjMat, SMat)
  *     return sg             # <<<<<<<<<<<<<<
@@ -3902,7 +3722,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   __pyx_r = __pyx_v_sg;
   goto __pyx_L0;
 
-  /* "cython_utils/initdata.pyx":148
+  /* "cython_utils/initdata.pyx":143
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  * cdef SparseGraph * _init_similarity_graph(int num_terms, double lam, list similarity_matrix):             # <<<<<<<<<<<<<<
@@ -3913,8 +3733,8 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_12);
   __Pyx_WriteUnraisable("_ldags_train._init_similarity_graph", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
@@ -3923,7 +3743,7 @@ static __pyx_t_12_ldags_train_SparseGraph *__pyx_f_12_ldags_train__init_similari
   return __pyx_r;
 }
 
-/* "cython_utils/initdata.pyx":186
+/* "cython_utils/initdata.pyx":182
  *     return sg
  * 
  * def test_sim_mat():             # <<<<<<<<<<<<<<
@@ -3968,7 +3788,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
   PyObject *__pyx_t_9 = NULL;
   __Pyx_RefNannySetupContext("test_sim_mat", 0);
 
-  /* "cython_utils/initdata.pyx":189
+  /* "cython_utils/initdata.pyx":185
  *     cdef:
  *         int i, j, k
  *         int num_terms = 10             # <<<<<<<<<<<<<<
@@ -3977,7 +3797,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
   __pyx_v_num_terms = 10;
 
-  /* "cython_utils/initdata.pyx":190
+  /* "cython_utils/initdata.pyx":186
  *         int i, j, k
  *         int num_terms = 10
  *         double lam = 0.5             # <<<<<<<<<<<<<<
@@ -3986,19 +3806,19 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
   __pyx_v_lam = 0.5;
 
-  /* "cython_utils/initdata.pyx":194
+  /* "cython_utils/initdata.pyx":190
  *         SparseGraph * simgraph
  *     # populate randomly
  *     similarity_matrix = []             # <<<<<<<<<<<<<<
  *     for i in range(num_terms):
  *         similarity_row = [0] * num_terms
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 194, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_similarity_matrix = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "cython_utils/initdata.pyx":195
+  /* "cython_utils/initdata.pyx":191
  *     # populate randomly
  *     similarity_matrix = []
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -4010,14 +3830,14 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":196
+    /* "cython_utils/initdata.pyx":192
  *     similarity_matrix = []
  *     for i in range(num_terms):
  *         similarity_row = [0] * num_terms             # <<<<<<<<<<<<<<
  *         similarity_matrix.append(similarity_row)
  *     for i in range(num_terms):
  */
-    __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_terms<0) ? 0:__pyx_v_num_terms)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 196, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(1 * ((__pyx_v_num_terms<0) ? 0:__pyx_v_num_terms)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 192, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     { Py_ssize_t __pyx_temp;
       for (__pyx_temp=0; __pyx_temp < __pyx_v_num_terms; __pyx_temp++) {
@@ -4029,17 +3849,17 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
     __Pyx_XDECREF_SET(__pyx_v_similarity_row, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "cython_utils/initdata.pyx":197
+    /* "cython_utils/initdata.pyx":193
  *     for i in range(num_terms):
  *         similarity_row = [0] * num_terms
  *         similarity_matrix.append(similarity_row)             # <<<<<<<<<<<<<<
  *     for i in range(num_terms):
  *         for j in range(i + 1, num_terms):
  */
-    __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_similarity_matrix, __pyx_v_similarity_row); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(1, 197, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_similarity_matrix, __pyx_v_similarity_row); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(1, 193, __pyx_L1_error)
   }
 
-  /* "cython_utils/initdata.pyx":198
+  /* "cython_utils/initdata.pyx":194
  *         similarity_row = [0] * num_terms
  *         similarity_matrix.append(similarity_row)
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -4051,7 +3871,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":199
+    /* "cython_utils/initdata.pyx":195
  *         similarity_matrix.append(similarity_row)
  *     for i in range(num_terms):
  *         for j in range(i + 1, num_terms):             # <<<<<<<<<<<<<<
@@ -4063,51 +3883,51 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
     for (__pyx_t_8 = (__pyx_v_i + 1); __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_j = __pyx_t_8;
 
-      /* "cython_utils/initdata.pyx":200
+      /* "cython_utils/initdata.pyx":196
  *     for i in range(num_terms):
  *         for j in range(i + 1, num_terms):
  *             similarity_matrix[i][j] = randInt(0, 2) * randUniform()             # <<<<<<<<<<<<<<
  *             similarity_matrix[j][i] = similarity_matrix[i][j]
  *     # print similarity_matrix
  */
-      __pyx_t_1 = PyFloat_FromDouble((__pyx_f_12_ldags_train_randInt(0, 2) * __pyx_f_12_ldags_train_randUniform())); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 200, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble((__pyx_f_12_ldags_train_randInt(0, 2) * __pyx_f_12_ldags_train_randUniform())); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 196, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_similarity_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 200, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_similarity_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 196, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_9, __pyx_v_j, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(1, 200, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_9, __pyx_v_j, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(1, 196, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "cython_utils/initdata.pyx":201
+      /* "cython_utils/initdata.pyx":197
  *         for j in range(i + 1, num_terms):
  *             similarity_matrix[i][j] = randInt(0, 2) * randUniform()
  *             similarity_matrix[j][i] = similarity_matrix[i][j]             # <<<<<<<<<<<<<<
  *     # print similarity_matrix
  *     print(similarity_matrix)
  */
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_similarity_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 201, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_similarity_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 197, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 201, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 197, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_similarity_matrix, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 201, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_similarity_matrix, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 197, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_t_9, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(1, 201, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_t_9, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(1, 197, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     }
   }
 
-  /* "cython_utils/initdata.pyx":203
+  /* "cython_utils/initdata.pyx":199
  *             similarity_matrix[j][i] = similarity_matrix[i][j]
  *     # print similarity_matrix
  *     print(similarity_matrix)             # <<<<<<<<<<<<<<
  *     # create similarity graph
  *     simgraph = _init_similarity_graph(num_terms, lam, similarity_matrix)
  */
-  if (__Pyx_PrintOne(0, __pyx_v_similarity_matrix) < 0) __PYX_ERR(1, 203, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_v_similarity_matrix) < 0) __PYX_ERR(1, 199, __pyx_L1_error)
 
-  /* "cython_utils/initdata.pyx":205
+  /* "cython_utils/initdata.pyx":201
  *     print(similarity_matrix)
  *     # create similarity graph
  *     simgraph = _init_similarity_graph(num_terms, lam, similarity_matrix)             # <<<<<<<<<<<<<<
@@ -4116,7 +3936,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
   __pyx_v_simgraph = __pyx_f_12_ldags_train__init_similarity_graph(__pyx_v_num_terms, __pyx_v_lam, __pyx_v_similarity_matrix);
 
-  /* "cython_utils/initdata.pyx":207
+  /* "cython_utils/initdata.pyx":203
  *     simgraph = _init_similarity_graph(num_terms, lam, similarity_matrix)
  *     # print graph
  *     printf("node neighbours:\n")             # <<<<<<<<<<<<<<
@@ -4125,7 +3945,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
   (void)(printf(((char const *)"node neighbours:\n")));
 
-  /* "cython_utils/initdata.pyx":208
+  /* "cython_utils/initdata.pyx":204
  *     # print graph
  *     printf("node neighbours:\n")
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -4137,7 +3957,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":209
+    /* "cython_utils/initdata.pyx":205
  *     printf("node neighbours:\n")
  *     for i in range(num_terms):
  *         printf("node %d:", i)             # <<<<<<<<<<<<<<
@@ -4146,7 +3966,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
     (void)(printf(((char const *)"node %d:"), __pyx_v_i));
 
-    /* "cython_utils/initdata.pyx":210
+    /* "cython_utils/initdata.pyx":206
  *     for i in range(num_terms):
  *         printf("node %d:", i)
  *         for k in range(simgraph.node[i].deg):             # <<<<<<<<<<<<<<
@@ -4158,7 +3978,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
     for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_k = __pyx_t_8;
 
-      /* "cython_utils/initdata.pyx":211
+      /* "cython_utils/initdata.pyx":207
  *         printf("node %d:", i)
  *         for k in range(simgraph.node[i].deg):
  *             printf("\t%d", simgraph.node[i].neighb[k])             # <<<<<<<<<<<<<<
@@ -4168,7 +3988,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
       (void)(printf(((char const *)"\t%d"), ((__pyx_v_simgraph->node[__pyx_v_i]).neighb[__pyx_v_k])));
     }
 
-    /* "cython_utils/initdata.pyx":212
+    /* "cython_utils/initdata.pyx":208
  *         for k in range(simgraph.node[i].deg):
  *             printf("\t%d", simgraph.node[i].neighb[k])
  *         printf("\n")             # <<<<<<<<<<<<<<
@@ -4178,7 +3998,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
     (void)(printf(((char const *)"\n")));
   }
 
-  /* "cython_utils/initdata.pyx":213
+  /* "cython_utils/initdata.pyx":209
  *             printf("\t%d", simgraph.node[i].neighb[k])
  *         printf("\n")
  *     printf("node weights:\n");             # <<<<<<<<<<<<<<
@@ -4187,7 +4007,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
   (void)(printf(((char const *)"node weights:\n")));
 
-  /* "cython_utils/initdata.pyx":214
+  /* "cython_utils/initdata.pyx":210
  *         printf("\n")
  *     printf("node weights:\n");
  *     for i in range(num_terms):             # <<<<<<<<<<<<<<
@@ -4199,7 +4019,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_utils/initdata.pyx":215
+    /* "cython_utils/initdata.pyx":211
  *     printf("node weights:\n");
  *     for i in range(num_terms):
  *         printf("node %d:", i)             # <<<<<<<<<<<<<<
@@ -4208,7 +4028,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
     (void)(printf(((char const *)"node %d:"), __pyx_v_i));
 
-    /* "cython_utils/initdata.pyx":216
+    /* "cython_utils/initdata.pyx":212
  *     for i in range(num_terms):
  *         printf("node %d:", i)
  *         sum = 0.0             # <<<<<<<<<<<<<<
@@ -4217,7 +4037,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
     __pyx_v_sum = 0.0;
 
-    /* "cython_utils/initdata.pyx":217
+    /* "cython_utils/initdata.pyx":213
  *         printf("node %d:", i)
  *         sum = 0.0
  *         for k in range(simgraph.node[i].deg):             # <<<<<<<<<<<<<<
@@ -4229,7 +4049,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
     for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_k = __pyx_t_8;
 
-      /* "cython_utils/initdata.pyx":218
+      /* "cython_utils/initdata.pyx":214
  *         sum = 0.0
  *         for k in range(simgraph.node[i].deg):
  *             sum += simgraph.node[i].weight[k]             # <<<<<<<<<<<<<<
@@ -4238,7 +4058,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
  */
       __pyx_v_sum = (__pyx_v_sum + ((__pyx_v_simgraph->node[__pyx_v_i]).weight[__pyx_v_k]));
 
-      /* "cython_utils/initdata.pyx":219
+      /* "cython_utils/initdata.pyx":215
  *         for k in range(simgraph.node[i].deg):
  *             sum += simgraph.node[i].weight[k]
  *             printf("\t%f", simgraph.node[i].weight[k])             # <<<<<<<<<<<<<<
@@ -4247,7 +4067,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
       (void)(printf(((char const *)"\t%f"), ((__pyx_v_simgraph->node[__pyx_v_i]).weight[__pyx_v_k])));
     }
 
-    /* "cython_utils/initdata.pyx":220
+    /* "cython_utils/initdata.pyx":216
  *             sum += simgraph.node[i].weight[k]
  *             printf("\t%f", simgraph.node[i].weight[k])
  *         printf("\nsum = %f\n", sum)             # <<<<<<<<<<<<<<
@@ -4255,7 +4075,7 @@ static PyObject *__pyx_pf_12_ldags_train_2test_sim_mat(CYTHON_UNUSED PyObject *_
     (void)(printf(((char const *)"\nsum = %f\n"), __pyx_v_sum));
   }
 
-  /* "cython_utils/initdata.pyx":186
+  /* "cython_utils/initdata.pyx":182
  *     return sg
  * 
  * def test_sim_mat():             # <<<<<<<<<<<<<<
@@ -7397,7 +7217,7 @@ static void __pyx_f_12_ldags_train_genSamplesAlias(int __pyx_v_n, int __pyx_v_k,
   /* function exit code */
 }
 
-/* "_ldags_train.pyx":31
+/* "_ldags_train.pyx":33
  * 
  * 
  * def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam):             # <<<<<<<<<<<<<<
@@ -7446,29 +7266,29 @@ static PyObject *__pyx_pw_12_ldags_train_5train(PyObject *__pyx_self, PyObject *
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_passes)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 1); __PYX_ERR(2, 31, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 1); __PYX_ERR(2, 33, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_corpus)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 2); __PYX_ERR(2, 31, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 2); __PYX_ERR(2, 33, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_similarity_matrix)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 3); __PYX_ERR(2, 31, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 3); __PYX_ERR(2, 33, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_lam)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 4); __PYX_ERR(2, 31, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 4); __PYX_ERR(2, 33, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) __PYX_ERR(2, 31, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) __PYX_ERR(2, 33, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -7479,15 +7299,15 @@ static PyObject *__pyx_pw_12_ldags_train_5train(PyObject *__pyx_self, PyObject *
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_num_topics = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_num_topics == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 31, __pyx_L3_error)
-    __pyx_v_num_passes = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_num_passes == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 31, __pyx_L3_error)
+    __pyx_v_num_topics = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_num_topics == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 33, __pyx_L3_error)
+    __pyx_v_num_passes = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_num_passes == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 33, __pyx_L3_error)
     __pyx_v_corpus = values[2];
     __pyx_v_similarity_matrix = values[3];
-    __pyx_v_lam = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_lam == (double)-1) && PyErr_Occurred())) __PYX_ERR(2, 31, __pyx_L3_error)
+    __pyx_v_lam = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_lam == (double)-1) && PyErr_Occurred())) __PYX_ERR(2, 33, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(2, 31, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(2, 33, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("_ldags_train.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7515,7 +7335,6 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   __pyx_t_12_ldags_train_Priors *__pyx_v_priors;
   __pyx_t_12_ldags_train_SparseGraph *__pyx_v_sim_graph;
   double __pyx_v_sum;
-  PyObject *__pyx_v_id2word = NULL;
   PyObject *__pyx_v_term_seqs = NULL;
   PyObject *__pyx_v_topic_seqs = NULL;
   PyObject *__pyx_v_term_topic_counts = NULL;
@@ -7526,11 +7345,11 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
-  Py_ssize_t __pyx_t_5;
-  int __pyx_t_6;
+  int __pyx_t_2;
+  Py_ssize_t __pyx_t_3;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
+  PyObject *__pyx_t_6 = NULL;
   PyObject *__pyx_t_7 = NULL;
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
@@ -7544,75 +7363,42 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   int __pyx_t_17;
   __Pyx_RefNannySetupContext("train", 0);
 
-  /* "_ldags_train.pyx":48
+  /* "_ldags_train.pyx":50
  * 
  *     # init RNG
  *     srand(1)             # <<<<<<<<<<<<<<
  * 
- *     # get num_terms from corpus
+ *     # get num_terms, num_docs from corpus
  */
   srand(1);
 
-  /* "_ldags_train.pyx":51
- * 
- *     # get num_terms from corpus
- *     id2word = corpus.dictionary             # <<<<<<<<<<<<<<
- *     num_terms = 1 + max(id2word.keys())
- *     del id2word
- */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_corpus, __pyx_n_s_dictionary); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 51, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_id2word = __pyx_t_1;
-  __pyx_t_1 = 0;
-
-  /* "_ldags_train.pyx":52
- *     # get num_terms from corpus
- *     id2word = corpus.dictionary
- *     num_terms = 1 + max(id2word.keys())             # <<<<<<<<<<<<<<
- *     del id2word
- * 
- */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_id2word, __pyx_n_s_keys); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 52, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
-  }
-  if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 52, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 52, __pyx_L1_error)
-  }
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_max, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 52, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_2, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 52, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 52, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_num_terms = __pyx_t_4;
-
   /* "_ldags_train.pyx":53
- *     id2word = corpus.dictionary
- *     num_terms = 1 + max(id2word.keys())
- *     del id2word             # <<<<<<<<<<<<<<
+ * 
+ *     # get num_terms, num_docs from corpus
+ *     num_terms = corpus.num_terms             # <<<<<<<<<<<<<<
+ *     num_docs = corpus.num_docs
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_corpus, __pyx_n_s_num_terms); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 53, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_num_terms = __pyx_t_2;
+
+  /* "_ldags_train.pyx":54
+ *     # get num_terms, num_docs from corpus
+ *     num_terms = corpus.num_terms
+ *     num_docs = corpus.num_docs             # <<<<<<<<<<<<<<
  * 
  *     # verify similarity_matrix size
  */
-  __Pyx_DECREF(__pyx_v_id2word);
-  __pyx_v_id2word = NULL;
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_corpus, __pyx_n_s_num_docs); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(2, 54, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_num_docs = __pyx_t_2;
 
-  /* "_ldags_train.pyx":56
+  /* "_ldags_train.pyx":57
  * 
  *     # verify similarity_matrix size
  *     assert(len(similarity_matrix) == num_terms, "similarity matrix size != num_terms")             # <<<<<<<<<<<<<<
@@ -7621,51 +7407,51 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
-    __pyx_t_5 = PyObject_Length(__pyx_v_similarity_matrix); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(2, 56, __pyx_L1_error)
-    __pyx_t_1 = __Pyx_PyBool_FromLong((__pyx_t_5 == __pyx_v_num_terms)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 56, __pyx_L1_error)
+    __pyx_t_3 = PyObject_Length(__pyx_v_similarity_matrix); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(2, 57, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyBool_FromLong((__pyx_t_3 == __pyx_v_num_terms)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 57, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 56, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 57, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
     __Pyx_INCREF(__pyx_kp_s_similarity_matrix_size_num_terms);
     __Pyx_GIVEREF(__pyx_kp_s_similarity_matrix_size_num_terms);
-    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_kp_s_similarity_matrix_size_num_terms);
+    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_kp_s_similarity_matrix_size_num_terms);
     __pyx_t_1 = 0;
-    __pyx_t_6 = (PyTuple_GET_SIZE(__pyx_t_2) != 0);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_6)) {
+    __pyx_t_5 = (PyTuple_GET_SIZE(__pyx_t_4) != 0);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_5)) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(2, 56, __pyx_L1_error)
+      __PYX_ERR(2, 57, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "_ldags_train.pyx":59
+  /* "_ldags_train.pyx":60
  * 
  *     # build similarity graph
  *     sim_graph = _init_similarity_graph(num_terms, lam, similarity_matrix)             # <<<<<<<<<<<<<<
  * 
  *     # init sequences and counts
  */
-  if (!(likely(PyList_CheckExact(__pyx_v_similarity_matrix))||((__pyx_v_similarity_matrix) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_v_similarity_matrix)->tp_name), 0))) __PYX_ERR(2, 59, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_v_similarity_matrix))||((__pyx_v_similarity_matrix) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_v_similarity_matrix)->tp_name), 0))) __PYX_ERR(2, 60, __pyx_L1_error)
   __pyx_v_sim_graph = __pyx_f_12_ldags_train__init_similarity_graph(__pyx_v_num_terms, __pyx_v_lam, ((PyObject*)__pyx_v_similarity_matrix));
 
-  /* "_ldags_train.pyx":62
+  /* "_ldags_train.pyx":63
  * 
  *     # init sequences and counts
  *     term_seqs, topic_seqs, term_topic_counts, terms_per_topic = init_seqs_and_counts(num_topics, num_terms, corpus)             # <<<<<<<<<<<<<<
- *     num_docs = len(term_seqs)
  * 
+ *     # init doc_len
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_init_seqs_and_counts); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 62, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_init_seqs_and_counts); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_num_topics); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 62, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_num_terms); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 62, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_num_topics); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 63, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_num_terms); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_8 = NULL;
-  __pyx_t_4 = 0;
+  __pyx_t_2 = 0;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
     __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_1);
     if (likely(__pyx_t_8)) {
@@ -7673,98 +7459,98 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
       __Pyx_INCREF(__pyx_t_8);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_1, function);
-      __pyx_t_4 = 1;
+      __pyx_t_2 = 1;
     }
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_1)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_t_3, __pyx_t_7, __pyx_v_corpus};
-    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 62, __pyx_L1_error)
+    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_t_6, __pyx_t_7, __pyx_v_corpus};
+    __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_2, 3+__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   } else
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_t_3, __pyx_t_7, __pyx_v_corpus};
-    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 62, __pyx_L1_error)
+    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_t_6, __pyx_t_7, __pyx_v_corpus};
+    __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_2, 3+__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   } else
   #endif
   {
-    __pyx_t_9 = PyTuple_New(3+__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 62, __pyx_L1_error)
+    __pyx_t_9 = PyTuple_New(3+__pyx_t_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     if (__pyx_t_8) {
       __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8); __pyx_t_8 = NULL;
     }
-    __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_4, __pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_6);
+    PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_2, __pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_7);
-    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_4, __pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_2, __pyx_t_7);
     __Pyx_INCREF(__pyx_v_corpus);
     __Pyx_GIVEREF(__pyx_v_corpus);
-    PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_4, __pyx_v_corpus);
-    __pyx_t_3 = 0;
+    PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_2, __pyx_v_corpus);
+    __pyx_t_6 = 0;
     __pyx_t_7 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 62, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_9, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 63, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if ((likely(PyTuple_CheckExact(__pyx_t_2))) || (PyList_CheckExact(__pyx_t_2))) {
-    PyObject* sequence = __pyx_t_2;
+  if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
+    PyObject* sequence = __pyx_t_4;
     Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
     if (unlikely(size != 4)) {
       if (size > 4) __Pyx_RaiseTooManyValuesError(4);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(2, 62, __pyx_L1_error)
+      __PYX_ERR(2, 63, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
       __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
       __pyx_t_9 = PyTuple_GET_ITEM(sequence, 1); 
       __pyx_t_7 = PyTuple_GET_ITEM(sequence, 2); 
-      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 3); 
+      __pyx_t_6 = PyTuple_GET_ITEM(sequence, 3); 
     } else {
       __pyx_t_1 = PyList_GET_ITEM(sequence, 0); 
       __pyx_t_9 = PyList_GET_ITEM(sequence, 1); 
       __pyx_t_7 = PyList_GET_ITEM(sequence, 2); 
-      __pyx_t_3 = PyList_GET_ITEM(sequence, 3); 
+      __pyx_t_6 = PyList_GET_ITEM(sequence, 3); 
     }
     __Pyx_INCREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_t_9);
     __Pyx_INCREF(__pyx_t_7);
-    __Pyx_INCREF(__pyx_t_3);
+    __Pyx_INCREF(__pyx_t_6);
     #else
     {
       Py_ssize_t i;
-      PyObject** temps[4] = {&__pyx_t_1,&__pyx_t_9,&__pyx_t_7,&__pyx_t_3};
+      PyObject** temps[4] = {&__pyx_t_1,&__pyx_t_9,&__pyx_t_7,&__pyx_t_6};
       for (i=0; i < 4; i++) {
-        PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(2, 62, __pyx_L1_error)
+        PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(2, 63, __pyx_L1_error)
         __Pyx_GOTREF(item);
         *(temps[i]) = item;
       }
     }
     #endif
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   } else {
     Py_ssize_t index = -1;
-    PyObject** temps[4] = {&__pyx_t_1,&__pyx_t_9,&__pyx_t_7,&__pyx_t_3};
-    __pyx_t_8 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 62, __pyx_L1_error)
+    PyObject** temps[4] = {&__pyx_t_1,&__pyx_t_9,&__pyx_t_7,&__pyx_t_6};
+    __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_10 = Py_TYPE(__pyx_t_8)->tp_iternext;
     for (index=0; index < 4; index++) {
       PyObject* item = __pyx_t_10(__pyx_t_8); if (unlikely(!item)) goto __pyx_L3_unpacking_failed;
       __Pyx_GOTREF(item);
       *(temps[index]) = item;
     }
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_8), 4) < 0) __PYX_ERR(2, 62, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_8), 4) < 0) __PYX_ERR(2, 63, __pyx_L1_error)
     __pyx_t_10 = NULL;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     goto __pyx_L4_unpacking_done;
@@ -7772,7 +7558,7 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_10 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(2, 62, __pyx_L1_error)
+    __PYX_ERR(2, 63, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
   __pyx_v_term_seqs = __pyx_t_1;
@@ -7781,18 +7567,8 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   __pyx_t_9 = 0;
   __pyx_v_term_topic_counts = __pyx_t_7;
   __pyx_t_7 = 0;
-  __pyx_v_terms_per_topic = __pyx_t_3;
-  __pyx_t_3 = 0;
-
-  /* "_ldags_train.pyx":63
- *     # init sequences and counts
- *     term_seqs, topic_seqs, term_topic_counts, terms_per_topic = init_seqs_and_counts(num_topics, num_terms, corpus)
- *     num_docs = len(term_seqs)             # <<<<<<<<<<<<<<
- * 
- *     # init doc_len
- */
-  __pyx_t_5 = PyObject_Length(__pyx_v_term_seqs); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(2, 63, __pyx_L1_error)
-  __pyx_v_num_docs = __pyx_t_5;
+  __pyx_v_terms_per_topic = __pyx_t_6;
+  __pyx_t_6 = 0;
 
   /* "_ldags_train.pyx":66
  * 
@@ -7810,8 +7586,8 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  *         doc_len[i] = len(term_seqs[i])
  * 
  */
-  __pyx_t_4 = __pyx_v_num_docs;
-  __pyx_t_11 = __pyx_t_4;
+  __pyx_t_2 = __pyx_v_num_docs;
+  __pyx_t_11 = __pyx_t_2;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
 
@@ -7822,11 +7598,11 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  * 
  *     # convert lists to C pointers
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_term_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 68, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(2, 68, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    (__pyx_v_doc_len[__pyx_v_i]) = __pyx_t_5;
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_term_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_3 = PyObject_Length(__pyx_t_4); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(2, 68, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    (__pyx_v_doc_len[__pyx_v_i]) = __pyx_t_3;
   }
 
   /* "_ldags_train.pyx":71
@@ -7903,13 +7679,13 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  *     phi = np.empty(shape=(num_topics, num_terms), dtype=np.float64)
  * 
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 86, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_empty); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 86, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 86, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_num_docs); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_topics); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 86, __pyx_L1_error)
@@ -7922,19 +7698,19 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_9);
   __pyx_t_7 = 0;
   __pyx_t_9 = 0;
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_shape, __pyx_t_1) < 0) __PYX_ERR(2, 86, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shape, __pyx_t_1) < 0) __PYX_ERR(2, 86, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_dtype, __pyx_t_9) < 0) __PYX_ERR(2, 86, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_9) < 0) __PYX_ERR(2, 86, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 86, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_theta = __pyx_t_9;
   __pyx_t_9 = 0;
 
@@ -7947,22 +7723,22 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  */
   __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 87, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 87, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __pyx_t_9 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_num_topics); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 87, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_num_topics); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 87, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_terms); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_GIVEREF(__pyx_t_3);
-  PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_1);
-  __pyx_t_3 = 0;
+  __pyx_t_6 = 0;
   __pyx_t_1 = 0;
   if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_shape, __pyx_t_7) < 0) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -7973,9 +7749,9 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_dtype, __pyx_t_1) < 0) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 87, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __pyx_v_phi = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7987,8 +7763,8 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  *         sum = 0.0
  *         for t in range(num_topics):
  */
-  __pyx_t_4 = __pyx_v_num_docs;
-  __pyx_t_11 = __pyx_t_4;
+  __pyx_t_2 = __pyx_v_num_docs;
+  __pyx_t_11 = __pyx_t_2;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
     __pyx_v_d = __pyx_t_12;
 
@@ -8039,13 +7815,13 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_9 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 94, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_9, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 94, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_9, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 94, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 94, __pyx_L1_error)
+      __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 94, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_9); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(2, 94, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __pyx_v_sum = __pyx_t_16;
@@ -8073,13 +7849,13 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
       __pyx_t_9 = __Pyx_GetItemInt(__pyx_v_theta, __pyx_v_d, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 96, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __pyx_t_17 = __pyx_v_t;
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_9, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 96, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_9, __pyx_t_17, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 96, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
       __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 96, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 96, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 96, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (unlikely(__Pyx_SetItemInt(__pyx_t_9, __pyx_t_17, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(2, 96, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -8094,8 +7870,8 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
  *         sum = 0.0
  *         for w in range(num_terms):
  */
-  __pyx_t_4 = __pyx_v_num_topics;
-  __pyx_t_11 = __pyx_t_4;
+  __pyx_t_2 = __pyx_v_num_topics;
+  __pyx_t_11 = __pyx_t_2;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
     __pyx_v_t = __pyx_t_12;
 
@@ -8184,12 +7960,12 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_9 = PyFloat_FromDouble(__pyx_v_sum); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 103, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_2 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 103, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_4 = __Pyx_PyNumber_InPlaceDivide(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 103, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_t_17, __pyx_t_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(2, 103, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_t_17, __pyx_t_4, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(2, 103, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
   }
@@ -8214,7 +7990,7 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "_ldags_train.pyx":31
+  /* "_ldags_train.pyx":33
  * 
  * 
  * def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam):             # <<<<<<<<<<<<<<
@@ -8225,15 +8001,14 @@ static PyObject *__pyx_pf_12_ldags_train_4train(CYTHON_UNUSED PyObject *__pyx_se
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_AddTraceback("_ldags_train.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_id2word);
   __Pyx_XDECREF(__pyx_v_term_seqs);
   __Pyx_XDECREF(__pyx_v_topic_seqs);
   __Pyx_XDECREF(__pyx_v_term_topic_counts);
@@ -8925,24 +8700,52 @@ static void __pyx_f_12_ldags_train_init_stale_samples(__pyx_t_12_ldags_train_Cor
   /* "_ldags_train.pyx":237
  *                             double ** qq, double * qq_norm, double * qqS_norm, SparseGraph * sim_graph) nogil:
  *     cdef int w
- *     for w in range(cdata.num_terms):             # <<<<<<<<<<<<<<
+ *     for w in prange(cdata.num_terms):             # <<<<<<<<<<<<<<
  *         generate_stale_samples(cdata.num_topics + sim_graph.node[w].deg - 1, w, cdata, priors, stale_samples,\
  *                                 qq, qq_norm, qqS_norm, sim_graph)
  */
   __pyx_t_1 = __pyx_v_cdata->num_terms;
-  __pyx_t_2 = __pyx_t_1;
-  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
-    __pyx_v_w = __pyx_t_3;
+  if (1 == 0) abort();
+  {
+      #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
+          #undef likely
+          #undef unlikely
+          #define likely(x)   (x)
+          #define unlikely(x) (x)
+      #endif
+      __pyx_t_3 = (__pyx_t_1 - 0 + 1 - 1/abs(1)) / 1;
+      if (__pyx_t_3 > 0)
+      {
+          #ifdef _OPENMP
+          #pragma omp parallel
+          #endif /* _OPENMP */
+          {
+              #ifdef _OPENMP
+              #pragma omp for firstprivate(__pyx_v_w) lastprivate(__pyx_v_w)
+              #endif /* _OPENMP */
+              for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_3; __pyx_t_2++){
+                  {
+                      __pyx_v_w = (int)(0 + 1 * __pyx_t_2);
 
-    /* "_ldags_train.pyx":238
+                      /* "_ldags_train.pyx":238
  *     cdef int w
- *     for w in range(cdata.num_terms):
+ *     for w in prange(cdata.num_terms):
  *         generate_stale_samples(cdata.num_topics + sim_graph.node[w].deg - 1, w, cdata, priors, stale_samples,\             # <<<<<<<<<<<<<<
  *                                 qq, qq_norm, qqS_norm, sim_graph)
  * 
  */
-    __pyx_f_12_ldags_train_generate_stale_samples(((__pyx_v_cdata->num_topics + (__pyx_v_sim_graph->node[__pyx_v_w]).deg) - 1), __pyx_v_w, __pyx_v_cdata, __pyx_v_priors, __pyx_v_stale_samples, __pyx_v_qq, __pyx_v_qq_norm, __pyx_v_qqS_norm, __pyx_v_sim_graph);
+                      __pyx_f_12_ldags_train_generate_stale_samples(((__pyx_v_cdata->num_topics + (__pyx_v_sim_graph->node[__pyx_v_w]).deg) - 1), __pyx_v_w, __pyx_v_cdata, __pyx_v_priors, __pyx_v_stale_samples, __pyx_v_qq, __pyx_v_qq_norm, __pyx_v_qqS_norm, __pyx_v_sim_graph);
+                  }
+              }
+          }
+      }
   }
+  #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
+      #undef likely
+      #undef unlikely
+      #define likely(x)   __builtin_expect(!!(x), 1)
+      #define unlikely(x) __builtin_expect(!!(x), 0)
+  #endif
 
   /* "_ldags_train.pyx":234
  * @cython.boundscheck(False)
@@ -8975,7 +8778,7 @@ static void __pyx_f_12_ldags_train_generate_stale_samples(int __pyx_v_num_sam, i
  *         int t
  *     # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
  *     qq_norm[cur_w] = 0.0             # <<<<<<<<<<<<<<
- *     for t in range(cdata.num_topics):
+ *     for t in prange(cdata.num_topics):
  *         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \
  */
   (__pyx_v_qq_norm[__pyx_v_cur_w]) = 0.0;
@@ -8983,58 +8786,114 @@ static void __pyx_f_12_ldags_train_generate_stale_samples(int __pyx_v_num_sam, i
   /* "_ldags_train.pyx":250
  *     # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
  *     qq_norm[cur_w] = 0.0
- *     for t in range(cdata.num_topics):             # <<<<<<<<<<<<<<
+ *     for t in prange(cdata.num_topics):             # <<<<<<<<<<<<<<
  *         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \
  *                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
  */
   __pyx_t_1 = __pyx_v_cdata->num_topics;
-  __pyx_t_2 = __pyx_t_1;
-  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
-    __pyx_v_t = __pyx_t_3;
+  if (1 == 0) abort();
+  {
+      #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
+          #undef likely
+          #undef unlikely
+          #define likely(x)   (x)
+          #define unlikely(x) (x)
+      #endif
+      __pyx_t_3 = (__pyx_t_1 - 0 + 1 - 1/abs(1)) / 1;
+      if (__pyx_t_3 > 0)
+      {
+          #ifdef _OPENMP
+          #pragma omp parallel private(__pyx_t_4)
+          #endif /* _OPENMP */
+          {
+              #ifdef _OPENMP
+              #pragma omp for firstprivate(__pyx_v_t) lastprivate(__pyx_v_t)
+              #endif /* _OPENMP */
+              for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_3; __pyx_t_2++){
+                  {
+                      __pyx_v_t = (int)(0 + 1 * __pyx_t_2);
 
-    /* "_ldags_train.pyx":251
+                      /* "_ldags_train.pyx":251
  *     qq_norm[cur_w] = 0.0
- *     for t in range(cdata.num_topics):
+ *     for t in prange(cdata.num_topics):
  *         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \             # <<<<<<<<<<<<<<
  *                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
  *         qq_norm[cur_w] += qq[cur_w][t]
  */
-    ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_t]) = (((__pyx_v_priors->alpha[__pyx_v_t]) * (((__pyx_v_cdata->cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_t]) + (__pyx_v_priors->beta[__pyx_v_cur_w]))) / ((__pyx_v_cdata->cTermsPerTopic[__pyx_v_t]) + __pyx_v_priors->w_beta));
+                      ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_t]) = (((__pyx_v_priors->alpha[__pyx_v_t]) * (((__pyx_v_cdata->cTermTopicCounts[__pyx_v_cur_w])[__pyx_v_t]) + (__pyx_v_priors->beta[__pyx_v_cur_w]))) / ((__pyx_v_cdata->cTermsPerTopic[__pyx_v_t]) + __pyx_v_priors->w_beta));
 
-    /* "_ldags_train.pyx":253
+                      /* "_ldags_train.pyx":253
  *         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \
  *                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
  *         qq_norm[cur_w] += qq[cur_w][t]             # <<<<<<<<<<<<<<
- *     for t in range(cdata.num_topics):
+ *     for t in prange(cdata.num_topics):
  *         qq[cur_w][t] /= qq_norm[cur_w]
  */
-    __pyx_t_4 = __pyx_v_cur_w;
-    (__pyx_v_qq_norm[__pyx_t_4]) = ((__pyx_v_qq_norm[__pyx_t_4]) + ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_t]));
+                      __pyx_t_4 = __pyx_v_cur_w;
+                      (__pyx_v_qq_norm[__pyx_t_4]) = ((__pyx_v_qq_norm[__pyx_t_4]) + ((__pyx_v_qq[__pyx_v_cur_w])[__pyx_v_t]));
+                  }
+              }
+          }
+      }
   }
+  #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
+      #undef likely
+      #undef unlikely
+      #define likely(x)   __builtin_expect(!!(x), 1)
+      #define unlikely(x) __builtin_expect(!!(x), 0)
+  #endif
 
   /* "_ldags_train.pyx":254
  *                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
  *         qq_norm[cur_w] += qq[cur_w][t]
- *     for t in range(cdata.num_topics):             # <<<<<<<<<<<<<<
+ *     for t in prange(cdata.num_topics):             # <<<<<<<<<<<<<<
  *         qq[cur_w][t] /= qq_norm[cur_w]
  *     # Sample num_topics samples from above distribution using the alias method
  */
-  __pyx_t_1 = __pyx_v_cdata->num_topics;
-  __pyx_t_2 = __pyx_t_1;
-  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
-    __pyx_v_t = __pyx_t_3;
+  __pyx_t_3 = __pyx_v_cdata->num_topics;
+  if (1 == 0) abort();
+  {
+      #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
+          #undef likely
+          #undef unlikely
+          #define likely(x)   (x)
+          #define unlikely(x) (x)
+      #endif
+      __pyx_t_1 = (__pyx_t_3 - 0 + 1 - 1/abs(1)) / 1;
+      if (__pyx_t_1 > 0)
+      {
+          #ifdef _OPENMP
+          #pragma omp parallel private(__pyx_t_4, __pyx_t_5)
+          #endif /* _OPENMP */
+          {
+              #ifdef _OPENMP
+              #pragma omp for firstprivate(__pyx_v_t) lastprivate(__pyx_v_t)
+              #endif /* _OPENMP */
+              for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2++){
+                  {
+                      __pyx_v_t = (int)(0 + 1 * __pyx_t_2);
 
-    /* "_ldags_train.pyx":255
+                      /* "_ldags_train.pyx":255
  *         qq_norm[cur_w] += qq[cur_w][t]
- *     for t in range(cdata.num_topics):
+ *     for t in prange(cdata.num_topics):
  *         qq[cur_w][t] /= qq_norm[cur_w]             # <<<<<<<<<<<<<<
  *     # Sample num_topics samples from above distribution using the alias method
  *     genSamplesAlias(num_sam, cdata.num_topics, qq[cur_w], stale_samples[cur_w])
  */
-    __pyx_t_4 = __pyx_v_cur_w;
-    __pyx_t_5 = __pyx_v_t;
-    ((__pyx_v_qq[__pyx_t_4])[__pyx_t_5]) = (((__pyx_v_qq[__pyx_t_4])[__pyx_t_5]) / (__pyx_v_qq_norm[__pyx_v_cur_w]));
+                      __pyx_t_4 = __pyx_v_cur_w;
+                      __pyx_t_5 = __pyx_v_t;
+                      ((__pyx_v_qq[__pyx_t_4])[__pyx_t_5]) = (((__pyx_v_qq[__pyx_t_4])[__pyx_t_5]) / (__pyx_v_qq_norm[__pyx_v_cur_w]));
+                  }
+              }
+          }
+      }
   }
+  #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
+      #undef likely
+      #undef unlikely
+      #define likely(x)   __builtin_expect(!!(x), 1)
+      #define unlikely(x) __builtin_expect(!!(x), 0)
+  #endif
 
   /* "_ldags_train.pyx":257
  *         qq[cur_w][t] /= qq_norm[cur_w]
@@ -11888,26 +11747,21 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_cython_utils_initdata_pyx, __pyx_k_cython_utils_initdata_pyx, sizeof(__pyx_k_cython_utils_initdata_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_d, __pyx_k_d, sizeof(__pyx_k_d), 0, 0, 1, 1},
   {&__pyx_n_s_di, __pyx_k_di, sizeof(__pyx_k_di), 0, 0, 1, 1},
-  {&__pyx_n_s_dictionary, __pyx_k_dictionary, sizeof(__pyx_k_dictionary), 0, 0, 1, 1},
   {&__pyx_n_s_doc_len, __pyx_k_doc_len, sizeof(__pyx_k_doc_len), 0, 0, 1, 1},
-  {&__pyx_n_s_document, __pyx_k_document, sizeof(__pyx_k_document), 0, 0, 1, 1},
   {&__pyx_n_s_dtype, __pyx_k_dtype, sizeof(__pyx_k_dtype), 0, 0, 1, 1},
   {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
   {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
   {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
   {&__pyx_n_s_float64, __pyx_k_float64, sizeof(__pyx_k_float64), 0, 0, 1, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
-  {&__pyx_n_s_id2word, __pyx_k_id2word, sizeof(__pyx_k_id2word), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_init_seqs_and_counts, __pyx_k_init_seqs_and_counts, sizeof(__pyx_k_init_seqs_and_counts), 0, 0, 1, 1},
   {&__pyx_n_s_j, __pyx_k_j, sizeof(__pyx_k_j), 0, 0, 1, 1},
   {&__pyx_n_s_k, __pyx_k_k, sizeof(__pyx_k_k), 0, 0, 1, 1},
-  {&__pyx_n_s_keys, __pyx_k_keys, sizeof(__pyx_k_keys), 0, 0, 1, 1},
   {&__pyx_n_s_lam, __pyx_k_lam, sizeof(__pyx_k_lam), 0, 0, 1, 1},
   {&__pyx_n_s_ldags_train, __pyx_k_ldags_train, sizeof(__pyx_k_ldags_train), 0, 0, 1, 1},
   {&__pyx_kp_s_ldags_train_pyx, __pyx_k_ldags_train_pyx, sizeof(__pyx_k_ldags_train_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
-  {&__pyx_n_s_max, __pyx_k_max, sizeof(__pyx_k_max), 0, 0, 1, 1},
   {&__pyx_kp_u_ndarray_is_not_C_contiguous, __pyx_k_ndarray_is_not_C_contiguous, sizeof(__pyx_k_ndarray_is_not_C_contiguous), 0, 1, 0, 0},
   {&__pyx_kp_u_ndarray_is_not_Fortran_contiguou, __pyx_k_ndarray_is_not_Fortran_contiguou, sizeof(__pyx_k_ndarray_is_not_Fortran_contiguou), 0, 1, 0, 0},
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
@@ -11934,8 +11788,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
   {&__pyx_n_s_term, __pyx_k_term, sizeof(__pyx_k_term), 0, 0, 1, 1},
-  {&__pyx_n_s_term_pair, __pyx_k_term_pair, sizeof(__pyx_k_term_pair), 0, 0, 1, 1},
-  {&__pyx_n_s_term_seq, __pyx_k_term_seq, sizeof(__pyx_k_term_seq), 0, 0, 1, 1},
   {&__pyx_n_s_term_seqs, __pyx_k_term_seqs, sizeof(__pyx_k_term_seqs), 0, 0, 1, 1},
   {&__pyx_n_s_term_topic_counts, __pyx_k_term_topic_counts, sizeof(__pyx_k_term_topic_counts), 0, 0, 1, 1},
   {&__pyx_n_s_terms_per_topic, __pyx_k_terms_per_topic, sizeof(__pyx_k_terms_per_topic), 0, 0, 1, 1},
@@ -11954,9 +11806,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 30, __pyx_L1_error)
-  __pyx_builtin_zip = __Pyx_GetBuiltinName(__pyx_n_s_zip); if (!__pyx_builtin_zip) __PYX_ERR(1, 47, __pyx_L1_error)
-  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) __PYX_ERR(1, 163, __pyx_L1_error)
-  __pyx_builtin_max = __Pyx_GetBuiltinName(__pyx_n_s_max); if (!__pyx_builtin_max) __PYX_ERR(2, 52, __pyx_L1_error)
+  __pyx_builtin_zip = __Pyx_GetBuiltinName(__pyx_n_s_zip); if (!__pyx_builtin_zip) __PYX_ERR(1, 42, __pyx_L1_error)
+  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) __PYX_ERR(1, 158, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(3, 229, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(3, 810, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(3, 1000, __pyx_L1_error)
@@ -12071,36 +11922,36 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * def init_seqs_and_counts(num_topics, num_terms, corpus):             # <<<<<<<<<<<<<<
  *     cdef int di, topic, term
- *     # Build term_seqs[d][s]
+ *     # Get term_seqs[d][s] from corpus
  */
-  __pyx_tuple__10 = PyTuple_Pack(14, __pyx_n_s_num_topics, __pyx_n_s_num_terms, __pyx_n_s_corpus, __pyx_n_s_di, __pyx_n_s_topic, __pyx_n_s_term, __pyx_n_s_term_seqs, __pyx_n_s_document, __pyx_n_s_term_seq, __pyx_n_s_term_pair, __pyx_n_s_topic_seqs, __pyx_n_s_topic_seq, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 25, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(11, __pyx_n_s_num_topics, __pyx_n_s_num_terms, __pyx_n_s_corpus, __pyx_n_s_di, __pyx_n_s_topic, __pyx_n_s_term, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_topic_seq, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(3, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_utils_initdata_pyx, __pyx_n_s_init_seqs_and_counts, 25, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(1, 25, __pyx_L1_error)
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(3, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_utils_initdata_pyx, __pyx_n_s_init_seqs_and_counts, 25, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(1, 25, __pyx_L1_error)
 
-  /* "cython_utils/initdata.pyx":186
+  /* "cython_utils/initdata.pyx":182
  *     return sg
  * 
  * def test_sim_mat():             # <<<<<<<<<<<<<<
  *     cdef:
  *         int i, j, k
  */
-  __pyx_tuple__12 = PyTuple_Pack(9, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_num_terms, __pyx_n_s_lam, __pyx_n_s_sum, __pyx_n_s_simgraph, __pyx_n_s_similarity_matrix, __pyx_n_s_similarity_row); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(1, 186, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(9, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_num_terms, __pyx_n_s_lam, __pyx_n_s_sum, __pyx_n_s_simgraph, __pyx_n_s_similarity_matrix, __pyx_n_s_similarity_row); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(1, 182, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(0, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_utils_initdata_pyx, __pyx_n_s_test_sim_mat, 186, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(1, 186, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(0, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_utils_initdata_pyx, __pyx_n_s_test_sim_mat, 182, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(1, 182, __pyx_L1_error)
 
-  /* "_ldags_train.pyx":31
+  /* "_ldags_train.pyx":33
  * 
  * 
  * def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam):             # <<<<<<<<<<<<<<
  *     cdef:
  *         int d, t, w
  */
-  __pyx_tuple__14 = PyTuple_Pack(28, __pyx_n_s_num_topics, __pyx_n_s_num_passes, __pyx_n_s_corpus, __pyx_n_s_similarity_matrix, __pyx_n_s_lam, __pyx_n_s_d, __pyx_n_s_t, __pyx_n_s_w, __pyx_n_s_num_docs, __pyx_n_s_num_terms, __pyx_n_s_cdata, __pyx_n_s_cTermSeqs, __pyx_n_s_cTopicSeqs, __pyx_n_s_cDocTopicCounts, __pyx_n_s_cTermTopicCounts, __pyx_n_s_cTermsPerTopic, __pyx_n_s_doc_len, __pyx_n_s_priors, __pyx_n_s_sim_graph, __pyx_n_s_sum, __pyx_n_s_id2word, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic, __pyx_n_s_i, __pyx_n_s_theta, __pyx_n_s_phi); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(2, 31, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(27, __pyx_n_s_num_topics, __pyx_n_s_num_passes, __pyx_n_s_corpus, __pyx_n_s_similarity_matrix, __pyx_n_s_lam, __pyx_n_s_d, __pyx_n_s_t, __pyx_n_s_w, __pyx_n_s_num_docs, __pyx_n_s_num_terms, __pyx_n_s_cdata, __pyx_n_s_cTermSeqs, __pyx_n_s_cTopicSeqs, __pyx_n_s_cDocTopicCounts, __pyx_n_s_cTermTopicCounts, __pyx_n_s_cTermsPerTopic, __pyx_n_s_doc_len, __pyx_n_s_priors, __pyx_n_s_sim_graph, __pyx_n_s_sum, __pyx_n_s_term_seqs, __pyx_n_s_topic_seqs, __pyx_n_s_term_topic_counts, __pyx_n_s_terms_per_topic, __pyx_n_s_i, __pyx_n_s_theta, __pyx_n_s_phi); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(2, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(5, 0, 28, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_ldags_train_pyx, __pyx_n_s_train, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(2, 31, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(5, 0, 27, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_ldags_train_pyx, __pyx_n_s_train, 33, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(2, 33, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -12109,6 +11960,13 @@ static int __Pyx_InitCachedConstants(void) {
 }
 
 static int __Pyx_InitGlobals(void) {
+  /* InitThreads.init */
+  #ifdef WITH_THREAD
+PyEval_InitThreads();
+#endif
+
+if (unlikely(PyErr_Occurred())) __PYX_ERR(2, 1, __pyx_L1_error)
+
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(2, 1, __pyx_L1_error);
   __pyx_float_0_0 = PyFloat_FromDouble(0.0); if (unlikely(!__pyx_float_0_0)) __PYX_ERR(2, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(2, 1, __pyx_L1_error)
@@ -12399,35 +12257,35 @@ if (!__Pyx_RefNanny) {
  * 
  * def init_seqs_and_counts(num_topics, num_terms, corpus):             # <<<<<<<<<<<<<<
  *     cdef int di, topic, term
- *     # Build term_seqs[d][s]
+ *     # Get term_seqs[d][s] from corpus
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12_ldags_train_1init_seqs_and_counts, NULL, __pyx_n_s_ldags_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_init_seqs_and_counts, __pyx_t_1) < 0) __PYX_ERR(1, 25, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cython_utils/initdata.pyx":186
+  /* "cython_utils/initdata.pyx":182
  *     return sg
  * 
  * def test_sim_mat():             # <<<<<<<<<<<<<<
  *     cdef:
  *         int i, j, k
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12_ldags_train_3test_sim_mat, NULL, __pyx_n_s_ldags_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 186, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12_ldags_train_3test_sim_mat, NULL, __pyx_n_s_ldags_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 182, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_sim_mat, __pyx_t_1) < 0) __PYX_ERR(1, 186, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_sim_mat, __pyx_t_1) < 0) __PYX_ERR(1, 182, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "_ldags_train.pyx":31
+  /* "_ldags_train.pyx":33
  * 
  * 
  * def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam):             # <<<<<<<<<<<<<<
  *     cdef:
  *         int d, t, w
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12_ldags_train_5train, NULL, __pyx_n_s_ldags_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 31, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_12_ldags_train_5train, NULL, __pyx_n_s_ldags_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_train, __pyx_t_1) < 0) __PYX_ERR(2, 31, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_train, __pyx_t_1) < 0) __PYX_ERR(2, 33, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "_ldags_train.pyx":1
@@ -12660,8 +12518,35 @@ bad:
     return -1;
 }
 
+/* GetModuleGlobalName */
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        result = NULL;
+    } else {
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else {
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    if (!result) {
+        PyErr_Clear();
+#endif
+        result = __Pyx_GetBuiltinName(name);
+    }
+    return result;
+}
+
 /* GetItemInt */
-static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
+    static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
     PyObject *r;
     if (!j) return NULL;
     r = PyObject_GetItem(o, j);
@@ -12745,33 +12630,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
     }
 #endif
     return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-}
-
-/* GetModuleGlobalName */
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    if (likely(result)) {
-        Py_INCREF(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        result = NULL;
-    } else {
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    if (likely(result)) {
-        Py_INCREF(result);
-    } else {
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    if (!result) {
-        PyErr_Clear();
-#endif
-        result = __Pyx_GetBuiltinName(name);
-    }
-    return result;
 }
 
 /* PyObjectCall */
@@ -13382,128 +13240,6 @@ static PyObject* __Pyx_PyFloat_SubtractObjC(PyObject *op1, PyObject *op2, double
         result = a - b;
         PyFPE_END_PROTECT(result)
         return PyFloat_FromDouble(result);
-}
-#endif
-
-/* PyIntBinop */
-          #if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyInt_AddCObj(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
-    #if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_CheckExact(op2))) {
-        const long a = intval;
-        long x;
-        long b = PyInt_AS_LONG(op2);
-            x = (long)((unsigned long)a + b);
-            if (likely((x^a) >= 0 || (x^b) >= 0))
-                return PyInt_FromLong(x);
-            return PyLong_Type.tp_as_number->nb_add(op1, op2);
-    }
-    #endif
-    #if CYTHON_USE_PYLONG_INTERNALS
-    if (likely(PyLong_CheckExact(op2))) {
-        const long a = intval;
-        long b, x;
-#ifdef HAVE_LONG_LONG
-        const PY_LONG_LONG lla = intval;
-        PY_LONG_LONG llb, llx;
-#endif
-        const digit* digits = ((PyLongObject*)op2)->ob_digit;
-        const Py_ssize_t size = Py_SIZE(op2);
-        if (likely(__Pyx_sst_abs(size) <= 1)) {
-            b = likely(size) ? digits[0] : 0;
-            if (size == -1) b = -b;
-        } else {
-            switch (size) {
-                case -2:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        b = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
-                        llb = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                    CYTHON_FALLTHROUGH;
-                case 2:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        b = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
-                        llb = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                    CYTHON_FALLTHROUGH;
-                case -3:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        b = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
-                        llb = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                    CYTHON_FALLTHROUGH;
-                case 3:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        b = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
-                        llb = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                    CYTHON_FALLTHROUGH;
-                case -4:
-                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                        b = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
-                        llb = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                    CYTHON_FALLTHROUGH;
-                case 4:
-                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                        b = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-#ifdef HAVE_LONG_LONG
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
-                        llb = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-#endif
-                    }
-                    CYTHON_FALLTHROUGH;
-                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
-            }
-        }
-                x = a + b;
-            return PyLong_FromLong(x);
-#ifdef HAVE_LONG_LONG
-        long_long:
-                llx = lla + llb;
-            return PyLong_FromLongLong(llx);
-#endif
-        
-        
-    }
-    #endif
-    if (PyFloat_CheckExact(op2)) {
-        const long a = intval;
-        double b = PyFloat_AS_DOUBLE(op2);
-            double result;
-            PyFPE_START_PROTECT("add", return NULL)
-            result = ((double)a) + (double)b;
-            PyFPE_END_PROTECT(result)
-            return PyFloat_FromDouble(result);
-    }
-    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
 }
 #endif
 

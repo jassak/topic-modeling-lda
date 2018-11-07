@@ -17,6 +17,8 @@ from libc.limits cimport INT_MIN
 import numpy as np
 cimport numpy as np
 
+from cython.parallel import *
+
 include "cython_utils/rng.pyx"
 include "cython_utils/datastructs.pyx"
 include "cython_utils/initdata.pyx"
@@ -47,10 +49,9 @@ def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam)
     # init RNG
     srand(1)
 
-    # get num_terms from corpus
-    id2word = corpus.dictionary
-    num_terms = 1 + max(id2word.keys())
-    del id2word
+    # get num_terms, num_docs from corpus
+    num_terms = corpus.num_terms
+    num_docs = corpus.num_docs
 
     # verify similarity_matrix size
     assert(len(similarity_matrix) == num_terms, "similarity matrix size != num_terms")
@@ -60,7 +61,6 @@ def train(int num_topics, int num_passes, corpus, similarity_matrix, double lam)
 
     # init sequences and counts
     term_seqs, topic_seqs, term_topic_counts, terms_per_topic = init_seqs_and_counts(num_topics, num_terms, corpus)
-    num_docs = len(term_seqs)
 
     # init doc_len
     doc_len = <int *>malloc(num_docs * sizeof(int))
@@ -234,7 +234,7 @@ cdef void _train(CorpusData * cdata, Priors * priors, int num_passes, SparseGrap
 cdef void init_stale_samples(CorpusData * cdata, Priors * priors, Stack ** stale_samples, \
                             double ** qq, double * qq_norm, double * qqS_norm, SparseGraph * sim_graph) nogil:
     cdef int w
-    for w in range(cdata.num_terms):
+    for w in prange(cdata.num_terms):
         generate_stale_samples(cdata.num_topics + sim_graph.node[w].deg - 1, w, cdata, priors, stale_samples,\
                                 qq, qq_norm, qqS_norm, sim_graph)
 
@@ -247,11 +247,11 @@ cdef void generate_stale_samples(int num_sam, int cur_w, CorpusData * cdata, Pri
         int t
     # Compute dense component of conditional topic distribution (q_w in Li et al. 2014)
     qq_norm[cur_w] = 0.0
-    for t in range(cdata.num_topics):
+    for t in prange(cdata.num_topics):
         qq[cur_w][t] = priors.alpha[t] * (cdata.cTermTopicCounts[cur_w][t] + priors.beta[cur_w]) \
                        / (cdata.cTermsPerTopic[t] + priors.w_beta)
         qq_norm[cur_w] += qq[cur_w][t]
-    for t in range(cdata.num_topics):
+    for t in prange(cdata.num_topics):
         qq[cur_w][t] /= qq_norm[cur_w]
     # Sample num_topics samples from above distribution using the alias method
     genSamplesAlias(num_sam, cdata.num_topics, qq[cur_w], stale_samples[cur_w])

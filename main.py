@@ -5,8 +5,7 @@
 """
 @author: jason
 """
-import numpy as np
-import random
+
 
 def gen_erdosrenyi_graph(nnodes, avdeg):
     adj_mat = np.zeros((nnodes, nnodes), int)
@@ -31,8 +30,7 @@ def make_rand_sim_matrix(num_terms, avdeg):
     return sim_mat
 
 def main():
-    from ldamodel_cgs import LDAModelCGS
-    from ldamodel_mhw import LDAModelMHW
+    from ldamodel_gs import LDAModelGrS
     # from ldamodel_gs import LDAModelGrS
     from nipscorpus import NipsCorpus
 
@@ -41,7 +39,7 @@ def main():
     #==============#
     # DO THIS FIRST FOR EVERY NEW MODEL:============================================#
     corpus = NipsCorpus()
-    model = LDAModelMHW(corpus, num_topics=20)
+    model = LDAModelGrS(corpus, num_topics=20)
     model.save('models/test_model.pkl')
     # THEN DO THIS:=================================================================#
     # model = LDAModelCGS.load('models/test_model.pkl')
@@ -55,7 +53,6 @@ if __name__ == '__main__':
     import numpy as np
     import random
 
-
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(filename="logs/logger.log",
                         level=logging.INFO,
@@ -66,3 +63,6 @@ if __name__ == '__main__':
     main()
 
 
+# In ipython:
+# from nipscorpus import NipsCorpus; corpus = NipsCorpus.load('data/nips_corpus.pkl'); import pickle; file = open('data/sim_mat.pkl', 'rb'); sim_mat = pickle.load(file)
+# from ldamodel_gs import LDAModelGrS; model = LDAModelGrS(corpus, sim_mat, 20, 0.1, 30)

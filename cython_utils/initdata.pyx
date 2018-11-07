@@ -24,19 +24,12 @@ cimport numpy as np
 
 def init_seqs_and_counts(num_topics, num_terms, corpus):
     cdef int di, topic, term
-    # Build term_seqs[d][s]
-    term_seqs = []
-    for document in corpus:
-        term_seq = []
-        for term_pair in document:
-            term_seq += [term_pair[0]] * int(term_pair[1])
-        term_seqs.append(term_seq)
+    # Get term_seqs[d][s] from corpus
+    term_seqs = corpus.term_seqs
     # Init randomly topic_seqs[d][s]
     topic_seqs = []
     for di in range(len(term_seqs)):
-        # init to a random seq, problem: not sparse
          topic_seq = np.random.randint(num_topics, size=len(term_seqs[di])).tolist()
-#         topic_seq = np.random.randint(10, size=len(term_seqs[di])).tolist()
          topic_seqs.append(topic_seq)
     # Build term_topic_counts[w][t]
     term_topic_counts = [None] * num_terms
@@ -162,7 +155,8 @@ cdef SparseGraph * _init_similarity_graph(int num_terms, double lam, list simila
     for i in range(num_terms):
         sum_row = sum(similarity_matrix[i])
         for j in range(num_terms):
-            similarity_matrix[i][j] /= sum_row
+            if fabs(sum_row) > 1e-10:
+                similarity_matrix[i][j] /= sum_row
     # create S = (1 - lam) * I + lam * similarity_matrix (eq.(8) in Ahmed, Long, Silva, Wang 2017)
     # and its adjacency matrix
     for i in range(num_terms):

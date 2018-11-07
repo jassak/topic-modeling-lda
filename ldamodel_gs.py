@@ -53,15 +53,18 @@ class LDAModelGrS(ABCTopicModel):
 
         logger.info("creating a new lda graph sampler model with {0} topics".format(num_topics))
         # store user-supplied parameters
-        if corpus is not None:
-            self.id2word = corpus.dictionary
-            self.num_terms = 1 + max(self.id2word.keys())
-        else:
-            self.id2word = None
-            self.num_terms = 0
+        # if corpus is not None:
+        #     self.id2word = corpus.dictionary
+        #     self.num_terms = 1 + max(self.id2word.keys())
+        # else:
+        #     self.id2word = None
+        #     self.num_terms = 0
 
+        self.num_docs = corpus.num_docs
+        self.num_terms = corpus.num_terms
         self.num_topics = int(num_topics)
         self.minimum_probability = minimum_prob
+        self.id2word = corpus.dict
 
         # if a training corpus was provided, start estimating the model right away
         if corpus is not None:
