@@ -152,7 +152,7 @@ cdef void _train(CorpusData * cdata, Priors * priors, int num_passes, SparseGrap
     sparseDotProd(sim_graph, qq_norm, qqS_norm)
 
     with nogil:
-        # start monte calro
+        # start monte carlo
         for p in range(num_passes):
             printf("pass: %d\n", p)
             for d in range(num_docs):

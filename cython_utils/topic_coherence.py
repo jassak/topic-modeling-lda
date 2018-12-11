@@ -32,7 +32,10 @@ def compute_doc_term_freqs(term_seqs, fname):
                     if w1 == w2:
                         terms_indoc.add(w1)
                     else:
-                        entry = frozenset([w1, w2])
+                        if w1 < w2:
+                            entry = (w1, w2)
+                        else:
+                            entry = (w2, w1)
                         pairs_indoc.add(entry)
             # and update counts accordingly
             for term in terms_indoc:

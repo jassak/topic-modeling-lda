@@ -10,6 +10,7 @@ Created on 1 November 2018
 cimport cython
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 from libc.stdlib cimport malloc, free, rand, RAND_MAX, srand
+from libc.math cimport floor, fabs
 
 @cython.cdivision(True)
 cdef double randUniform() nogil:
